@@ -1,0 +1,39 @@
+# this one adds more dynamism. Nodes come and go according to the
+# configured schedule.
+
+random.seed 1234569890
+
+simulation.cycles 100
+
+control.sh Shuffle
+
+network.size 1
+network.maxSize 10000
+
+protocol.0 lpbcast.SimpleLpbcast
+#protocol.0.l 10
+protocol.0.F 3
+protocol.0.subs 20
+protocol.0.unSubs 20
+protocol.0.unSubsTout 50
+
+control.d0 DynamicNetwork
+control.d0.add 1000
+control.d0.step 1
+control.d0.until 5
+control.d0.init.0 RandNI
+control.d0.init.0.protocol 0
+control.d0.init.0.k 2
+
+control.d1 lpbcast.Unsubscribe
+control.d1.add -10
+control.d1.step 1
+control.d1.from 8
+control.d1.protocol 0
+
+control.o0 peersim.reports.DegreeStats
+control.o0.protocol 0
+
+control.o1 peersim.reports.ConnectivityObserver
+control.o1.protocol 0
+

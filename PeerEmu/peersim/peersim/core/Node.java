@@ -80,4 +80,9 @@ public long getID();
  */
 public Object clone();
 
+/**
+ * Returns a new instance of the Descriptor used for the referred protocol.
+ * Calls the constructor of the Descriptor class defined for this protocol.
+ */
+public Descriptor getDescriptor(int pid);
 }

@@ -714,6 +714,7 @@ public Object getInstance(String name, Object def)
 	}
 }
 
+
 // -------------------------------------------------------------------
 
 /**

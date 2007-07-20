@@ -1,18 +1,5 @@
 /*
- * Copyright (c) 2003-2005 The BISON Project
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License version 2 as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Created on Jul 15, 2007 by Spyros Voulgaris
  *
  */
 
@@ -23,69 +10,13 @@ import peersim.config.*;
 import peersim.core.*;
 
 
-/**
-* Event-driven simulator engine.
-* It is a fully static singleton class.
-* For an event driven simulation 
-* the configuration has to describe a set of {@link Protocol}s,
-* a set of {@link Control}s and their ordering and a set of
-* initializers and their ordering. See parameters {@value #PAR_INIT},
-* {@value #PAR_CTRL}.
-* <p>
-* One experiment run by {@link #nextExperiment} works as follows.
-* First the initializers are run in the specified order. Then the first
-* execution of all specified controls is scheduled in the event queue.
-* This scheduling is defined by the {@link Scheduler} parameters of each
-* control component.
-* After this, the first event is taken from the event queue. If the event
-* wraps a control, the control is executed, otherwise the event is
-* delivered to the destination protocol, that must implement
-* {@link EDProtocol}. This
-* is iterated while the current time is less than {@value #PAR_ENDTIME} or
-* the queue becomes empty.
-* If more control events fall at the same time point, then the order given
-* in the configuration is respected. If more non-control events fall at the same
-* time point, they are processed in a random order.
-* <p>
-* The engine also provides the interface to add events to the queue.
-* Note that this engine does not explicitly run the protocols.
-* In all cases at least one control or initializer has to be defined that
-* sends event(s) to protocols.
-* <p>
-* Controls can be scheduled (using the {@link Scheduler}
-* parameters in the configuration) to run after the experiment
-* has finished.
-* That is, each experiment is finished by running the controls that are
-* scheduled to be run after the experiment.
-* <p>
-* Any control can interrupt an experiment at any time it is
-* executed by returning true in method {@link Control#execute}.
-* However, the controls scheduled to run after the experiment are still
-* executed completely, irrespective of their return value and even if
-* the experiment was interrupted.
-* <p>
-* {@link CDScheduler} has to be mentioned that is a control that
-* can bridge the gap between {@link peersim.cdsim} and the event driven
-* engine. It can wrap {@link peersim.cdsim.CDProtocol} appropriately so that the
-* execution of the cycles are scheduled in configurable ways for each node
-* individually. In some cases this can add a more fine-grained control
-* and more realism to {@link peersim.cdsim.CDProtocol} simulations,
-* at the cost of some
-* loss in performance.
-* <p>
-* When protocols at different nodes send messages to each other, they might
-* want to use a model of the transport layer so that in the simulation
-* message delay and message omissions can be modeled in a modular way.
-* This functionality is implemented in package {@link peersim.transport}.
-* @see Configuration
- */
-public class EDSimulator
+public class EmuSimulator extends EDSimulator
 {
-
+  
 //---------------------------------------------------------------------
 // Parameters
 //---------------------------------------------------------------------
-	
+
 /**
  * The ending time for simulation. Only events that have a strictly smaller
  * value are executed.
@@ -99,7 +30,7 @@ public static final String PAR_ENDTIME = "simulation.endtime";
  * standard error.
  * @config
  */
-private static final String PAR_LOGTIME = "simulation.logtime";	
+private static final String PAR_LOGTIME = "simulation.logtime";
 
 /** 
  * This parameter specifies how many
@@ -161,8 +92,6 @@ private static long nextlog = 0;
 // =============== initialization ======================================
 // =====================================================================
 
-/** to prevent construction */
-protected EDSimulator() {}
 
 //---------------------------------------------------------------------
 //Private methods
@@ -235,15 +164,6 @@ static void addControlEvent(long time, int order, ControlEvent event)
 
 //---------------------------------------------------------------------
 
-/**
- * This method is used to check whether the current configuration can
- * be used for event driven simulations. It checks for the existence of
- * config parameter {@value #PAR_ENDTIME}.
- */
-public static final boolean isConfigurationEventDriven()
-{
-	return Configuration.contains(PAR_ENDTIME);
-}
 
 //---------------------------------------------------------------------
 
@@ -389,5 +309,6 @@ public static void add(long delay, Object event, Node node, int pid)
 	time = (time << rbits) | CommonState.r.nextInt(1 << rbits);
 	heap.add(time, event, node, (byte) pid);
 }
+
 
 }

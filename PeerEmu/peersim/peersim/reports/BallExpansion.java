@@ -18,9 +18,11 @@
 
 package peersim.reports;
 
-import peersim.config.*;
-import peersim.core.*;
-import peersim.util.*;
+import peersim.config.Configuration;
+import peersim.core.CommonState;
+import peersim.core.Network;
+import peersim.util.IncrementalStats;
+import peersim.util.RandPermutation;
 
 /**
  * Control to observe the ball expansion, that is,
@@ -119,7 +121,7 @@ public BallExpansion(String name)
 public boolean execute() {
 
 	updateGraph();
-	System.out.print(name + ": ");
+//	System.out.print(name + ": ");
 	rp.reset(g.size());
 	if (stats)
 	{
@@ -141,16 +143,19 @@ public boolean execute() {
 	}
 	else
 	{
-		System.out.println();
+		//System.out.println();
 		for (int i = 0; i < n && i < g.size(); ++i)
 		{
 			ga.flooding(g, b, rp.next());
 			int j = 0;
+			int numReached = 0;
 			while (j < b.length && b[j] > 0)
 			{
-				System.out.print(b[j++] + " ");
+				numReached+=b[j];
+				//System.out.print(b[j] + " ");
+				j++;
 			}
-			System.out.println();
+			System.out.println(CommonState.getTime()+"\t"+Network.size()+"\t"+Configuration.getInt("CC")+"\t"+numReached);
 		}
 	}
 	return false;

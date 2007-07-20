@@ -25,6 +25,11 @@ package peersim.core;
  */
 public interface Control
 {
+/**
+ * The protocol to operate on.
+ * @config
+ */
+public static final String PAR_PROT = "protocol";
 
 /**
  * Performs arbitrary modifications or reports arbitrary information over the
@@ -32,5 +37,4 @@ public interface Control
  * @return true if the simulation has to be stopped, false otherwise.
  */
 public boolean execute();
-
 }

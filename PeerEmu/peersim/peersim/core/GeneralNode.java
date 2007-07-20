@@ -15,7 +15,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-		
+
 package peersim.core;
 
 import peersim.config.*;
@@ -67,35 +67,35 @@ private long ID;
 * the configuration.
 */
 public GeneralNode(String prefix) {
-	
-	String[] names = Configuration.getNames(PAR_PROT);
-	CommonState.setNode(this);
-	ID=nextID();
-	protocol = new Protocol[names.length];
-	for (int i=0; i < names.length; i++) {
-		CommonState.setPid(i);
-		Protocol p = (Protocol) 
-			Configuration.getInstance(names[i]);
-		protocol[i] = p; 
-	}
+    
+    String[] names = Configuration.getNames(PAR_PROT);
+    CommonState.setNode(this);
+    ID=nextID();
+    protocol = new Protocol[names.length];
+    for (int i=0; i < names.length; i++) {
+        CommonState.setPid(i);
+        Protocol p = (Protocol) 
+            Configuration.getInstance(names[i]);
+        protocol[i] = p; 
+    }
 }
 
 
 // -----------------------------------------------------------------
 
 public Object clone() {
-	
-	GeneralNode result = null;
-	try { result=(GeneralNode)super.clone(); }
-	catch( CloneNotSupportedException e ) {} // never happens
-	result.protocol = new Protocol[protocol.length];
-	CommonState.setNode(result);
-	result.ID=nextID();
-	for(int i=0; i<protocol.length; ++i) {
-		CommonState.setPid(i);
-		result.protocol[i] = (Protocol)protocol[i].clone();
-	}
-	return result;
+    
+    GeneralNode result = null;
+    try { result=(GeneralNode)super.clone(); }
+    catch( CloneNotSupportedException e ) {} // never happens
+    result.protocol = new Protocol[protocol.length];
+    CommonState.setNode(result);
+    result.ID=nextID();
+    for(int i=0; i<protocol.length; ++i) {
+        CommonState.setPid(i);
+        result.protocol[i] = (Protocol)protocol[i].clone();
+    }
+    return result;
 }
 
 // -----------------------------------------------------------------
@@ -103,7 +103,7 @@ public Object clone() {
 /** returns the next unique ID */
 private long nextID() {
 
-	return counterID++;
+    return counterID++;
 }
 
 // =============== public methods ==================================
@@ -111,30 +111,30 @@ private long nextID() {
 
 
 public void setFailState(int failState) {
-	
-	// after a node is dead, all operations on it are errors by definition
-	if(failstate==DEAD && failState!=DEAD) throw new IllegalStateException(
-		"Cannot change fail state: node is already DEAD");
-	switch(failState)
-	{
-		case OK:
-			failstate=OK;
-			break;
-		case DEAD:
-			//protocol = null;
-			index = -1;
-			failstate = DEAD;
-			for(int i=0;i<protocol.length;++i)
-				if(protocol[i] instanceof Cleanable)
-					((Cleanable)protocol[i]).onKill();
-			break;
-		case DOWN:
-			failstate = DOWN;
-			break;
-		default:
-			throw new IllegalArgumentException(
-				"failState="+failState);
-	}
+    
+    // after a node is dead, all operations on it are errors by definition
+    if(failstate==DEAD && failState!=DEAD) throw new IllegalStateException(
+        "Cannot change fail state: node is already DEAD");
+    switch(failState)
+    {
+        case OK:
+            failstate=OK;
+            break;
+        case DEAD:
+            //protocol = null;
+            index = -1;
+            failstate = DEAD;
+            for(int i=0;i<protocol.length;++i)
+                if(protocol[i] instanceof Cleanable)
+                    ((Cleanable)protocol[i]).onKill();
+            break;
+        case DOWN:
+            failstate = DOWN;
+            break;
+        default:
+            throw new IllegalArgumentException(
+                "failState="+failState);
+    }
 }
 
 // -----------------------------------------------------------------
@@ -160,7 +160,7 @@ public int getIndex() { return index; }
 //------------------------------------------------------------------
 
 public void setIndex(int index) { this.index = index; }
-	
+    
 //------------------------------------------------------------------
 
 /**
@@ -173,19 +173,25 @@ public long getID() { return ID; }
 
 public String toString() 
 {
-	StringBuffer buffer = new StringBuffer();
-	buffer.append("ID: "+ID+" index: "+index+"\n");
-	for(int i=0; i<protocol.length; ++i)
-	{
-		buffer.append("protocol["+i+"]="+protocol[i]+"\n");
-	}
-	return buffer.toString();
+    StringBuffer buffer = new StringBuffer();
+    buffer.append("ID: "+ID+" index: "+index+"\n");
+    for(int i=0; i<protocol.length; ++i)
+    {
+        buffer.append("protocol["+i+"]="+protocol[i]+"\n");
+    }
+    return buffer.toString();
 }
 
 //------------------------------------------------------------------
 
 /** Implemented as <code>(int)getID()</code>. */
 public int hashCode() { return (int)getID(); }
+
+
+public Descriptor getDescriptor(int pid)
+{
+    return null;
+}
 
 }
 

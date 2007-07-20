@@ -215,6 +215,20 @@ public static Node get( int index ) {
 	return node[index];
 }
 
+/**
+ * Returns the node based on the given ID.
+ * XXX: Very inefficient, scratch implementation. To be replaced by a hashtable.
+ */
+public static Node getByID(int ID)
+{
+	for (int i=0; i<len; i++)
+	{
+		if (node[i].getID() == ID)
+			return node[i];
+	}
+	return null;
+}
+
 // ------------------------------------------------------------------
 
 /**

@@ -16,10 +16,10 @@
  *
  */
 		
-package peersim.cdsim;
+package peeremu.cdsim;
 
-import peersim.config.*;
-import peersim.core.*;
+import peeremu.config.*;
+import peeremu.core.*;
 
 /**
 * It generalizes its superclass so that the list of protocols to run can

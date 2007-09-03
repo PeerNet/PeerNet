@@ -16,15 +16,15 @@
  *
  */
 
-package peersim.cdsim;
+package peeremu.cdsim;
 
-import peersim.core.CommonState;
+import peeremu.core.CommonState;
 
 
 /**
  * This is the common state of a cycle driven simulation that all objects see.
  * It contains additional information, specific to the cycle driven model,
- * in addition to the info in {@link peersim.core.CommonState}.
+ * in addition to the info in {@link peeremu.core.CommonState}.
  */
 public class CDState extends CommonState {
 

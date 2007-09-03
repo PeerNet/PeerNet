@@ -16,11 +16,11 @@
  *
  */
 		
-package peersim.cdsim;
+package peeremu.cdsim;
 
-import peersim.config.*;
-import peersim.core.*;
-import peersim.util.RandPermutation;
+import peeremu.config.*;
+import peeremu.core.*;
+import peeremu.util.RandPermutation;
 
 /**
 * Control to run a cycle of the cycle driven simulation.

@@ -16,11 +16,12 @@
  *
  */
 
-package peersim.cdsim;
+package peeremu.cdsim;
 
 import java.util.*;
-import peersim.config.*;
-import peersim.core.*;
+
+import peeremu.config.*;
+import peeremu.core.*;
 
 /**
  * This is the cycle driven simulation engine. It is a fully static

@@ -16,12 +16,13 @@
  *
  */
  
-package peersim.cdsim;
+package peeremu.cdsim;
 
 import java.util.Arrays;
-import peersim.config.Configuration;
-import peersim.core.Node;
-import peersim.core.Control;
+
+import peeremu.config.Configuration;
+import peeremu.core.Control;
+import peeremu.core.Node;
 
 /**
 * A protocol that is not realy a protocol, but a trick to carry out all

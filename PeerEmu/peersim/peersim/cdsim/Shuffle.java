@@ -16,9 +16,9 @@
  *
  */
 		
-package peersim.cdsim;
+package peeremu.cdsim;
 
-import peersim.core.*;
+import peeremu.core.*;
 
 /**
 * Shuffles the network. After shuffling, the order in which the nodes

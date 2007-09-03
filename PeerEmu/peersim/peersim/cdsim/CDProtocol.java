@@ -16,10 +16,10 @@
  *
  */
 
-package peersim.cdsim;
+package peeremu.cdsim;
 
-import peersim.core.Protocol;
-import peersim.core.Node;
+import peeremu.core.Node;
+import peeremu.core.Protocol;
 
 /**
 * Defines cycle driven protocols, that is, protocols that have a periodic

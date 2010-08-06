@@ -16,11 +16,11 @@
  *
  */
 
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.graph.Graph;
-import peersim.config.*;
-import peersim.core.*;
+import peeremu.config.*;
+import peeremu.core.*;
+import peeremu.graph.Graph;
 
 /**
  * Wires a scale free graph using a method described in

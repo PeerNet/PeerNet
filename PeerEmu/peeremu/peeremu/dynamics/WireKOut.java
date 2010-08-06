@@ -16,11 +16,11 @@
  *
  */
 
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.graph.*;
-import peersim.core.*;
-import peersim.config.*;
+import peeremu.config.*;
+import peeremu.core.*;
+import peeremu.graph.*;
 
 /**
  * Takes a {@link Linkable} protocol and adds random connections. Note that no

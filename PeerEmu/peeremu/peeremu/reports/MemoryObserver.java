@@ -16,9 +16,9 @@
  *
  */
 
-package peersim.reports;
+package peeremu.reports;
 
-import peersim.core.*;
+import peeremu.core.*;
 
 /**
  * This observer reports memory utilization (max, total and 

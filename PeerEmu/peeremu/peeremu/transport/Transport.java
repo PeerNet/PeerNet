@@ -1,59 +1,22 @@
 /*
- * Copyright (c) 2003-2005 The BISON Project
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License version 2 as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Created on Jul 18, 2007 by Spyros Voulgaris
  *
  */
+package peeremu.transport;
 
-package peersim.transport;
-
-import peersim.core.*;
-
+import peeremu.core.Descriptor;
+import peeremu.core.Protocol;
 
 /**
- * This interface represents a generic transport protocol, used to
- * send messages through the underlying network. Generally, transport
- * protocols use {@link peersim.edsim.EDSimulator} to schedule the delivery of
- * messages with some appropriate delay. They can also model message omission
- * failure as well.
+ * This is a generic transport interface.
+ * It is used to send messages to other nodes.
  * 
- * @author Alberto Montresor
- * @version $Revision: 1.7 $
+ * @author Spyros Voulgaris
  */
 public interface Transport extends Protocol
 {
-	
-/**
- * Sends message <code>msg</code>	from node <code>src</code> to protocol
- * <code>pid</code> of node <code>dst</code>.
- * 
- * @param src sender node
- * @param dest destination node
- * @param msg message to be sent
- * @param pid protocol identifier
- */
-public void send(Node src, Node dest, Object msg, int pid);
-
-
-/**
- * Return a latency estimate from node <code>src</code> to protocol
- * <code>pid</code> of node <code>dst</code>. 
- * 
- * @param src sender node
- * @param dest destination node
- */
-public long getLatency(Node src, Node dest);
-
-
+  /**
+   * Used to send a message to another node, given the node's descriptor.
+   */
+  public void send(Descriptor src, Descriptor dest, int pid, Object payload);
 }

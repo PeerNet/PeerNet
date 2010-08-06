@@ -16,9 +16,9 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
-import peersim.core.*;
+import peeremu.core.*;
 
 /**
  * Observes the cosine angle between two vectors. The number which is output is
@@ -31,7 +31,7 @@ import peersim.core.*;
  * The methods to be used are specified through parameter {@value #PAR_METHOD1}
  * and {@value #PAR_METHOD2}.
  * <p>
- * Please refer to package {@link peersim.vector} for a detailed description of 
+ * Please refer to package {@link peeremu.vector} for a detailed description of 
  * this mechanism. 
  */
 public class VectAngle implements Control
@@ -58,7 +58,7 @@ private static final String PAR_PROT2 = "protocol2";
  * Defauls to <code>getValue</code> (for backward compatibility with previous 
  * implementation of this class, that were based on the 
  * {@link SingleValue} interface).
- * Refer to the {@linkplain peersim.vector vector package description} for more 
+ * Refer to the {@linkplain peeremu.vector vector package description} for more 
  * information about getters and setters.
  * @config
  */
@@ -69,7 +69,7 @@ private static final String PAR_METHOD1 = "getter1";
  * Defauls to <code>getValue</code> (for backward compatibility with previous 
  * implementation of this class, that were based on the 
  * {@link SingleValue} interface).
- * Refer to the {@linkplain peersim.vector vector package description} for more 
+ * Refer to the {@linkplain peeremu.vector vector package description} for more 
  * information about getters and setters.
  * @config
  */

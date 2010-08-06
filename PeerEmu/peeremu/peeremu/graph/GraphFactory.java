@@ -16,7 +16,7 @@
  *
  */
 		
-package peersim.graph;
+package peeremu.graph;
 
 import java.util.*;
 

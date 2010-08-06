@@ -16,13 +16,13 @@
  *
  */
 
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.graph.*;
-import peersim.config.Configuration;
+import peeremu.config.Configuration;
+import peeremu.graph.*;
 
 /**
- * Takes a {@link peersim.core.Linkable} protocol and adds edges that
+ * Takes a {@link peeremu.core.Linkable} protocol and adds edges that
  * define a ring lattice.
  * Note that no connections are removed, they are only added. So it can be used
  * in combination with other initializers.

@@ -16,12 +16,12 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
 import java.lang.reflect.*;
 import java.util.*;
 
-import peersim.core.*;
+import peeremu.core.*;
 
 /**
  * This class provides a generic implementation of the

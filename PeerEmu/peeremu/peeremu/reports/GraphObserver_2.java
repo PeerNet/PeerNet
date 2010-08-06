@@ -16,13 +16,13 @@
  *
  */
 		
-package peersim.reports;
+package peeremu.reports;
 
-import peersim.core.*;
-import peersim.config.Configuration;
-import peersim.config.IllegalParameterException;
-import peersim.graph.*;
-import peersim.cdsim.CDState;
+import peeremu.cdsim.CDState;
+import peeremu.config.Configuration;
+import peeremu.config.IllegalParameterException;
+import peeremu.core.*;
+import peeremu.graph.*;
 
 /**
 * Class that provides functionality for observing graphs.

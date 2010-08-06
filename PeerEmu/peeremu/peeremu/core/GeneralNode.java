@@ -16,9 +16,12 @@
  *
  */
 
-package peersim.core;
+package peeremu.core;
 
-import peersim.config.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import peeremu.config.*;
 
 /**
 * This is the default {@link Node} class that is used to compose the
@@ -63,7 +66,7 @@ private long ID;
 /** Used to construct the prototype node. This class currently does not
 * have specific configuration parameters and so the parameter
 * <code>prefix</code> is not used. It reads the protocol components
-* (components that have type {@value peersim.core.Node#PAR_PROT}) from
+* (components that have type {@value peeremu.core.Node#PAR_PROT}) from
 * the configuration.
 */
 public GeneralNode(String prefix) {
@@ -188,11 +191,34 @@ public String toString()
 public int hashCode() { return (int)getID(); }
 
 
+
 public Descriptor getDescriptor(int pid)
 {
-    return null;
+  Descriptor d = null;
+  Constructor c = FastConfig.getDescriptorConstructor(pid);
+
+  try
+  {
+    d = (Descriptor) c.newInstance(this, pid);
+  }
+  catch (IllegalArgumentException e)
+  {
+    e.printStackTrace();
+  }
+  catch (InstantiationException e)
+  {
+    e.printStackTrace();
+  }
+  catch (IllegalAccessException e)
+  {
+    e.printStackTrace();
+  }
+  catch (InvocationTargetException e)
+  {
+    e.printStackTrace();
+  }
+
+  return d;
 }
 
 }
-
-

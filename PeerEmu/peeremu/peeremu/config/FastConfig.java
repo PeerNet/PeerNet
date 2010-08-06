@@ -16,7 +16,13 @@
  *
  */
 
-package peersim.config;
+package peeremu.config;
+
+import java.lang.reflect.Constructor;
+
+import peeremu.core.CommonState;
+import peeremu.core.Descriptor;
+import peeremu.core.Node;
 
 /**
  * Reads configuration regarding relations between protocols.
@@ -50,16 +56,40 @@ private static final String PAR_LINKABLE = "linkable";
 private static final String PAR_TRANSPORT = "transport";
 
 /**
- * This array stores the protocol ids of the {@link peersim.core.Linkable}
+ * Parameter name in configuration that attaches a transport layer protocol to a
+ * protocol.
+ * @config
+ */
+private static final String PAR_SETTINGS = "settings";
+
+/**
+ * Parameter name in configuration that attaches a transport layer protocol to a
+ * protocol.
+ * @config
+ */
+private static final String PAR_DESCRIPTOR = "descriptor";
+
+/**
+ * This array stores the protocol ids of the {@link peeremu.core.Linkable}
  * protocols that are linked to the protocol given by the array index.
  */
 protected static final int[][] links;
 
 /**
- * This array stores the protocol id of the {@link peersim.transport.Transport}
+ * This array stores the protocol id of the {@link peeremu.transport.TransportAlberto}
  * protocol that is linked to the protocol given by the array index.
  */
 protected static final int[] transports;
+
+/**
+ * 
+ */
+protected static Object[] settings;
+
+/**
+ * 
+ */
+protected static Constructor<Descriptor>[] descriptorConstructors;
 
 
 // ======================= initialization ===================================
@@ -83,27 +113,71 @@ static {
 	String[] names = Configuration.getNames(Configuration.PAR_PROT);
 	links = new int[names.length][];
 	transports = new int[names.length];
-	for (int i = 0; i < names.length; ++i)
+	settings = new Object[names.length];
+	descriptorConstructors = new Constructor[names.length];
+
+  int keepCommonPid = CommonState.getPid();
+	for (int pid = 0; pid < names.length; ++pid)
 	{
-		if (Configuration.contains(names[i] + "." + PAR_LINKABLE))
+	  CommonState.setPid(pid);
+
+	  /*
+	   * Setup linkables
+	   */
+		if (Configuration.contains(names[pid] + "." + PAR_LINKABLE))
 		{
 			// get string of linkables
-			String str = Configuration.getString(names[i] + "." + PAR_LINKABLE);
+			String str = Configuration.getString(names[pid] + "." + PAR_LINKABLE);
 			// split around non-word characters
 			String[] linkNames = str.split("\\W+");
-			links[i] = new int[linkNames.length];
+			links[pid] = new int[linkNames.length];
 			for (int j=0; j<linkNames.length; ++j)
-				links[i][j] = Configuration.lookupPid(linkNames[j]);
+				links[pid][j] = Configuration.lookupPid(linkNames[j]);
 		}		
 		else
-			links[i] = new int[0]; // empty set
+			links[pid] = new int[0]; // empty set
 
-		if (Configuration.contains(names[i] + "." + PAR_TRANSPORT))
-			transports[i] = 
-			Configuration.getPid(names[i] + "." + PAR_TRANSPORT);
+		/*
+		 * Setup transports
+		 */
+		if (Configuration.contains(names[pid] + "." + PAR_TRANSPORT))
+			transports[pid] = 
+			Configuration.getPid(names[pid] + "." + PAR_TRANSPORT);
 		else
-			transports[i] = -1;
-	}
+			transports[pid] = -1;
+		
+		/*
+		 * Setup settings
+		 */
+		if (Configuration.contains(names[pid] + "." + PAR_SETTINGS))
+		  settings[pid] = Configuration.getInstance(names[pid] + "." + PAR_SETTINGS);
+		else
+		  settings[pid] = null;
+
+		/*
+		 * Setup descriptor constructors
+		 */
+    if (Configuration.contains(names[pid] + "." + PAR_DESCRIPTOR))
+    {
+      Class cDescriptor = Configuration.getClass(names[pid] + "." + PAR_DESCRIPTOR);
+      try
+      {
+        Class pars[] = {Node.class, int.class};
+        descriptorConstructors[pid] = cDescriptor.getConstructor(pars);
+      }
+      catch (SecurityException e)
+      {
+        e.printStackTrace();
+      }
+      catch (NoSuchMethodException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    else
+      descriptorConstructors[pid] = null;
+  }
+	CommonState.setPid(keepCommonPid);
 }
 
 // ---------------------------------------------------------------------
@@ -186,6 +260,24 @@ public static int getTransport(int pid)
 		"Protocol " + pid + " has no "+PAR_TRANSPORT + " parameter");
 	}
 	return transports[pid];
+}
+
+
+public static Object getSettings(int pid)
+{
+  return settings[pid];
+}
+
+/**
+ * Returns a constructor for the Descriptor class defined for the given
+ * protocol ID. If no Descriptor class has been defined for this pid, it
+ * returns null.
+ * 
+ * The returned constructor takes as arguments (Node, int).
+ */
+public static Constructor getDescriptorConstructor(int pid)
+{
+  return descriptorConstructors[pid];
 }
 
 }

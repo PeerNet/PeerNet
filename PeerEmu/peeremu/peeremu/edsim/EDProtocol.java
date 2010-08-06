@@ -16,9 +16,9 @@
  *
  */
 		
-package peersim.edsim;
+package peeremu.edsim;
 
-import peersim.core.*;
+import peeremu.core.*;
 
 /**
  * The interface to be implemented by protocols run under the event-driven
@@ -27,8 +27,7 @@ import peersim.core.*;
  * @author Alberto Montresor
  * @version $Revision: 1.4 $
  */
-public interface EDProtocol 
-extends Protocol 
+public interface EDProtocol extends Protocol 
 {
 
 	/**

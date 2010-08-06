@@ -16,12 +16,13 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
 import java.io.*;
 import java.util.*;
-import peersim.config.*;
-import peersim.core.*;
+
+import peeremu.config.*;
+import peeremu.core.*;
 
 /**
  * Initializes a protocol vector from data read from a file.
@@ -34,7 +35,7 @@ import peersim.core.*;
  * The file can contain more values than necessary but
  * enough values must be present.
  * @see VectControl
- * @see peersim.vector
+ * @see peeremu.vector
  */
 public class InitVectFromFile extends VectControl
 {

@@ -16,11 +16,12 @@
  *
  */
 
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.graph.*;
-import peersim.core.*;
-import peersim.config.*;
+import peeremu.config.*;
+import peeremu.core.*;
+import peeremu.graph.*;
+
 import java.lang.reflect.*;
 import java.util.ArrayList;
 

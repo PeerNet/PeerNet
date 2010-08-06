@@ -16,16 +16,16 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
-import peersim.config.*;
-import peersim.core.*;
+import peeremu.config.*;
+import peeremu.core.*;
 
 /**
  * Initializes a protocol vector with values in the range [{@value #PAR_MIN}, 
  * {@value #PAR_MAX}] (inclusive both ends), linearly increasing.
  * @see VectControl
- * @see peersim.vector
+ * @see peeremu.vector
  */
 public class LinearDistribution extends VectControl
 {

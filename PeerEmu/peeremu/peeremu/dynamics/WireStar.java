@@ -16,12 +16,12 @@
  *
  */
 		
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.graph.*;
+import peeremu.graph.*;
 
 /**
- * Takes a {@link peersim.core.Linkable} protocol and adds connection
+ * Takes a {@link peeremu.core.Linkable} protocol and adds connection
  * which for a star
  * topology. No connections are removed, they are only added. So it can be used
  * in combination with other initializers.

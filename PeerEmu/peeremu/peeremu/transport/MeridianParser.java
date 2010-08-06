@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.transport;
+package peeremu.transport;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -24,13 +24,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
-import peersim.config.Configuration;
-import peersim.config.IllegalParameterException;
-import peersim.core.Control;
+
+import peeremu.config.Configuration;
+import peeremu.config.IllegalParameterException;
+import peeremu.core.Control;
 
 
 /**
- * Initializes static singleton {@link E2ENetwork} by reading a king data set.
+ * Initializes static singleton {@link RouterNetwork} by reading a king data set.
  * 
  * @author Spyros Voulgaris
  * @version $Revision: 1.0$
@@ -102,7 +103,7 @@ public MeridianParser(String prefix)
 // ---------------------------------------------------------------------
 
 /**
- * Initializes static singleton {@link E2ENetwork} by reading a king data set.
+ * Initializes static singleton {@link RouterNetwork} by reading a king data set.
 * @return  always false
 */
 public boolean execute()
@@ -125,7 +126,7 @@ public boolean execute()
 	// exceptions. To be improved.
 
 
-	E2ENetwork.reset(size, true);
+	RouterNetwork.reset(size, true);
 	System.err.println("MeridianParser: going to read " + size + " entries");
 
   try
@@ -142,7 +143,7 @@ public boolean execute()
 			if (mod>=500)
 				latency += 1000;
 			System.err.println(n1+"\t"+n2+"\t"+latency);
-			E2ENetwork.setLatency(n1, n2, latency);
+			RouterNetwork.setLatency(n1, n2, latency);
 		}
 	}
   catch (IOException e) {}

@@ -2,7 +2,7 @@
  * Created on Jul 16, 2007 by Spyros Voulgaris
  *
  */
-package peersim.core;
+package peeremu.core;
 
 public class DescriptorSim implements Descriptor
 {
@@ -12,10 +12,17 @@ public class DescriptorSim implements Descriptor
 	 * In single-machine simulated environments, a reference to Node is
 	 * sufficient to fully describe the node.
 	 */
-	private final Node node;
+	protected final Node node;
 
 
-	public DescriptorSim(Node node)
+	/**
+	 * This is the default constructor expected in Descriptor classes.
+	 * Unfortunately interfaces in Java cannot define constructors...
+	 * 
+	 * @param node
+	 * @param pid
+	 */
+	public DescriptorSim(Node node, int pid)
 	{
 		this.node = node;
 	}
@@ -31,4 +38,24 @@ public class DescriptorSim implements Descriptor
 	{
 		return getID() == ((DescriptorSim)otherDescriptor).getID();
 	}
+
+
+  public Node getNode()
+  {
+    return node;
+  }
+
+
+  public String toString()
+  {
+    return ""+getID();
+  }
+  
+  public Object clone() throws CloneNotSupportedException
+  {
+    // 'node' is *not* deep copied.
+    Object result = super.clone();
+
+    return result;
+  }
 }

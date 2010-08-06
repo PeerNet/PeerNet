@@ -16,12 +16,13 @@
  *
  */
 
-package peersim.reports;
+package peeremu.reports;
 
 import java.util.Iterator;
 import java.util.Map;
-import peersim.config.Configuration;
-import peersim.util.IncrementalStats;
+
+import peeremu.config.Configuration;
+import peeremu.util.IncrementalStats;
 
 /**
  * Reports statistics about connectivity properties of the network, such as
@@ -93,8 +94,8 @@ public ConnectivityObserver(String name)
 * The meaning of the cluster IDs is not specified, but is printed for
 * debugging purposes.
 * @return always false
-* @see peersim.graph.GraphAlgorithms#tarjan
-* @see peersim.graph.GraphAlgorithms#weaklyConnectedClusters
+* @see peeremu.graph.GraphAlgorithms#tarjan
+* @see peeremu.graph.GraphAlgorithms#weaklyConnectedClusters
 */
 public boolean execute()
 {

@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.graph;
+package peeremu.graph;
 
 import java.util.Collection;
 
@@ -27,7 +27,7 @@ import java.util.Collection;
 * Implementations might return objects that represent the
 * nodes or edges, although this is not required.
 *
-* Undirected graphs are modelled by the interface as directed graphs in which
+* Undirected graphs are modeled by the interface as directed graphs in which
 * every edge (i,j) has a corresponding reverse edge (j,i).
 */
 public interface Graph {
@@ -64,7 +64,7 @@ public interface Graph {
 	int size();
 
 	/**
-	* Returns true if the graph is directed othewise false.
+	* Returns true if the graph is directed otherwise false.
 	*/
 	boolean directed();
 

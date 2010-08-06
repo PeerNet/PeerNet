@@ -16,23 +16,23 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
-import peersim.core.*;
-import peersim.dynamics.*;
+import peeremu.core.*;
+import peeremu.dynamics.*;
 
 /**
  * Sets values in a protocol vector by copying the values of another 
  * protocol vector.
  * The source is defined by {@value #PAR_SOURCE},
- * and getter method {@value peersim.vector.VectControl#PAR_GETTER}.
+ * and getter method {@value peeremu.vector.VectControl#PAR_GETTER}.
  * <p>
  * This dynamics class can copy any primitive field in the source
  * protocol to any primitive field in the destination protocol,
  * provided that the former field is associated with a getter method,
  * while the latter is associated with a setter method.
  * @see VectControl
- * @see peersim.vector
+ * @see peeremu.vector
  */
 public class VectCopy extends VectControl implements  NodeInitializer {
 
@@ -78,7 +78,7 @@ public VectCopy(String prefix)
 /**
  * Sets values in a protocol vector by copying the values of another 
  * protocol vector. The source is defined by {@value #PAR_SOURCE},
- * and getter method {@value peersim.vector.VectControl#PAR_GETTER}.
+ * and getter method {@value peeremu.vector.VectControl#PAR_GETTER}.
  * @return always false
  */
 public boolean execute() {
@@ -98,7 +98,7 @@ public boolean execute() {
 /**
  * Sets the value by copying the value of another 
  * protocol. The source is  defined by {@value #PAR_SOURCE},
- * and getter method {@value peersim.vector.VectControl#PAR_GETTER}.
+ * and getter method {@value peeremu.vector.VectControl#PAR_GETTER}.
  * @param n the node to initialize
  */
 public void initialize(Node n) {

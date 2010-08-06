@@ -16,9 +16,9 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
-import peersim.core.*;
+import peeremu.core.*;
 
 /**
  * The task of this protocol is to store a single double value and make it

@@ -16,10 +16,10 @@
  *
  */
 
-package peersim.edsim;
+package peeremu.edsim;
 
-import peersim.core.Control;
-import peersim.core.Scheduler;
+import peeremu.core.Control;
+import peeremu.core.Scheduler;
 
 
 /**

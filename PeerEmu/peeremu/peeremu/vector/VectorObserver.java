@@ -16,10 +16,10 @@
  *
  */
 		
-package peersim.vector;
+package peeremu.vector;
 
-import peersim.core.*;
-import peersim.util.*;
+import peeremu.core.*;
+import peeremu.util.*;
 
 /**
  * This class computes and reports statistics information about a vector.
@@ -27,7 +27,7 @@ import peersim.util.*;
  * etc. Values are printed according to the string format of {@link 
  * IncrementalStats#toString}.
  * @see VectControl
- * @see peersim.vector
+ * @see peeremu.vector
  */
 public class VectorObserver extends VectControl {
 

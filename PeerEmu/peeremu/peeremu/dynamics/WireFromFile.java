@@ -16,16 +16,17 @@
  *
  */
 		
-package peersim.dynamics;
+package peeremu.dynamics;
 
 
 import java.io.IOException;
 import java.io.FileReader;
 import java.io.LineNumberReader;
 import java.util.StringTokenizer;
-import peersim.graph.Graph;
-import peersim.core.*;
-import peersim.config.Configuration;
+
+import peeremu.config.Configuration;
+import peeremu.core.*;
+import peeremu.graph.Graph;
 
 /**
 * Takes a {@link Linkable} protocol and adds connections that are stored in a

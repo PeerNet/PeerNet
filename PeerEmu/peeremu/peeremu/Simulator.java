@@ -16,14 +16,17 @@
  *
  */
 
-package peersim;
+package peeremu;
 
-import java.io.*;
+import java.io.PrintStream;
 
-import peersim.cdsim.*;
-import peersim.config.*;
-import peersim.core.*;
-import peersim.edsim.*;
+import peeremu.cdsim.CDSimulator;
+import peeremu.config.Configuration;
+import peeremu.config.IllegalParameterException;
+import peeremu.config.MissingParameterException;
+import peeremu.config.ParsedProperties;
+import peeremu.core.CommonState;
+import peeremu.edsim.EDSimulator;
 
 
 /**
@@ -156,7 +159,7 @@ public static void main(String[] args)
 	PrintStream newout =
 		(PrintStream)Configuration.getInstance(PAR_REDIRECT,System.out);
 	if(newout!=System.out) System.setOut(newout);
-	
+
 	int exps = Configuration.getInt(PAR_EXPS,1);
 
 	final int SIMID = getSimID();
@@ -206,7 +209,7 @@ public static void main(String[] args)
 	// undocumented testing capabilities
 	if(Configuration.contains("__t")) 
 		System.out.println(System.currentTimeMillis()-time);
-	if(Configuration.contains("__x")) Network.test();
+//	if(Configuration.contains("__x")) Network.test();
 	
 	
 	

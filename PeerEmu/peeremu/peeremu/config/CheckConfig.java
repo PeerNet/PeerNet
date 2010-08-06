@@ -16,13 +16,13 @@
  *
  */
 
-package peersim.config;
+package peeremu.config;
 
 import java.util.*;
 
-import peersim.cdsim.*;
-import peersim.edsim.*;
-import peersim.util.*;
+import peeremu.cdsim.*;
+import peeremu.edsim.*;
+import peeremu.util.*;
 
 
 /**

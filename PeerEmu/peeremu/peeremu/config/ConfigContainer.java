@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.config;
+package peeremu.config;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -743,8 +743,8 @@ public Object[] getInstanceArray(String name)
 /**
  * Returns an array of names prefixed by the specified name. The array is
  * sorted as follows. If there is no config entry
- * <code>{@value peersim.config.Configuration#PAR_INCLUDE}+"."+name</code> or
- * <code>{@value peersim.config.Configuration#PAR_ORDER}+"."+name</code> then the order is
+ * <code>{@value peeremu.config.Configuration#PAR_INCLUDE}+"."+name</code> or
+ * <code>{@value peeremu.config.Configuration#PAR_ORDER}+"."+name</code> then the order is
  * alphabetical. Otherwise this entry defines the order. For more
  * information see {@link Configuration}.
  * @param name

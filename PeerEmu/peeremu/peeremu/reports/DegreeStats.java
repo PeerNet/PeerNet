@@ -16,11 +16,11 @@
  *
  */
 
-package peersim.reports;
+package peeremu.reports;
 
-import peersim.config.*;
-import peersim.core.*;
-import peersim.util.*;
+import peeremu.config.*;
+import peeremu.core.*;
+import peeremu.util.*;
 
 /**
  * Prints several statistics about the node degrees in the graph.
@@ -62,7 +62,7 @@ private static final String PAR_METHOD = "method";
  * Selects the types of links to print information about. Three methods are
  * known: "live": links pointing to live nodes, "dead": links pointing to nodes
  * that are unavailable and "all": both dead and live links summed. "all" and
- * "dead" require parameter {@value peersim.reports.GraphObserver#PAR_UNDIR} 
+ * "dead" require parameter {@value peeremu.reports.GraphObserver#PAR_UNDIR} 
  * to be unset (graph must be directed). Default is "live".
  * @config
  */

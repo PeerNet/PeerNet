@@ -16,10 +16,10 @@
  *
  */
 	
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.config.Configuration;
-import peersim.core.*;
+import peeremu.config.Configuration;
+import peeremu.core.*;
 
 /**
  * Makes the network size oscillate.

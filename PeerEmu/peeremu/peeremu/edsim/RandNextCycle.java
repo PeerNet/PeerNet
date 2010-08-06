@@ -16,9 +16,9 @@
  *
  */
 
-package peersim.edsim;
+package peeremu.edsim;
 
-import peersim.core.*;
+import peeremu.core.*;
 
 
 /**

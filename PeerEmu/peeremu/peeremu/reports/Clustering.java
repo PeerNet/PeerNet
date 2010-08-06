@@ -16,11 +16,11 @@
  *
  */
 
-package peersim.reports;
+package peeremu.reports;
 
-import peersim.config.Configuration;
-import peersim.graph.GraphAlgorithms;
-import peersim.util.IncrementalStats;
+import peeremu.config.Configuration;
+import peeremu.graph.GraphAlgorithms;
+import peeremu.util.IncrementalStats;
 
 /**
  * Control to observe the clustering coefficient.

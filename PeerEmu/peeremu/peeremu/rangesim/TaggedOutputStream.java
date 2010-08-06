@@ -16,13 +16,13 @@
  *
  */
 
-package peersim.rangesim;
+package peeremu.rangesim;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintStream;
+import java.util.ArrayList;
 
-import peersim.config.*;
-import peersim.core.*;
+import peeremu.config.Configuration;
+import peeremu.core.CommonState;
 
 /**
  * This OutputStream uses an underlying stream to output
@@ -55,7 +55,7 @@ protected static final int TAG = 1;
  * This parameter contains the string that should be printed on each 
  * line, containing the values of the range parameters for the experiment
  * which is being run. The full name of this configuration string is
- * prefixed by {@value peersim.Simulator#PAR_REDIRECT}.
+ * prefixed by {@value peeremu.Simulator#PAR_REDIRECT}.
  */
 protected static final String PAR_RANGES = "ranges";
 

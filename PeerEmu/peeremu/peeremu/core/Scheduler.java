@@ -16,10 +16,10 @@
  *
  */
 		
-package peersim.core;
+package peeremu.core;
 
-import peersim.config.Configuration;
-import peersim.config.IllegalParameterException;
+import peeremu.config.Configuration;
+import peeremu.config.IllegalParameterException;
 
 // XXX a quite primitive scheduler, should be able to be configured
 // much more flexibly using a simlpe syntax for time ranges.

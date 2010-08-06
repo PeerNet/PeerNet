@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.graph;
+package peeremu.graph;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -88,15 +88,15 @@ protected void initGraph()
  */
 private void addEdge(int i, int j)
 {
-	if (undirected)
-	{
-		if( i > j )
-			edgeMatrix[i].set(j);
-		else
-			edgeMatrix[j].set(i);
-	}
-	else
-		edgeMatrix[i].set(j);
+//	if (undirected)
+//	{
+//		if( i > j )
+//			edgeMatrix[i].set(j);
+//		else
+//			edgeMatrix[j].set(i);
+//	}
+//	else
+//		edgeMatrix[i].set(j);
 }
 
 

@@ -2,7 +2,7 @@
  * Created on Jul 16, 2007 by Spyros Voulgaris
  *
  */
-package peersim.core;
+package peeremu.core;
 
 /**
  * A Descriptor represents a link between two nodes. It is the information
@@ -14,7 +14,7 @@ package peersim.core;
  * @author Spyros Voulgaris
  *
  */
-public interface Descriptor
+public interface Descriptor extends Cloneable
 {
 	/**
 	 * Returns the ID of the node referenced by this descriptor.
@@ -32,4 +32,17 @@ public interface Descriptor
 	 * @return
 	 */
 	public boolean equals(Object otherDescriptor);
+
+  public Object clone() throws CloneNotSupportedException;
+	
+  /**
+   * Returns the node referred by the descriptor.
+   * 
+   * However, it should be avoided, because it makes no sense in Internet
+   * Emulation mode. To be used only for convenience 
+   * 
+   * @param otherDescriptor
+   * @return
+   */
+//  public Node getNode();
 }

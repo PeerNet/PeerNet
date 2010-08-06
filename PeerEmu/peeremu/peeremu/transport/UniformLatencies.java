@@ -16,13 +16,13 @@
  *
  */
 
-package peersim.transport;
+package peeremu.transport;
 
-import peersim.core.Control;
+import peeremu.core.Control;
 
 
 /**
- * Initializes static singleton {@link E2ENetwork} by reading a king data set.
+ * Initializes static singleton {@link RouterNetwork} by reading a king data set.
  * 
  * @author Spyros Voulgaris
  * @version $Revision: 1.0$
@@ -58,12 +58,12 @@ public UniformLatencies(String prefix)
 // ---------------------------------------------------------------------
 
 /**
- * Initializes static singleton {@link E2ENetwork} by reading a king data set.
+ * Initializes static singleton {@link RouterNetwork} by reading a king data set.
 * @return  always false
 */
 public boolean execute()
 {
-	E2ENetwork.reset(size, true);
+	RouterNetwork.reset(size, true);
 	return false;
 }
 

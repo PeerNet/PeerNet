@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.core;
+package peeremu.core;
 
 /**
  * Generic interface for classes that are responsible for observing or modifying

@@ -16,9 +16,9 @@
  *
  */
 
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.core.Node;
+import peeremu.core.Node;
 
 /**
  * Generic interface to initialize a node before inserting it into the

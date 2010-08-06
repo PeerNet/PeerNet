@@ -16,11 +16,12 @@
  *
  */
 
-package peersim.edsim;
+package peeremu.edsim;
 
 import java.util.*;
-import peersim.config.*;
-import peersim.core.*;
+
+import peeremu.config.*;
+import peeremu.core.*;
 
 
 /**
@@ -65,18 +66,18 @@ import peersim.core.*;
 * the experiment was interrupted.
 * <p>
 * {@link CDScheduler} has to be mentioned that is a control that
-* can bridge the gap between {@link peersim.cdsim} and the event driven
-* engine. It can wrap {@link peersim.cdsim.CDProtocol} appropriately so that the
+* can bridge the gap between {@link peeremu.cdsim} and the event driven
+* engine. It can wrap {@link peeremu.cdsim.CDProtocol} appropriately so that the
 * execution of the cycles are scheduled in configurable ways for each node
 * individually. In some cases this can add a more fine-grained control
-* and more realism to {@link peersim.cdsim.CDProtocol} simulations,
+* and more realism to {@link peeremu.cdsim.CDProtocol} simulations,
 * at the cost of some
 * loss in performance.
 * <p>
 * When protocols at different nodes send messages to each other, they might
 * want to use a model of the transport layer so that in the simulation
 * message delay and message omissions can be modeled in a modular way.
-* This functionality is implemented in package {@link peersim.transport}.
+* This functionality is implemented in package {@link peeremu.transport}.
 * @see Configuration
  */
 public class EDSimulator

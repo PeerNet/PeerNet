@@ -16,10 +16,10 @@
  *
  */
 
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.config.Configuration;
-import peersim.core.*;
+import peeremu.config.Configuration;
+import peeremu.core.*;
 
 /**
  * This {@link Control} can change the size of networks by adding and removing

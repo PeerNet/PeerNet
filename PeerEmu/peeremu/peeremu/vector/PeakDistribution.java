@@ -16,17 +16,17 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
-import peersim.config.*;
-import peersim.core.*;
+import peeremu.config.*;
+import peeremu.core.*;
 
 
 /**
  * Initializes the values so that {@value #PAR_PEAKS} nodes have value
  * {@value #PAR_VALUE}/{@value #PAR_PEAKS}, the rest zero.
  * @see VectControl
- * @see peersim.vector
+ * @see peeremu.vector
  */
 public class PeakDistribution extends VectControl
 {

@@ -16,10 +16,10 @@
  *
  */
 
-package peersim.core;
+package peeremu.core;
 
-import peersim.config.*;
-import peersim.util.*;
+import peeremu.config.*;
+import peeremu.util.*;
 
 /**
  * This is the common state of the simulation all objects see.

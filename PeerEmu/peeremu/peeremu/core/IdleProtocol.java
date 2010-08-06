@@ -16,9 +16,9 @@
  *
  */
 
-package peersim.core;
+package peeremu.core;
 
-import peersim.config.Configuration;
+import peeremu.config.Configuration;
 
 /**
  * A protocol that stores links. It does nothing apart from that.

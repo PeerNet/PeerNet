@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.rangesim;
+package peeremu.rangesim;
 
 public interface ProcessHandler
 {

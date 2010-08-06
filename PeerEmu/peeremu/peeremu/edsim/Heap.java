@@ -16,9 +16,9 @@
  *
  */
 
-package peersim.edsim;
+package peeremu.edsim;
 
-import peersim.core.*;
+import peeremu.core.*;
 
 /**
  *  The Heap data structure used to maintain events "sorted" by 

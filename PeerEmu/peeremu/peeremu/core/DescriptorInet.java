@@ -2,17 +2,24 @@
  * Created on Jul 16, 2007 by Spyros Voulgaris
  *
  */
-package peersim.core;
+package peeremu.core;
 
 import java.io.Serializable;
 import java.net.InetAddress;
-import peersim.config.FastConfig;
-import peersim.config.IllegalParameterException;
-import peersim.trans.TransportInet;
+
+import peeremu.config.FastConfig;
+import peeremu.config.IllegalParameterException;
+import peeremu.transport.TransportInet;
 
 public class DescriptorInet implements Descriptor, Serializable
 {
-	private static final String PAR_TRANSPORT = "transport";
+	/**
+   * 
+   */
+  private static final long serialVersionUID = 6822929577673644051L;
+
+
+  private static final String PAR_TRANSPORT = "transport";
 
 
 	/**
@@ -73,5 +80,16 @@ public class DescriptorInet implements Descriptor, Serializable
 	public int getPort()
 	{
 		return port;
+	}
+
+
+	public String toString()
+	{
+	  return ""+getID();
+	}
+
+	public Object clone() throws CloneNotSupportedException
+	{
+	  throw new CloneNotSupportedException();
 	}
 }

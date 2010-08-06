@@ -16,7 +16,7 @@
  *
  */
 		
-package peersim.core;
+package peeremu.core;
 
 /**
 * A protocol that does nothing but knows everything.

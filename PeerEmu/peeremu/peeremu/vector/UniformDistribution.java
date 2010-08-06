@@ -16,17 +16,17 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
-import peersim.config.*;
-import peersim.core.*;
-import peersim.dynamics.*;
+import peeremu.config.*;
+import peeremu.core.*;
+import peeremu.dynamics.*;
 
 /**
  * Initializes the values drawing uniform random samples from the range
  * [{@value #PAR_MIN}, {@value #PAR_MAX}[.
  * @see VectControl
- * @see peersim.vector
+ * @see peeremu.vector
  */
 public class UniformDistribution extends VectControl implements NodeInitializer
 {

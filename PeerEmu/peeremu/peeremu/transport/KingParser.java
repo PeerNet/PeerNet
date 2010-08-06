@@ -16,15 +16,16 @@
  *
  */
 
-package peersim.transport;
+package peeremu.transport;
 
 import java.io.*;
 import java.util.*;
-import peersim.config.*;
-import peersim.core.Control;
+
+import peeremu.config.*;
+import peeremu.core.Control;
 
 /**
- * Initializes static singleton {@link E2ENetwork} by reading a king data set.
+ * Initializes static singleton {@link RouterNetwork} by reading a king data set.
  * 
  * @author Alberto Montresor
  * @version $Revision: 1.7 $
@@ -84,7 +85,7 @@ public KingParser(String prefix)
 // ---------------------------------------------------------------------
 
 /**
- * Initializes static singleton {@link E2ENetwork} by reading a king data set.
+ * Initializes static singleton {@link RouterNetwork} by reading a king data set.
 * @return  always false
 */
 public boolean execute()
@@ -117,7 +118,7 @@ public boolean execute()
 		}
 	} catch (IOException e) {
 	}
-	E2ENetwork.reset(size, true);
+	RouterNetwork.reset(size, true);
 	System.err.println("KingParser: read " + size + " entries");
 	try {
 		do {
@@ -125,7 +126,7 @@ public boolean execute()
 			int n1 = Integer.parseInt(tok.nextToken()) - 1;
 			int n2 = Integer.parseInt(tok.nextToken()) - 1;
 			int latency = (int) (Double.parseDouble(tok.nextToken()) * ratio);
-			E2ENetwork.setLatency(n1, n2, latency);
+			RouterNetwork.setLatency(n1, n2, latency);
 
 			line = in.readLine();
 		} while (line != null);

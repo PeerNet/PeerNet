@@ -16,7 +16,7 @@
  *
  */
 		
-package peersim.graph;
+package peeremu.graph;
 
 import java.util.*;
 import java.io.*;
@@ -228,7 +228,7 @@ public static void writeChaco( Graph g, PrintStream out ) {
 public static Graph readNewscastGraph( String file, int direction )
 throws IOException {
 	
-	NeighbourListGraph gr = new NeighbourListGraph( direction != 2 );
+	NeighborListGraph gr = new NeighborListGraph( direction != 2 );
 	FileInputStream fis = new FileInputStream(file);
 	DataInputStream dis = new DataInputStream(fis);
 

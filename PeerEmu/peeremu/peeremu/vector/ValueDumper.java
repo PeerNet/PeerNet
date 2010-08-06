@@ -16,13 +16,13 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
 import java.io.*;
 
-import peersim.config.*;
-import peersim.core.*;
-import peersim.util.*;
+import peeremu.config.*;
+import peeremu.core.*;
+import peeremu.util.*;
 
 /**
  * Dump the content of a vector in a file. Each line
@@ -35,7 +35,7 @@ import peersim.util.*;
  * primitive value, provided that the field is associated with a getter method 
  * that reads it.
  * @see VectControl
- * @see peersim.vector
+ * @see peeremu.vector
  */
 public class ValueDumper extends VectControl {
 

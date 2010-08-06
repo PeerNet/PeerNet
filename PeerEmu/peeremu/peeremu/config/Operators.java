@@ -15,7 +15,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package peersim.config;
+package peeremu.config;
 import java.math.*;
 import org.lsmp.djep.groupJep.groups.*;
 import org.lsmp.djep.groupJep.interfaces.*;

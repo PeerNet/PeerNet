@@ -20,7 +20,7 @@
  * Created on Jan 30, 2005 by Spyros Voulgaris
  *
  */
-package peersim.graph;
+package peeremu.graph;
 
 import java.util.ArrayList;
 import java.util.BitSet;

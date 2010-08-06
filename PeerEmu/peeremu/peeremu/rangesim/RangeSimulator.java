@@ -16,15 +16,22 @@
  *
  */
 
-package peersim.rangesim;
+package peeremu.rangesim;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
-import peersim.*;
-import peersim.config.*;
-import peersim.core.*;
-import peersim.util.*;
+import peeremu.Simulator;
+import peeremu.config.Configuration;
+import peeremu.config.IllegalParameterException;
+import peeremu.config.MissingParameterException;
+import peeremu.config.ParsedProperties;
+import peeremu.core.CommonState;
+import peeremu.util.StringListParser;
 
 /**
  * This class is the main class for the Range Simulator. A range is
@@ -48,7 +55,7 @@ range.[id] [var];[range]
  * <LI> <code>var</code> is a variable parameter </LI>
  * <LI> <code>range</code> describes the collection of values to be associated
  * to <code>var</code>, whose syntax and semantics is defined in 
- * {@link peersim.util.StringListParser}. </LI>
+ * {@link peeremu.util.StringListParser}. </LI>
  * </UL>
  * An example of range specification is the following:
 <pre>

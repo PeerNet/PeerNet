@@ -16,9 +16,9 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
-import peersim.core.*;
+import peeremu.core.*;
 
 /**
  * Serves as an abstract superclass for {@link Control}s that deal
@@ -43,7 +43,7 @@ protected static final String PAR_PROT = "protocol";
  * <code>setValue</code>
  * (for backward compatibility with previous implementation of this
  * class, that were based on the {@link SingleValue} interface). Refer to the
- * {@linkplain peersim.vector vector package description} for more
+ * {@linkplain peeremu.vector vector package description} for more
  * information about getters and setters.
  * @config
  */
@@ -55,7 +55,7 @@ protected static final String PAR_METHOD = "setter";
  * (for backward compatibility with previous 
  * implementation of this class, that were based on the 
  * {@link SingleValue} interface).
- * Refer to the {@linkplain peersim.vector vector package description} for more 
+ * Refer to the {@linkplain peeremu.vector vector package description} for more 
  * information about getters and setters.
  * @config
  */

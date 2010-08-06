@@ -16,11 +16,11 @@
  *
  */
 		
-package peersim.vector;
+package peeremu.vector;
 
-import peersim.config.*;
-import peersim.core.*;
-import peersim.util.*;
+import peeremu.config.*;
+import peeremu.core.*;
+import peeremu.util.*;
 
 /**
 * Print statistics over a vector. The vector is defined by a protocol,

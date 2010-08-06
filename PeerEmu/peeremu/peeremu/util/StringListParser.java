@@ -16,13 +16,13 @@
  *
  */
 
-package peersim.util;
+package peeremu.util;
 
 import java.util.*;
 
 /**
  * This utility class can be used to parse range expressions. In particular,
- * it is used by {@link peersim.rangesim.RangeSimulator} to express ranges for
+ * it is used by {@link peeremu.rangesim.RangeSimulator} to express ranges for
  * configuration properties.
  * <p>
  * The language for range expression is the following: 

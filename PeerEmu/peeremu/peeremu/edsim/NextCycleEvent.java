@@ -16,10 +16,10 @@
  *
  */
 
-package peersim.edsim;
+package peeremu.edsim;
 
-import peersim.core.*;
-import peersim.cdsim.CDProtocol;
+import peeremu.cdsim.CDProtocol;
+import peeremu.core.*;
 
 
 /**

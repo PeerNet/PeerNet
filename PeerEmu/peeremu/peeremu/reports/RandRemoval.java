@@ -16,12 +16,13 @@
  *
  */
 
-package peersim.reports;
+package peeremu.reports;
 
-import peersim.core.*;
-import peersim.config.Configuration;
-import peersim.graph.*;
-import peersim.util.IncrementalStats;
+import peeremu.config.Configuration;
+import peeremu.core.*;
+import peeremu.graph.*;
+import peeremu.util.IncrementalStats;
+
 import java.util.Map;
 import java.util.Iterator;
 

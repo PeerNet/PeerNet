@@ -16,9 +16,10 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
-import peersim.core.*;
+import peeremu.core.*;
+
 import java.util.*;
 
 /**

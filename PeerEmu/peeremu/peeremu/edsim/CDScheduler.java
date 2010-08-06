@@ -16,12 +16,12 @@
  *
  */
 
-package peersim.edsim;
+package peeremu.edsim;
 
-import peersim.core.*;
-import peersim.cdsim.CDProtocol;
-import peersim.config.*;
-import peersim.dynamics.NodeInitializer;
+import peeremu.cdsim.CDProtocol;
+import peeremu.config.*;
+import peeremu.core.*;
+import peeremu.dynamics.NodeInitializer;
 
 /**
 * Schedules the first execution of the cycle based protocol instances in
@@ -33,7 +33,7 @@ import peersim.dynamics.NodeInitializer;
 *
 * <p>All {@link CDProtocol} specifications in the configuration need to
 * contain a {@link Scheduler} specification at least for the step size
-* (see config parameter {@value peersim.core.Scheduler#PAR_STEP} of
+* (see config parameter {@value peeremu.core.Scheduler#PAR_STEP} of
 * {@link Scheduler}). This value is used as the cycle length for the
 * corresponding protocol.
 *@see NextCycleEvent
@@ -166,14 +166,14 @@ public boolean execute() {
  * point in time and {@link #firstDelay}, which defines the delay from the
  * reference point.
  * The reference point is the maximum of the current time, and the
- * value of parameter {@value peersim.core.Scheduler#PAR_FROM} of the
+ * value of parameter {@value peeremu.core.Scheduler#PAR_FROM} of the
  * protocol being
  * scheduled. If the calculated time of the first execution
  * is not valid according to the schedule of the
  * protocol then no execution is scheduled for that protocol.
  * <p>
  * A final note: for performance reasons, the recommended practice is
- * not to use parameter {@value peersim.core.Scheduler#PAR_FROM}
+ * not to use parameter {@value peeremu.core.Scheduler#PAR_FROM}
  * in protocols, but
  * to schedule {@link CDScheduler} itself for the desired time, whenever
  * possible (eg, it is not possible if {@link CDScheduler} is used as a
@@ -194,7 +194,14 @@ public void initialize(Node n) {
 		Object nceclone=null;
 		try { nceclone = nce[i].clone(); }
 		catch(CloneNotSupportedException e) {} //cannot possibly happen
-		
+
+		/*
+		 * If step <= 0, do not schedule the execution of this protocol.
+		 * This is a logical way to turn off specific protocols.
+		 */
+		if (sch[pid[i]].step <= 0)
+		  continue;
+
 		final long delay = firstDelay(sch[pid[i]].step);
 		final long nexttime = Math.max(time,sch[pid[i]].from)+delay;
 		if( nexttime < sch[pid[i]].until )

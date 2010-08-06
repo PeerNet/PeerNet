@@ -16,10 +16,10 @@
  *
  */
 
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.core.*;
-import peersim.config.Configuration;
+import peeremu.config.Configuration;
+import peeremu.core.*;
 
 /**
  * Initializes the neighbor list of a node with random links.
@@ -105,7 +105,7 @@ public void initialize(Node n)
 	{
 		int r = CommonState.r.nextInt(Network.size()-1);
 		if (r >= n.getIndex()) r++;
-		linkable.addNeighbor(Network.get(r));
+		linkable.addNeighbor(Network.get(r).getDescriptor(pid));
 	}
 
 	if (pack) linkable.pack();

@@ -16,11 +16,11 @@
  *
  */
 
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.config.*;
-import peersim.core.*;
-import peersim.graph.*;
+import peeremu.config.*;
+import peeremu.core.*;
+import peeremu.graph.*;
 
 /**
 * This class contains the implementation of the Barabasi-Albert model

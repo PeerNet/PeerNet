@@ -3,11 +3,12 @@
  *
  */
 
-package peersim.edsim;
+package peeremu.edsim;
 
 import java.util.*;
-import peersim.config.*;
-import peersim.core.*;
+
+import peeremu.config.*;
+import peeremu.core.*;
 
 
 public class EmuSimulator extends EDSimulator

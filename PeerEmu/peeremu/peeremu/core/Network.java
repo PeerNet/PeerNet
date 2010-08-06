@@ -16,9 +16,10 @@
  *
  */
 		
-package peersim.core;
+package peeremu.core;
 
-import peersim.config.Configuration;
+import peeremu.config.Configuration;
+
 import java.util.Comparator;
 import java.util.Arrays;
 
@@ -34,11 +35,11 @@ import java.util.Arrays;
 * sake of efficiency.
 * Each node has an array of protocols. The protocols within a node can
 * interact directly as defined by their implementation, and can be imagined as
-* processes running in a common local environment (ie the node).
+* processes running in a common local environment (i.e., the node).
 * This class is called a "network" because, although it is only a set of nodes,
 * in most simulations there is at least one {@link Linkable} protocol that
 * defines connections between nodes. In fact, such a {@link Linkable} protocol
-* layer can be accessed through a {@link peersim.graph.Graph} view
+* layer can be accessed through a {@link peeremu.graph.Graph} view
 * using {@link OverlayGraph}.
 */
 public class Network {
@@ -79,7 +80,7 @@ private static final String PAR_SIZE = "network.size";
 * efficiency has the highest priority here. The main purpose is to allow
 * the package quick reading of the contents in a maximally flexible way.
 * Nevertheless, methods of this class should be used instead of the array
-* when modifiying the contents.
+* when modifying the contents.
 * Because this array is not private,
 * it is necessary to know that the actual node set is only the first
 * {@link #size()} items of the array.
@@ -165,9 +166,9 @@ public static int size() { return len; }
 * Sets the capacity of the internal array storing the nodes.
 * The nodes will remain the same in the same order.
 * If the new capacity is less than the
-* old size of the node list, than the end of the list is cut.
+* old size of the node list, then the end of the list is cut.
 */
-public static void setCapacity(int newSize) {
+private static void setCapacity(int newSize) {
 
 	if( node == null || newSize != node.length )
 	{
@@ -183,7 +184,7 @@ public static void setCapacity(int newSize) {
 
 /**
 * Returns the maximal number of nodes that can be stored without reallocating
-* the underlying array to increase capcity.
+* the underlying array to increase capacity.
 */
 public static int getCapacity() { return node.length; }
 
@@ -195,7 +196,8 @@ public static int getCapacity() { return node.length; }
 */
 public static void add( Node n ) {
 	
-	if(len==node.length) setCapacity(3*node.length/2+1);
+	if (len==node.length)
+	  setCapacity(3*node.length/2+1);
 	node[len] = n;
 	n.setIndex(len);
 	len++;
@@ -207,7 +209,7 @@ public static void add( Node n ) {
 * Returns node with the given index. Note that the same node will normally
 * have a different index in different times.
 * This can be used as a random access iterator.
-* This method does not perfomr range checks to increase efficiency.
+* This method does not perform range checks to increase efficiency.
 * The maximal valid index is {@link #size()}.
 */
 public static Node get( int index ) {
@@ -264,7 +266,7 @@ public static Node remove(int i) {
 // ------------------------------------------------------------------
 
 /**
-* Swaps the two nodes at the given indeces.
+* Swaps the two nodes at the given indices.
 */
 public static void swap(int i, int j) {
 	
@@ -278,12 +280,13 @@ public static void swap(int i, int j) {
 // ------------------------------------------------------------------
 
 /**
-* Shuffles the node array. The index of each node is updated accordingly.
-*/
-public static void shuffle() {
-	
-	for(int i=len; i>1; i--) swap(i-1, CommonState.r.nextInt(i));
-}
+ * Shuffles the node array. The index of each node is updated accordingly.
+ */
+  public static void shuffle()
+  {
+    for (int i = len; i>1; i--)
+      swap(i-1, CommonState.r.nextInt(i));
+  }
 
 // ------------------------------------------------------------------
 
@@ -300,24 +303,24 @@ public static void sort(Comparator<? super Node> c) {
 
 // ------------------------------------------------------------------
 
-public static void test() {
-	
-	System.err.println("number of nodes = "+len);
-	System.err.println("capacity (max number of nodes) = "+node.length);
-	for(int i=0; i<len; ++i)
-	{
-		System.err.println("node["+i+"]");
-		System.err.println(node[i].toString());
-	}
-	
-	if(prototype==null) return;
-	for(int i=0; i<prototype.protocolSize(); ++i)
-	{
-		if( prototype.getProtocol(i) instanceof Linkable )
-			peersim.graph.GraphIO.writeUCINET_DL(
-			new OverlayGraph(i),System.err);
-	}
-}
+//public static void test() {
+//	
+//	System.err.println("number of nodes = "+len);
+//	System.err.println("capacity (max number of nodes) = "+node.length);
+//	for(int i=0; i<len; ++i)
+//	{
+//		System.err.println("node["+i+"]");
+//		System.err.println(node[i].toString());
+//	}
+//	
+//	if(prototype==null) return;
+//	for(int i=0; i<prototype.protocolSize(); ++i)
+//	{
+//		if( prototype.getProtocol(i) instanceof Linkable )
+//			peersim.graph.GraphIO.writeUCINET_DL(
+//			new OverlayGraph(i),System.err);
+//	}
+//}
 
 }
 

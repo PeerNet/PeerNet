@@ -16,10 +16,10 @@
  *
  */
 		
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.core.*;
-import peersim.config.Configuration;
+import peeremu.config.Configuration;
+import peeremu.core.*;
 
 /**
  * Initializes a node's neighbor list with a fixed center.
@@ -76,7 +76,7 @@ public StarNI(String prefix) {
 
 /**
  * Adds a link to a fixed node, the center. This fixed node remains the same
- * throughout consequitive calls to this method. If the center fails in the
+ * throughout consecutive calls to this method. If the center fails in the
  * meantime, a new one is chosen so care should be taken. The center is the
  * first node that is not down (starting from node 0, 1, etc)
  * at the time of the first call to the function. When a new center needs to
@@ -91,8 +91,9 @@ public void initialize(Node n) {
 	
 	for(int i=0; (center==null || !center.isUp()) && i<Network.size(); ++i)
 		center=Network.get(i);
-	
-	((Linkable)n.getProtocol(pid)).addNeighbor(center);
+
+	Descriptor centerDescriptor = center.getDescriptor(pid);
+	((Linkable)n.getProtocol(pid)).addNeighbor(centerDescriptor);
 	
 	if(pack)
 	{

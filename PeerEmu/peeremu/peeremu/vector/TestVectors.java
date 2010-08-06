@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
 
 /**

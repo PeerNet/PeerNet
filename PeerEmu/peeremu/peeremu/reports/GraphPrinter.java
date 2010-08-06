@@ -16,11 +16,12 @@
  *
  */
 		
-package peersim.reports;
+package peeremu.reports;
 
-import peersim.config.Configuration;
-import peersim.graph.GraphIO;
-import peersim.util.FileNameGenerator;
+import peeremu.config.Configuration;
+import peeremu.graph.GraphIO;
+import peeremu.util.FileNameGenerator;
+
 import java.io.PrintStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,7 +47,7 @@ private static final String PAR_BASENAME = "outf";
 /**
 * The name for the format of the output. Defaults to "neighborlist",
 * which is a plain dump of neighbors. The class
-* {@link peersim.dynamics.WireFromFile} can read this format.
+* {@link peeremu.dynamics.WireFromFile} can read this format.
 * Other supported formats are "chaco" to be used with Yehuda Koren's
 * Embedder, "netmeter" to be used with Sergi Valverde's netmeter and
 * "edgelist" that dumps one (directed) node pair in each line for each edge.

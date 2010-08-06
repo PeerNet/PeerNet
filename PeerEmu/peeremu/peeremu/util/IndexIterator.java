@@ -16,7 +16,7 @@
  *
  */
 		
-package peersim.util;
+package peeremu.util;
 
 /**
 * This class provides iterations over the set of integers [0...k-1].

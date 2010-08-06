@@ -20,10 +20,11 @@ package traces;
 
 import java.io.*;
 import java.util.*;
-import peersim.config.*;
-import peersim.core.*;
-import peersim.util.*;
-import peersim.cdsim.CDState;
+
+import peeremu.cdsim.CDState;
+import peeremu.config.*;
+import peeremu.core.*;
+import peeremu.util.*;
 
 /**
  * This class reads a trace with the following format: <br>

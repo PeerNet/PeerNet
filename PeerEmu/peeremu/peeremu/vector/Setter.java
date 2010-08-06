@@ -16,11 +16,12 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
 import java.lang.reflect.*;
-import peersim.config.*;
-import peersim.core.*;
+
+import peeremu.config.*;
+import peeremu.core.*;
 
 /**
  * Vectors can be written through this class. Typically {@link Control} classes
@@ -32,7 +33,7 @@ import peersim.core.*;
  * implementing the {@link SingleValue} interface can be manipulated using the
  * old configuration syntax (ie, without specifying the method).
  * <p>
- * Please refer to package {@link peersim.vector} for a detailed description of 
+ * Please refer to package {@link peeremu.vector} for a detailed description of 
  * the concept of protocol vector and the role of getters and setters. 
  */
 public class Setter {

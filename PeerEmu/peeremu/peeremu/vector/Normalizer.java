@@ -16,10 +16,10 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
-import peersim.config.*;
-import peersim.core.*;
+import peeremu.config.*;
+import peeremu.core.*;
 
 /**
  * Normalizes the values of a protocol vector.
@@ -27,7 +27,7 @@ import peersim.core.*;
  * absolute values of the vector elements. Parameter {@value #PAR_L1} defines
  * the L1 norm that the vector will have after normalization.
  * @see VectControl
- * @see peersim.vector
+ * @see peeremu.vector
  */
 public class Normalizer extends VectControl
 {

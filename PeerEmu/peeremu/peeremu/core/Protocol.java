@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.core;
+package peeremu.core;
 
 /**
  * Interface to identify protocols.

@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.vector;
+package peeremu.vector;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -25,7 +25,7 @@ import java.util.*;
  * This utility class can be used to obtain get/set methods from classes. In
  * particular, it is used in the vector package to locate get/set methods for
  * observing and modifying protocol fields.
- * Please refer to package {@link peersim.vector} for a definition of
+ * Please refer to package {@link peeremu.vector} for a definition of
  * getter and setter methods. 
  */
 class GetterSetterFinder
@@ -36,7 +36,7 @@ class GetterSetterFinder
 /**
  * Search a getter method in the specified class. It succeeds only of there
  * is exactly one method with the given name that is a getter method.
- * Please refer to package {@link peersim.vector} for a definition of
+ * Please refer to package {@link peeremu.vector} for a definition of
  * getter methods. 
  * 
  * @param clazz
@@ -93,7 +93,7 @@ public static Method getGetterMethod(Class clazz, String methodName)
  * Search a setter method in the specified class.
  * It succeeds only of there
  * is exactly one method with the given name that is a setter method.
- * Please refer to package {@link peersim.vector} for a definition of
+ * Please refer to package {@link peeremu.vector} for a definition of
  * setter methods. 
  * @param clazz
  *          the class where to find get/set method

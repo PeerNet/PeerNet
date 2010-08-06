@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.core;
+package peeremu.core;
 
 /**
  * This interface must be implemented by protocols that need to release

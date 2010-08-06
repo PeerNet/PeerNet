@@ -16,11 +16,11 @@
  *
  */
 
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.graph.Graph;
-import peersim.core.*;
-import peersim.config.Configuration;
+import peeremu.config.Configuration;
+import peeremu.core.*;
+import peeremu.graph.Graph;
 
 /**
  * This class is the superclass of classes that

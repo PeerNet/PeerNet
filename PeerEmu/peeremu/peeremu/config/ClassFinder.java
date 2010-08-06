@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.config;
+package peeremu.config;
 
 import java.io.*;
 import java.util.*;

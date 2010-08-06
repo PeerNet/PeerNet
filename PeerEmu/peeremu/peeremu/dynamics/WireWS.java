@@ -16,11 +16,11 @@
  *
  */
 		
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.graph.*;
-import peersim.core.*;
-import peersim.config.Configuration;
+import peeremu.config.Configuration;
+import peeremu.core.*;
+import peeremu.graph.*;
 
 /**
 * Takes a {@link Linkable} protocol and adds connections following the

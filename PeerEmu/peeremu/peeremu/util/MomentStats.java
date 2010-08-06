@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.util;
+package peeremu.util;
 
 /**
  * This class provides extended statistical informations about the inspected 

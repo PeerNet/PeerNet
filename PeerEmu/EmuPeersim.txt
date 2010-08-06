@@ -1,0 +1,112 @@
+GENERAL SUGGESTIONS
+-------------------
+
+We add PAR_PROTOCOL constant in the Control interface.
+
+We add explicit simulation mode:
+simulation.mode CD / ED / EMU
+
+For EDSimulator, I think a protocol that implements CDProtocol, and for which
+the .step field has been defined in the configuration, should be automatically
+invoked (nextCycle()) periodically, without the need of explicit declaration
+of a CDScheduler.
+
+We should add the possibility to define a global-per-protocol class for each
+protocol.
+E.g.:
+protocol.cyclon      gossip.protocols.cyclon
+{
+  view               20
+  gossip_length      5
+  global             gossip.protocols.CyclonSettings
+}
+This class would be accessible through FastConfig by:
+FastConfig.getGlobal(int pid)
+
+
+Why do we need a special MaliciousProtocol interface?
+I would suggest to keep the whole thing as simple as possible.
+
+
+
+
+EMULATION
+---------
+
+For emulation it is strictly forbidden to refer to:
+- Node
+- Network
+- EDSimulator.add()
+
+
+Nodes know other nodes by means of a:
+- Descriptor
+
+
+Nodes send messages to other nodes by
+- Node.send(Descriptor dest, int pid, Object msg)
+
+
+Should provide wrapper classes implementing Runnable, that start a new thread, and call processEvent() or execute() from there.
+
+
+Controls and protocols should be executed as separate threads.
+
+There should be a single main scheduler per JVM, that invokes Protocols and Controls via new threads.
+The scheduler should compute execution times, and try to approximate them using the system clock. This way, timing errors will not accummulate.
+
+In case two or more controls or protocols should be executed concurrently, what should we do with ordering?
+Probably ignore ordering in the Emu mode.
+
+
+
+
+COORDINATOR
+-----------
+
+There should be a centralized coordinator that initializes the topology.
+
+
+
+DESCRIPTOR
+----------
+
+'Descriptor' is an interface, by means of which nodes can know other nodes.
+
+Its direct implementors are:
+- DescriptorSim:  Contains reference to Node object.
+- DescriptorInet: Contains InetAddress and Port, and node ID.
+
+Users might want to add more fields to a Descriptor, such as a timestamp
+commonly used in Newscast or age in Cyclon, and node specific information
+for T-Man/Vicinity.
+
+I had a dilemma as to whether each protocol should be allowed to define a
+separate Descriptor class. It may make sense that different protocols exchange
+different payload types along with the descriptors. However, if we have a
+globally defined descriptor class, this could be implemented by adding a generic
+Object field and using it to store protocol-specific payloads. As such, and to
+limit complexity, I would suggest to define a single class for a Descriptor, as:
+
+network.descriptor   peersim.core.DescriptorInet
+
+As nodes will be referred to by means of Descriptors, it should be possible to
+efficiently map from a node ID to the Node instance. I think this should be
+functionality of the Network class, by means of a hash table.
+
+
+
+TransportInet will have a thread that keeps listening to incoming messages,
+parses them, and dispatches them to the Scheduler.
+
+
+
+
+
+Should the 'sender' Descriptor be passed to deliverEvent() ?
+
+
+
+There should be a base class for the expression of time.
+- In simulation that should be a long
+- In emulation... well, a long too! :-)

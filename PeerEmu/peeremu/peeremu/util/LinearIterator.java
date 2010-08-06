@@ -16,7 +16,7 @@
  *
  */
 		
-package peersim.util;
+package peeremu.util;
 
 import java.util.NoSuchElementException;
 

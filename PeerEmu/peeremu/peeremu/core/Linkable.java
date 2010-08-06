@@ -16,7 +16,7 @@
  *
  */
 		
-package peersim.core;
+package peeremu.core;
 
 
 /**
@@ -51,7 +51,7 @@ public interface Linkable extends Cleanable {
 	* meantime. It throws an IndexOutOfBounds exception if i is negative
 	* or larger than or equal to {@link #degree}.
 	*/
-	public Node getNeighbor(int i);
+	public Descriptor getNeighbor(int i);
 
 	/**
 	* Add a neighbor to the current set of neighbors. If neighbor
@@ -61,12 +61,12 @@ public interface Linkable extends Cleanable {
 	* @return true if the neighbor has been inserted; false if the 
 	*    node is already a neighbor of this node
 	*/
-	public boolean addNeighbor(Node neighbour);
+	public boolean addNeighbor(Descriptor neighbour);
 
 	/**
 	* Returns true if the given node is a member of the neighbor set.
 	*/
-	public boolean contains(Node neighbor);
+	public boolean contains(Descriptor neighbor);
 	
 	/**
 	* A possibility for optimization. An implementation should try to

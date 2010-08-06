@@ -16,7 +16,7 @@
  *
  */
 		
-package peersim.util;
+package peeremu.util;
 
 /**
 * A class that can keep track of some statistics like variance, average, min,

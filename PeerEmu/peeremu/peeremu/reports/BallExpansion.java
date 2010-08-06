@@ -16,13 +16,13 @@
  *
  */
 
-package peersim.reports;
+package peeremu.reports;
 
-import peersim.config.Configuration;
-import peersim.core.CommonState;
-import peersim.core.Network;
-import peersim.util.IncrementalStats;
-import peersim.util.RandPermutation;
+import peeremu.config.Configuration;
+import peeremu.core.CommonState;
+import peeremu.core.Network;
+import peeremu.util.IncrementalStats;
+import peeremu.util.RandPermutation;
 
 /**
  * Control to observe the ball expansion, that is,

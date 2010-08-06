@@ -1,4 +1,4 @@
-package peersim.rangesim;
+package peeremu.rangesim;
 
 import java.util.*;
 

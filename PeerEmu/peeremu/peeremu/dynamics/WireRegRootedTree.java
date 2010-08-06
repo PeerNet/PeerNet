@@ -16,13 +16,13 @@
  *
  */
 
-package peersim.dynamics;
+package peeremu.dynamics;
 
-import peersim.graph.*;
-import peersim.config.*;
+import peeremu.config.*;
+import peeremu.graph.*;
 
 /**
- * Takes a {@link peersim.core.Linkable} protocol and adds connections that
+ * Takes a {@link peeremu.core.Linkable} protocol and adds connections that
  * define a regular
  * rooted tree. Note that no
  * connections are removed, they are only added. So it can be used in

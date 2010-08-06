@@ -16,15 +16,15 @@
  *
  */
 
-package peersim.transport;
+package peeremu.transport;
 
 import java.io.*;
 
-import peersim.config.*;
-import peersim.core.*;
+import peeremu.config.*;
+import peeremu.core.*;
 
 /**
- * Initializes static singleton {@link E2ENetwork} by reading a trace 
+ * Initializes static singleton {@link RouterNetwork} by reading a trace 
  * file containing the latency distance measured between a set of 
  * "virtual" routers. Latency is assumed to be symmetric, so the 
  * latency between x and y is equal to the latency to y and x.
@@ -95,7 +95,7 @@ public TriangularMatrixParser(String prefix)
 // ---------------------------------------------------------------------
 
 /**
- * Initializes static singleton {@link E2ENetwork} by reading a king data set.
+ * Initializes static singleton {@link RouterNetwork} by reading a king data set.
 * @return  always false
 */
 public boolean execute()
@@ -116,9 +116,9 @@ public boolean execute()
 	
 		// Read the number of nodes in the file (first four bytes).
 	  int size = in.readInt();
-	  
+
 		// Reset the E2E network
-		E2ENetwork.reset(size, true);
+		RouterNetwork.reset(size, true);
 		System.err.println("TriangularMatrixParser: reading " + size + " rows");
 	
 		// If the file format is not correct, data will be read 
@@ -131,7 +131,7 @@ public boolean execute()
 			for (int c = r+1; c < size; c++) {
 				int x = (int) (ratio*in.readInt());
 				count++;
-				E2ENetwork.setLatency(r,c,x);
+				RouterNetwork.setLatency(r,c,x);
 			}
 		}
 		System.err.println("TriangularMatrixParser: Read " + count + " entries");

@@ -16,7 +16,7 @@
  *
  */
 
-package peersim.config;
+package peeremu.config;
 
 /**
 * Exception thrown to indicate that a

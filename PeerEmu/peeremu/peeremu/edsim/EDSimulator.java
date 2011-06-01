@@ -295,14 +295,16 @@ private static boolean executeNext() {
 		}
 		else
 		{
-			try {
-				EDProtocol prot = (EDProtocol) ev.node.getProtocol(pid);
-				prot.processEvent(ev.node, pid, ev.event);
-			} catch (ClassCastException e) {
-				throw new IllegalArgumentException("Protocol " +
-					Configuration.lookupPid(pid) + 
-					" does not implement EDProtocol; " + ev.event.getClass()  );
-			}
+      EDProtocol prot = (EDProtocol) ev.node.getProtocol(pid);
+      prot.processEvent(ev.node, pid, ev.event);
+//			try {
+//				EDProtocol prot = (EDProtocol) ev.node.getProtocol(pid);
+//				prot.processEvent(ev.node, pid, ev.event);
+//			} catch (ClassCastException e) {
+//				throw new IllegalArgumentException("Protocol " +
+//					Configuration.lookupPid(pid) + 
+//					" does not implement EDProtocol; " + ev.event.getClass()  );
+//			}
 		}
 	}
 	

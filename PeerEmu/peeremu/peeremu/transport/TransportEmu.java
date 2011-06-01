@@ -37,7 +37,7 @@ public class TransportEmu implements Transport
 
     int latency = RouterNetwork.getLatency(senderRouter, receiverRouter) + local*2;
 
-    if (latency > 0) // if latency < 0, it's a broken link
+    if (latency >= 0) // if latency < 0, it's a broken link
       EDSimulator.add(latency, payload, ((DescriptorSim)dest).getNode(), pid);
   }
 

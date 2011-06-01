@@ -22,7 +22,7 @@ import peeremu.config.Configuration;
 import peeremu.config.IllegalParameterException;
 
 // XXX a quite primitive scheduler, should be able to be configured
-// much more flexibly using a simlpe syntax for time ranges.
+// much more flexibly using a simple syntax for time ranges.
 /**
 * A binary function over the time points. That is,
 * for each time point returns a boolean value.

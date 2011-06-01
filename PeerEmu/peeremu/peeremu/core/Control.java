@@ -29,7 +29,7 @@ public interface Control
  * The protocol to operate on.
  * @config
  */
-public static final String PAR_PROT = "protocol";
+public static final String PAR_PROTOCOL = "protocol";
 
 /**
  * Performs arbitrary modifications or reports arbitrary information over the

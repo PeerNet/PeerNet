@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry excluding="peeremu/core/OracleIdleProtocol.java|peeremu/edsim/EmuSimulator.java|peeremu/core/IdleProtocol.java" kind="src" path="peeremu"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/spyros/Source/jep-2.3.0/djep-1.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/spyros/Source/jep-2.3.0/jep-2.3.0.jar"/>
+	<classpathentry kind="lib" path="djep-1.0.0.jar"/>
+	<classpathentry kind="lib" path="jep-2.3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

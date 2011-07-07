@@ -34,10 +34,20 @@ public class DescriptorSim implements Descriptor
 	}
 
 
+	@Override
 	public boolean equals(Object otherDescriptor)
 	{
 		return getID() == ((DescriptorSim)otherDescriptor).getID();
 	}
+
+
+
+  @Override
+  public int hashCode()
+  {
+    return (int)getID();
+  }
+
 
 
   public Node getNode()

@@ -196,7 +196,7 @@ private static void scheduleControls()
 	for(int i=0; i<names.length; ++i)
 	{
 		controls[i]=(Control)Configuration.getInstance(names[i]);
-		ctrlSchedules[i] = new Scheduler(names[i], false);
+		ctrlSchedules[i] = new Scheduler(names[i]);
 	}
 	System.err.println("EDSimulator: loaded controls "+
 		Arrays.asList(names));

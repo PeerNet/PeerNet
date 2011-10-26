@@ -102,7 +102,7 @@ static {
 		if( Network.prototype.getProtocol(i) instanceof CDProtocol )
 			// with no default values for step to avoid
 			// "overscheduling" due to lack of step option.
-			sch[i] = new Scheduler(names[i],false);
+			sch[i] = new Scheduler(names[i]);
 	}
 }
 

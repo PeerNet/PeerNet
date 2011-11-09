@@ -44,23 +44,26 @@ public class KingParser implements Control
    * @config
    */
   private static final String PAR_FILE = "file";
+
   /**
-   * The ratio between the time units used in the configuration file and the
-   * time units used in the Peersim simulator.
+   * The number of time units in which a second is subdivided.
    * 
    * @config
    */
-  private static final String PAR_RATIO = "ratio";
+  private static final String PAR_TICKS_PER_SEC = "ticks_per_sec";
+
   // ---------------------------------------------------------------------
   // Fields
   // ---------------------------------------------------------------------
   /** Name of the file containing the King measurements. */
   private String filename;
+
   /**
    * Ratio between the time units used in the configuration file and the time
    * units used in the Peersim simulator.
    */
   private double ratio;
+
   /** Prefix for reading parameters */
   private String prefix;
 
@@ -75,7 +78,8 @@ public class KingParser implements Control
   public KingParser(String prefix)
   {
     this.prefix = prefix;
-    ratio = Configuration.getDouble(prefix+"."+PAR_RATIO, 1);
+    int ticks_per_sec = Configuration.getInt(prefix+"."+PAR_TICKS_PER_SEC);
+    ratio = ((double)ticks_per_sec) / 1000000;  // since King trace is in microseconds
     filename = Configuration.getString(prefix+"."+PAR_FILE, null);
   }
 
@@ -108,23 +112,22 @@ public class KingParser implements Control
     {
       in = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("t-king.map")));
     }
-    // XXX If the file format is not correct, we will get quite obscure
-    // exceptions. To be improved.
+
     String line = null;
     // Skip initial lines
     int size = 0;
     try
     {
-      while ((line = in.readLine())!=null&&!line.startsWith("node"))
-        ;
-      while (line!=null&&line.startsWith("node"))
+      while ((line = in.readLine())!=null && !line.startsWith("node"));
+
+      while (line!=null && line.startsWith("node"))
       {
         size++;
         line = in.readLine();
       }
     }
-    catch (IOException e)
-    {}
+    catch (IOException e) {}
+
     RouterNetwork.reset(size, true);
     System.err.println("KingParser: read "+size+" entries");
     try
@@ -140,8 +143,7 @@ public class KingParser implements Control
       }
       while (line!=null);
     }
-    catch (IOException e)
-    {}
+    catch (IOException e) {}
     return false;
   }
 }

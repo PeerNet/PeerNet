@@ -44,14 +44,16 @@ public class MatrixParser implements Control
   private static final String PAR_FILE = "file";
 
   /**
-   * The ratio between the time units used in the configuration file and the time
-   * units used in the Peersim simulator.
-   * 
+   * The number of time units in which a second is subdivided, in simulation.
    * @config
    */
-  private static final String PAR_RATIO = "ratio";
+  private static final String PAR_SIM_TICKS_PER_SEC = "ticks_per_sec";
 
-
+  /**
+   * The number of time units in which a second is subdivided, in the trace.
+   * @config
+   */
+  private static final String PAR_TRACE_TICKS_PER_SEC = "trace_ticks_per_sec";
 
   /** Name of the file containing the measurements. */
   private String filename;
@@ -73,8 +75,11 @@ public class MatrixParser implements Control
   {
     this.prefix = prefix;
     filename = Configuration.getString(prefix + "." + PAR_FILE);
-    ratio = Configuration.getDouble(prefix + "." + PAR_RATIO);
-  }
+
+    int ticks_per_sec = Configuration.getInt(prefix+"."+PAR_SIM_TICKS_PER_SEC);
+    int trace_ticks_per_sec = Configuration.getInt(prefix+"."+PAR_TRACE_TICKS_PER_SEC);
+    ratio = ((double)ticks_per_sec) / ((double)trace_ticks_per_sec);
+ }
 
 
   /**

@@ -1,3 +1,7 @@
+SV 04/12/2011
+- Removed CDSimulator and all dependencies
+
+
 SV 15/07/2007
 - Corrected small bug in GraphFactory.wireRingLattice giving wrong number of
   neighbors for odd k.

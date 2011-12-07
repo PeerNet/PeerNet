@@ -67,10 +67,10 @@ import peeremu.core.*;
 * <p>
 * {@link CDScheduler} has to be mentioned that is a control that
 * can bridge the gap between {@link peeremu.cdsim} and the event driven
-* engine. It can wrap {@link peeremu.cdsim.CDProtocol} appropriately so that the
+* engine. It can wrap {@link peeremu.edsim.CDProtocol} appropriately so that the
 * execution of the cycles are scheduled in configurable ways for each node
 * individually. In some cases this can add a more fine-grained control
-* and more realism to {@link peeremu.cdsim.CDProtocol} simulations,
+* and more realism to {@link peeremu.edsim.CDProtocol} simulations,
 * at the cost of some
 * loss in performance.
 * <p>
@@ -252,8 +252,8 @@ public static final boolean isConfigurationEventDriven()
  * Execute and remove the next event from the ordered event list.
  * @return true if the execution should be stopped.
  */
-private static boolean executeNext() {
-
+private static boolean executeNext()
+{
 	Heap.Event ev = heap.removeFirst();
 	if( ev == null )
 	{

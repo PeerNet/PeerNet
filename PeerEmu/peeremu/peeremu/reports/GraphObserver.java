@@ -13,11 +13,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
- * 
  */
 package peeremu.reports;
 
-import peeremu.cdsim.CDState;
 import peeremu.config.Configuration;
 import peeremu.core.*;
 import peeremu.graph.*;
@@ -73,10 +71,9 @@ public abstract class GraphObserver implements Control
   protected final GraphAlgorithms ga = new GraphAlgorithms();
   protected Graph g;
   // ---------------------------------------------------------------------
-  private static int lastpid = -1234;
-  private static long time = -1234;
-  private static int phase = -1234;
-  private static int ctime = -1234;
+  private static int lastpid = -1;
+  private static long time = -1;
+  private static int phase = -1;
   private static Graph dirg;
   private static Graph undirg;
   private static boolean fast;
@@ -97,8 +94,7 @@ public abstract class GraphObserver implements Control
   {
     this.name = name;
     pid = Configuration.getPid(name+"."+PAR_PROT);
-    undir = (Configuration.contains(name+"."+PAR_UNDIR)|Configuration
-        .contains(name+"."+PAR_UNDIR_ALT));
+    undir = (Configuration.contains(name+"."+PAR_UNDIR)|Configuration.contains(name+"."+PAR_UNDIR_ALT));
     GraphObserver.fast = Configuration.contains(PAR_FAST);
     GraphObserver.needUndir = (GraphObserver.needUndir||undir);
   }
@@ -120,16 +116,13 @@ public abstract class GraphObserver implements Control
    */
   protected void updateGraph()
   {
-    if (CommonState.getTime()!=GraphObserver.time
-        ||(CDState.isCD()&&(CDState.getCycleT()!=GraphObserver.ctime))
-        ||CommonState.getPhase()!=GraphObserver.phase
-        ||pid!=GraphObserver.lastpid)
+    if (CommonState.getTime() != GraphObserver.time ||
+        CommonState.getPhase() != GraphObserver.phase ||
+        pid != GraphObserver.lastpid)
     {
       // we need to update the graphs
       GraphObserver.lastpid = pid;
       GraphObserver.time = CommonState.getTime();
-      if (CDState.isCD())
-        GraphObserver.ctime = CDState.getCycleT();
       GraphObserver.phase = CommonState.getPhase();
       GraphObserver.dirg = new OverlayGraph(pid);
       if (GraphObserver.needUndir)

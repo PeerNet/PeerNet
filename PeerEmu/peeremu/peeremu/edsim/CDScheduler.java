@@ -18,7 +18,6 @@
 
 package peeremu.edsim;
 
-import peeremu.cdsim.CDProtocol;
 import peeremu.config.*;
 import peeremu.core.*;
 import peeremu.dynamics.NodeInitializer;

@@ -18,7 +18,6 @@
 
 package peeremu.edsim;
 
-import peeremu.cdsim.CDProtocol;
 import peeremu.core.*;
 
 

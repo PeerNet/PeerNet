@@ -16,7 +16,7 @@
  *
  */
 
-package peeremu.cdsim;
+package peeremu.edsim;
 
 import peeremu.core.Node;
 import peeremu.core.Protocol;

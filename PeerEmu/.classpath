@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="peeremu/core/OracleIdleProtocol.java|peeremu/edsim/EmuSimulator.java|peeremu/core/IdleProtocol.java|peeremu/config/CheckConfig.java" kind="src" path="peeremu"/>
+	<classpathentry excluding="peeremu/core/OracleIdleProtocol.java|peeremu/edsim/EmuSimulator.java|peeremu/core/IdleProtocol.java|peeremu/config/CheckConfig.java" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="djep-1.0.0.jar"/>
 	<classpathentry kind="lib" path="jep-2.3.0.jar"/>

@@ -8,8 +8,8 @@ package peeremu.core;
  * A Descriptor represents a link between two nodes. It is the information
  * a node has about its neighbors.
  * 
- * Typically, the Descriptor should the node's address, and other information
- * advertised along with it.
+ * Typically, the Descriptor should include the node's address, and other
+ * information advertised along with it.
  * 
  * @author Spyros Voulgaris
  *

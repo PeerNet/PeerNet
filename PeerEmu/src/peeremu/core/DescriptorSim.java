@@ -4,7 +4,7 @@
  */
 package peeremu.core;
 
-public class DescriptorSim implements Descriptor
+public class DescriptorSim extends Descriptor
 {
 	/**
 	 * Keeps a reference to the respective Node object.

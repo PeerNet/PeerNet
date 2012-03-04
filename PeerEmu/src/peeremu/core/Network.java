@@ -19,6 +19,7 @@
 package peeremu.core;
 
 import peeremu.config.Configuration;
+import peeremu.transport.OverlayGraph;
 
 import java.util.Comparator;
 import java.util.Arrays;
@@ -76,7 +77,7 @@ private static final String PAR_MAXSIZE = "network.maxSize";
 private static final String PAR_SIZE = "network.size";
 
 /**
-* The node array. This is not a private array which is not nice but
+* The node array. This is not a private array, which is not nice, but
 * efficiency has the highest priority here. The main purpose is to allow
 * the package quick reading of the contents in a maximally flexible way.
 * Nevertheless, methods of this class should be used instead of the array
@@ -212,8 +213,8 @@ public static void add( Node n ) {
 * This method does not perform range checks to increase efficiency.
 * The maximal valid index is {@link #size()}.
 */
-public static Node get( int index ) {
-	
+public static Node get( int index )
+{
 	return node[index];
 }
 

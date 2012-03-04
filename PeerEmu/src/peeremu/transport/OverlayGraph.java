@@ -15,13 +15,17 @@
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  */
-package peeremu.core;
+package peeremu.transport;
 
-import peeremu.graph.Graph;
-
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+
+import peeremu.core.Descriptor;
+import peeremu.core.Linkable;
+import peeremu.core.Network;
+import peeremu.core.Node;
+import peeremu.graph.Graph;
 
 
 
@@ -91,11 +95,11 @@ public class OverlayGraph implements Graph
   // ==============================================================
   public boolean isEdge(int i, int j)
   {
-    if (!Network.node[i].isUp()||!Network.node[j].isUp())
+    if (!Network.get(i).isUp()||!Network.get(j).isUp())
       return false;
 
-    Linkable l = (Linkable) Network.node[i].getProtocol(protocolID);
-    Descriptor d = Network.node[j].getDescriptor(protocolID);
+    Linkable l = (Linkable) Network.get(i).getProtocol(protocolID);
+    Descriptor d = Network.get(j).getDescriptor(protocolID);
     return l.contains(d);
   }
 
@@ -108,13 +112,13 @@ public class OverlayGraph implements Graph
    */
   public Collection<Integer> getNeighbours(int i)
   {
-    Linkable lble = (Linkable) Network.node[i].getProtocol(protocolID);
-    ArrayList<Integer> al = new ArrayList<Integer>(lble.degree());
-    if (Network.node[i].isUp())
+    Linkable l = (Linkable) Network.get(i).getProtocol(protocolID);
+    ArrayList<Integer> al = new ArrayList<Integer>(l.degree());
+    if (Network.get(i).isUp())
     {
-      for (int j = 0; j<lble.degree(); ++j)
+      for (int j = 0; j<l.degree(); ++j)
       {
-        final Node n = ((DescriptorSim) lble.getNeighbor(j)).getNode();
+        final Node n = ((AddressSim)l.getNeighbor(j).address).node;
         // if accessible, we include it
         if (n.isUp())
           al.add(new Integer(n.getIndex()));
@@ -126,10 +130,10 @@ public class OverlayGraph implements Graph
 
 
   // ---------------------------------------------------------------
-  /** Returns <code>Network.node[i]</code> */
+  /** Returns <code>Network.get(i]</code> */
   public Object getNode(int i)
   {
-    return Network.node[i];
+    return Network.get(i);
   }
 
 
@@ -181,12 +185,21 @@ public class OverlayGraph implements Graph
    */
   public boolean setEdge(int i, int j)
   {
-    // XXX slightly unintuitive behavior but makes sense when understood
     if (!wireDirected)
-      ((Linkable) Network.node[j].getProtocol(protocolID))
-          .addNeighbor(Network.node[i].getDescriptor(protocolID));
-    return ((Linkable) Network.node[i].getProtocol(protocolID))
-        .addNeighbor(Network.node[j].getDescriptor(protocolID));
+    {
+      // Set the inverse edge
+      Linkable jProt = (Linkable) Network.get(j).getProtocol(protocolID);
+      Descriptor iDescr = Network.get(i).getDescriptor(protocolID);
+      ((AddressSim)iDescr.address).node = Network.get(i);
+      jProt.addNeighbor(iDescr);
+    }
+    // Set the direct edge
+    Linkable iProt = (Linkable) Network.get(i).getProtocol(protocolID);
+    Descriptor jDescr = Network.get(j).getDescriptor(protocolID);
+    ((AddressSim)jDescr.address).node = Network.get(j);
+    iProt.addNeighbor(jDescr);
+
+    return true;
   }
 
 
@@ -206,13 +219,14 @@ public class OverlayGraph implements Graph
    */
   public int degree(int i)
   {
-    if (!Network.node[i].isUp())
+    if (!Network.get(i).isUp())
       return 0;
-    Linkable lble = (Linkable) Network.node[i].getProtocol(protocolID);
+
+    Linkable l = (Linkable) Network.get(i).getProtocol(protocolID);
     int numNeighbours = 0;
-    for (int j = 0; j<lble.degree(); ++j)
+    for (int j = 0; j<l.degree(); ++j)
     {
-      final Node n = ((DescriptorSim) lble.getNeighbor(j)).getNode();
+      final Node n = ((AddressSim)l.getNeighbor(j).address).node;
       if (n.isUp())
         numNeighbours++;
     }
@@ -229,9 +243,9 @@ public class OverlayGraph implements Graph
    */
   public int fullDegree(int i)
   {
-    if (!Network.node[i].isUp())
+    if (!Network.get(i).isUp())
       return 0;
-    Linkable lble = (Linkable) Network.node[i].getProtocol(protocolID);
+    Linkable lble = (Linkable) Network.get(i).getProtocol(protocolID);
     return lble.degree();
   }
 }

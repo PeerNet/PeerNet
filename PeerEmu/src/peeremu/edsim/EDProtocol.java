@@ -18,7 +18,10 @@
 		
 package peeremu.edsim;
 
-import peeremu.core.*;
+import peeremu.core.CommonState;
+import peeremu.core.Node;
+import peeremu.core.Protocol;
+import peeremu.transport.Address;
 
 /**
  * The interface to be implemented by protocols run under the event-driven
@@ -29,18 +32,18 @@ import peeremu.core.*;
  */
 public interface EDProtocol extends Protocol 
 {
-
 	/**
 	* This method is invoked by the scheduler to deliver events to the
 	* protcol. Apart from the event object, information about the node
 	* and the protocol identifier are also provided. Additional information
 	* can be accessed through the {@link CommonState} class.
 	* 
-	* @param node the local node
+  * @param from the address of the event's sender
+  * @param node the local node
 	* @param pid the identifier of this protocol
 	* @param event the delivered event
 	*/
-	public void processEvent( Node node, int pid, Object event );
+	public void processEvent(Address src, Node node, int pid, Object event );
 
 }
 

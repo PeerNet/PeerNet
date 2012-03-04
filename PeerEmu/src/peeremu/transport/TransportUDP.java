@@ -16,7 +16,6 @@ import java.net.SocketException;
 
 import peeremu.config.Configuration;
 import peeremu.core.Descriptor;
-import peeremu.core.DescriptorInet;
 
 public class TransportUDP implements TransportInet
 {
@@ -54,7 +53,8 @@ public class TransportUDP implements TransportInet
 	}
 
 
-	public void send(Descriptor src, Descriptor dest, int pid, Object payload)
+  @Override
+	public void send(Address dest, int pid, Object payload)
 	{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ObjectOutputStream oos;
@@ -71,10 +71,7 @@ public class TransportUDP implements TransportInet
 		DatagramPacket datagramPacket;
 		try
 		{
-			InetAddress address = ((DescriptorInet)dest).getAddress();
-			int port = ((DescriptorInet)dest).getPort();
-			datagramPacket = new DatagramPacket(baos.toByteArray(),
-					baos.size(), address, port);
+			datagramPacket = new DatagramPacket(baos.toByteArray(), baos.size(), ((AddressInet)dest).ip, ((AddressInet)dest).port);
 			socket.send(datagramPacket);
 		}
 		catch (SocketException e) {e.printStackTrace();}

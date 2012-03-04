@@ -11,7 +11,7 @@ import peeremu.config.FastConfig;
 import peeremu.config.IllegalParameterException;
 import peeremu.transport.TransportInet;
 
-public class DescriptorInet implements Descriptor, Serializable
+public class DescriptorInet extends Descriptor implements Serializable
 {
 	/**
    * 

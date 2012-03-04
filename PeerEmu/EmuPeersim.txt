@@ -110,3 +110,23 @@ Should the 'sender' Descriptor be passed to deliverEvent() ?
 There should be a base class for the expression of time.
 - In simulation that should be a long
 - In emulation... well, a long too! :-)
+
+
+
+
+
+
+
+
+BASIC CONCEPTS IN PEEREMU
+-------------------------
+
+Node: Container of Protocols
+
+Protocol: Code that implements protocol behavior.
+
+Transport: Entity that takes care of communication between peers.
+
+Control: Runnable entity for logging or controlling the experiment.
+
+Engine: ?

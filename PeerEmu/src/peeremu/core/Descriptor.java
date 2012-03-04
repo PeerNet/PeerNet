@@ -4,6 +4,10 @@
  */
 package peeremu.core;
 
+import peeremu.transport.Address;
+import peeremu.transport.AddressInet;
+import peeremu.transport.AddressSim;
+
 /**
  * A Descriptor represents a link between two nodes. It is the information
  * a node has about its neighbors.
@@ -14,15 +18,37 @@ package peeremu.core;
  * @author Spyros Voulgaris
  *
  */
-public interface Descriptor extends Cloneable
+public abstract class Descriptor
 {
-	/**
-	 * Returns the ID of the node referenced by this descriptor.
-	 * 
-	 * IMPORTANT: IDs are unique for each node, both for single
-	 * machine simulations and distributed emulations.
-	 */
-	public long getID();
+  /**
+   * This is the address where this node can be contacted.
+   */
+  public Address address;
+
+
+
+  /**
+   * Default constructor
+   */
+	public Descriptor()
+	{
+	  if (Engine.isAddressTypeReal())
+	    address = new AddressInet();
+	  else
+	    address = new AddressSim();
+	}
+
+
+
+  /**
+   * Returns the ID of the node referenced by this descriptor.
+   * 
+   * IMPORTANT: IDs are unique for each node, both for single
+   * machine simulations and distributed emulations.
+   */
+  //public abstract long getID();
+
+
 
 	/**
 	 * Checks whether two descriptors refer to the same node.
@@ -31,18 +57,28 @@ public interface Descriptor extends Cloneable
 	 * @param otherDescriptor
 	 * @return
 	 */
-	public boolean equals(Object otherDescriptor);
+	public boolean equals(Object otherDescriptor)
+	{
+	  return address.equals( ((Descriptor)otherDescriptor).address );
+	}
 
-  public Object clone() throws CloneNotSupportedException;
-	
-  /**
-   * Returns the node referred by the descriptor.
-   * 
-   * However, it should be avoided, because it makes no sense in Internet
-   * Emulation mode. To be used only for convenience 
-   * 
-   * @param otherDescriptor
-   * @return
-   */
-//  public Node getNode();
+
+
+	/**
+	 * clone()
+	 */
+  public Object clone() throws CloneNotSupportedException
+  {
+    Descriptor descriptor = null;
+    try
+    {
+      descriptor = (Descriptor)super.clone();
+    }
+    catch (CloneNotSupportedException e)
+    {
+      System.out.println(e);
+    }
+    descriptor.address = (Address)address.clone();
+    return descriptor;
+  }
 }

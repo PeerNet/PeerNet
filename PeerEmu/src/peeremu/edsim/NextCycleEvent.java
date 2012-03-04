@@ -86,7 +86,7 @@ public final void execute() {
 	
 	long delay = nextDelay(CDScheduler.sch[pid].step);
 	if( CommonState.getTime()+delay < CDScheduler.sch[pid].until )
-		EDSimulator.add(delay, this, node, pid);
+		EDSimulator.add(delay, null, node, pid, this);
 
 }
 

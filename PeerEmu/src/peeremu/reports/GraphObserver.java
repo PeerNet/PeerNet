@@ -19,6 +19,7 @@ package peeremu.reports;
 import peeremu.config.Configuration;
 import peeremu.core.*;
 import peeremu.graph.*;
+import peeremu.transport.OverlayGraph;
 
 
 

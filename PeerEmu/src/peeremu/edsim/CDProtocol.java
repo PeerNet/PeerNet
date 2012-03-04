@@ -27,7 +27,6 @@ import peeremu.core.Protocol;
 */
 public interface CDProtocol extends Protocol
 {
-
 /**
  * A protocol which is defined by performing an algorithm in more or less
  * regular periodic intervals.

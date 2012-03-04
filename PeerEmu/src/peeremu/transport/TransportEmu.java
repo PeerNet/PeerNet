@@ -5,8 +5,8 @@
 package peeremu.transport;
 
 import peeremu.config.Configuration;
-import peeremu.core.Descriptor;
-import peeremu.core.DescriptorSim;
+import peeremu.core.CommonState;
+import peeremu.core.Engine;
 import peeremu.edsim.EDSimulator;
 
 
@@ -27,18 +27,20 @@ public class TransportEmu implements Transport
   public TransportEmu(String prefix)
   {
     local = Configuration.getInt(prefix + "." + PAR_LOCAL, 0);
+    assert Engine.isAddressTypeSim();
   }
 
 
-  public void send(Descriptor src, Descriptor dest, int pid, Object payload)
+  public void send(Address dest, int pid, Object payload)
   {
-    int senderRouter = (int)src.getID() % RouterNetwork.getSize();
-    int receiverRouter = (int)dest.getID() % RouterNetwork.getSize();
+    int senderRouter = (int)CommonState.getNode().getID() % RouterNetwork.getSize();
+    int receiverRouter = dest.hashCode() % RouterNetwork.getSize();
+    Address senderAddress = new AddressSim(CommonState.getNode());
 
     int latency = RouterNetwork.getLatency(senderRouter, receiverRouter) + local*2;
 
     if (latency >= 0) // if latency < 0, it's a broken link
-      EDSimulator.add(latency, payload, ((DescriptorSim)dest).getNode(), pid);
+      EDSimulator.add(latency, senderAddress, ((AddressSim)dest).node, pid, payload);
   }
 
   public Object clone()

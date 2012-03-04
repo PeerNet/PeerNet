@@ -20,6 +20,7 @@ package peeremu.reports;
 
 import peeremu.config.*;
 import peeremu.core.*;
+import peeremu.transport.OverlayGraph;
 import peeremu.util.*;
 
 /**

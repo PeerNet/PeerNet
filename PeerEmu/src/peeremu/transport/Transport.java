@@ -4,7 +4,6 @@
  */
 package peeremu.transport;
 
-import peeremu.core.Descriptor;
 import peeremu.core.Protocol;
 
 /**
@@ -16,7 +15,7 @@ import peeremu.core.Protocol;
 public interface Transport extends Protocol
 {
   /**
-   * Used to send a message to another node, given the node's descriptor.
+   * Used to send a message to another node, given the node's address.
    */
-  public void send(Descriptor src, Descriptor dest, int pid, Object payload);
+  public void send(Address dest, int pid, Object payload);
 }

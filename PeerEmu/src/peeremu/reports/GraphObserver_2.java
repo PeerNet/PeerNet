@@ -20,12 +20,12 @@ import peeremu.config.Configuration;
 import peeremu.config.IllegalParameterException;
 import peeremu.core.CommonState;
 import peeremu.core.Control;
-import peeremu.core.OverlayGraph;
 import peeremu.graph.ConstUndirGraph;
 import peeremu.graph.FastUndirGraph;
 import peeremu.graph.Graph;
 import peeremu.graph.GraphAlgorithms;
 import peeremu.graph.ReverseGraph;
+import peeremu.transport.OverlayGraph;
 
 
 

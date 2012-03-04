@@ -1,8 +1,9 @@
 package peeremu.transport;
 
-import peeremu.config.*;
-import peeremu.core.*;
-import peeremu.edsim.*;
+import peeremu.config.Configuration;
+import peeremu.config.IllegalParameterException;
+import peeremu.core.CommonState;
+import peeremu.edsim.EDSimulator;
 
 
 /**
@@ -71,11 +72,12 @@ public class UniformRandomTransport implements Transport
    * delay, that is drawn from the configured interval according to the uniform
    * distribution.
    */
-  public void send(Descriptor src, Descriptor dest, int pid, Object payload)
+  public void send(Address dest, int pid, Object payload)
   {
     // avoid calling nextLong if possible
-    long delay = (range==1?min:min + CommonState.r.nextLong(range));
+    long delay = (range==1 ? min : min+CommonState.r.nextLong(range));
+    Address senderAddress = new AddressSim(CommonState.getNode());
 
-    EDSimulator.add(delay, payload, ((DescriptorSim)dest).getNode(), pid);
+    EDSimulator.add(delay, senderAddress, ((AddressSim)dest).node, pid, payload);
   }
 }

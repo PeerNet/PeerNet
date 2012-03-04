@@ -1,3 +1,14 @@
+SV 03/03/2012
+- Renamed PeerEmu to PeerNet!
+- Decided that there will be three distinct modes of operation:
+  - SIM: simulation, similar to Event Driven simulation in PeerSim
+  - EMU: single machine execution, but separate thread per protocol
+  - NET: execution on the network.
+
+SV 26/02/2012
+- Introduced Address abstract class, to help the transparency between
+  development of protocols for simulation or network emulation.
+
 SV 04/12/2011
 - Removed CDSimulator and all dependencies
 

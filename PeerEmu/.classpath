@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry excluding="peeremu/core/OracleIdleProtocol.java|peeremu/edsim/EmuSimulator.java|peeremu/core/IdleProtocol.java|peeremu/config/CheckConfig.java|peeremu/edsim/HeapNew.java|peeremu/edsim/RandNextCycle.java|peeremu/edsim/RegRandNextCycle.java|peeremu/vector/Getter.java|peeremu/vector/GetterSetterFinder.java|peeremu/vector/InitVectFromFile.java|peeremu/vector/LinearDistribution.java|peeremu/vector/Normalizer.java|peeremu/vector/PeakDistribution.java|peeremu/vector/Setter.java|peeremu/vector/SingleValue.java|peeremu/vector/SingleValueComparator.java|peeremu/vector/SingleValueHolder.java|peeremu/vector/SingleValueObserver.java|peeremu/vector/TestVectors.java|peeremu/vector/UniformDistribution.java|peeremu/vector/ValueDumper.java|peeremu/vector/VectAngle.java|peeremu/vector/VectControl.java|peeremu/vector/VectCopy.java|peeremu/vector/VectorComparator.java|peeremu/vector/VectorObserver.java|peeremu/core/DescriptorSim.java|peeremu/core/DescriptorInet.java" kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="djep-1.0.0.jar"/>
-	<classpathentry kind="lib" path="jep-2.3.0.jar"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>

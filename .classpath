@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="peernet/core/OracleIdleProtocol.java|peernet/edsim/EmuSimulator.java|peernet/core/IdleProtocol.java|peernet/config/CheckConfig.java|peernet/edsim/HeapNew.java|peernet/edsim/RandNextCycle.java|peernet/edsim/RegRandNextCycle.java|peernet/vector/Getter.java|peernet/vector/GetterSetterFinder.java|peernet/vector/InitVectFromFile.java|peernet/vector/LinearDistribution.java|peernet/vector/Normalizer.java|peernet/vector/PeakDistribution.java|peernet/vector/Setter.java|peernet/vector/SingleValue.java|peernet/vector/SingleValueComparator.java|peernet/vector/SingleValueHolder.java|peernet/vector/SingleValueObserver.java|peernet/vector/TestVectors.java|peernet/vector/UniformDistribution.java|peernet/vector/ValueDumper.java|peernet/vector/VectAngle.java|peernet/vector/VectControl.java|peernet/vector/VectCopy.java|peernet/vector/VectorComparator.java|peernet/vector/VectorObserver.java|peernet/core/DescriptorSim.java|peernet/core/DescriptorInet.java" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="lib/djep-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/jep-2.3.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

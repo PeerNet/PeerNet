@@ -7,6 +7,7 @@ package peernet.transport;
 import peernet.config.Configuration;
 import peernet.core.CommonState;
 import peernet.core.Engine;
+import peernet.core.Engine.AddressType;
 import peernet.edsim.EDSimulator;
 
 
@@ -27,7 +28,7 @@ public class TransportEmu implements Transport
   public TransportEmu(String prefix)
   {
     local = Configuration.getInt(prefix + "." + PAR_LOCAL, 0);
-    assert Engine.isAddressTypeSim();
+    assert Engine.getAddressType() == AddressType.SIM;
   }
 
 

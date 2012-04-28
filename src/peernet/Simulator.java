@@ -30,7 +30,7 @@ import peernet.edsim.EDSimulator;
 
 
 /**
- * This is the main entry point to peersim. This class loads configuration and
+ * This is the main entry point to peernet. This class loads configuration and
  * detects the simulation type. According to this, it invokes the appropriate
  * simulator. The known simulators at this moment, along with the way to detect
  * them are the following:

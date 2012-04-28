@@ -131,4 +131,14 @@ Control: Runnable entity for logging or controlling the experiment.
 
 Engine: ?
 
-test
+
+
+
+
+
+
+SCRATCHPAD - NOTES
+------------------
+
+TIKS_PER_SECOND has to be *fixed* and well-defined.
+

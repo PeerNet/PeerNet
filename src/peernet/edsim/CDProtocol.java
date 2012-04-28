@@ -40,4 +40,6 @@ public interface CDProtocol extends Protocol
  */
 public void nextCycle(Node node, int protocolID);
 
+public long nextDelay();
+
 }

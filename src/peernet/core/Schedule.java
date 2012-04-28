@@ -42,7 +42,7 @@ import peernet.config.IllegalParameterException;
  * also added to the set of active time points. It refers to the time after the
  * simulation has finished (see {@link CommonState#getPhase}).
  */
-public class Scheduler
+public class Schedule
 {
   // ========================= fields =================================
   // ==================================================================
@@ -89,7 +89,7 @@ public class Scheduler
    * scheduled for a different random time for all nodes. The random time is a
    * sample between the current time (inclusive) and the cycle length
    * (exclusive), the latter being specified by the step parameter (see
-   * {@link Scheduler}) of the assigned protocol.
+   * {@link Schedule}) of the assigned protocol.
    * 
    * @see #execute
    * @config
@@ -116,17 +116,21 @@ public class Scheduler
    * 
    * Either parameter {@value #PAR_AT} or {@value #PAR_STEP} must be defined.
    */
-  public Scheduler(String prefix)
+  public Schedule(String prefix)
   {
     fin = Configuration.contains(prefix+"."+PAR_FINAL);
 
     if (Configuration.contains(prefix+"."+PAR_AT)) // AT defined
     {
       // FROM, UNTIL, and STEP should *not* be defined
-      if (Configuration.contains(prefix+"."+PAR_FROM)||Configuration.contains(prefix+"."+PAR_UNTIL)||
+      if (Configuration.contains(prefix+"."+PAR_FROM) ||
+          Configuration.contains(prefix+"."+PAR_UNTIL) ||
           Configuration.contains(prefix+"."+PAR_STEP))
-        throw new IllegalParameterException(prefix, "Cannot use \""+PAR_AT+"\" and \""+PAR_FROM+"\"/\""+PAR_UNTIL+"\"/\""+
-            PAR_STEP+"\" together");
+        throw new IllegalParameterException(prefix, "Cannot use \""+PAR_AT+
+            "\" and \""+PAR_FROM+
+            "\"/\""+PAR_UNTIL+
+            "\"/\""+PAR_STEP+
+            "\" together");
       long at = Configuration.getLong(prefix+"."+PAR_AT);
       from = at;
       until = at+1;

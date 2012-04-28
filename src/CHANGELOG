@@ -1,3 +1,5 @@
+- Scheduler -> Schedule
+
 SV 03/03/2012
 - Renamed PeerEmu to PeerNet!
 - Decided that there will be three distinct modes of operation:

@@ -33,8 +33,8 @@ import peernet.dynamics.NodeInitializer;
  * 
  * <p>
  * All {@link CDProtocol} specifications in the configuration need to contain a
- * {@link Scheduler} specification at least for the step size (see config
- * parameter {@value peernet.core.Scheduler#PAR_STEP} of {@link Scheduler}).
+ * {@link Schedule} specification at least for the step size (see config
+ * parameter {@value peernet.core.Schedule#PAR_STEP} of {@link Schedule}).
  * This value is used as the cycle length for the corresponding protocol.
  * 
  * @see NextCycleEvent
@@ -64,7 +64,7 @@ public class CDScheduler implements Control, NodeInitializer
    * scheduled for a different random time for all nodes. The random time is a
    * sample between the current time (inclusive) and the cycle length
    * (exclusive), the latter being specified by the step parameter (see
-   * {@link Scheduler}) of the assigned protocol.
+   * {@link Schedule}) of the assigned protocol.
    * 
    * @see #execute
    * @config
@@ -76,7 +76,7 @@ public class CDScheduler implements Control, NodeInitializer
    * but those entries that belong to protocols that are not {@link CDProtocol}s
    * are null.
    */
-  public static final Scheduler[] sch;
+  public static final Schedule[] sch;
   private final NextCycleEvent[] nce;
   private final int[] pid;
   private final boolean randstart;
@@ -87,13 +87,13 @@ public class CDScheduler implements Control, NodeInitializer
   static
   {
     String[] names = Configuration.getNames(Node.PAR_PROT);
-    sch = new Scheduler[names.length];
+    sch = new Schedule[names.length];
     for (int i = 0; i<names.length; ++i)
     {
       if (Network.prototype.getProtocol(i) instanceof CDProtocol)
         // with no default values for step to avoid
         // "overscheduling" due to lack of step option.
-        sch[i] = new Scheduler(names[i]);
+        sch[i] = new Schedule(names[i]);
     }
   }
 
@@ -146,12 +146,12 @@ public class CDScheduler implements Control, NodeInitializer
    * execution is detemined by a reference point in time and {@link #firstDelay}
    * , which defines the delay from the reference point. The reference point is
    * the maximum of the current time, and the value of parameter
-   * {@value peernet.core.Scheduler#PAR_FROM} of the protocol being scheduled.
+   * {@value peernet.core.Schedule#PAR_FROM} of the protocol being scheduled.
    * If the calculated time of the first execution is not valid according to the
    * schedule of the protocol then no execution is scheduled for that protocol.
    * <p>
    * A final note: for performance reasons, the recommended practice is not to
-   * use parameter {@value peernet.core.Scheduler#PAR_FROM} in protocols, but to
+   * use parameter {@value peernet.core.Schedule#PAR_FROM} in protocols, but to
    * schedule {@link CDScheduler} itself for the desired time, whenever possible
    * (eg, it is not possible if {@link CDScheduler} is used as a
    * {@link NodeInitializer}).

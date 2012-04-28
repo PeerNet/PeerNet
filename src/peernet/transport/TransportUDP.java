@@ -98,7 +98,7 @@ public class TransportUDP implements TransportInet
 		catch (IOException e) {e.printStackTrace();}
 		catch (ClassNotFoundException e) {e.printStackTrace();}
 
-		// Now invoke the Scheduler
+		// Now invoke the Schedule
 		
 	}
 

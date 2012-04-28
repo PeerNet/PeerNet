@@ -1,19 +1,8 @@
 /*
- * Copyright (c) 2003 The BISON Project
- * 
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License version 2 as published by
- * the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation, Inc.,
- * 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Created on Apr 26, 2012 by Spyros Voulgaris
+ *
  */
+
 package peernet.emu;
 
 import java.util.Arrays;
@@ -40,24 +29,18 @@ import peernet.edsim.EDProtocol;
  * To execute any of the cycle-based classes (observers, dynamics, and
  * protocols), the <code>step</code> parameter of the {@link RunnableScheduler}
  * associated to the class must be specified, to define the length of cycles.
- * 
- * 
- * 
- * @author Alberto Montresor
- * @version $Revision: 92 $
  */
 public class MTSimulator
 {
   public static Object mutex = new Object();
-  // ---------------------------------------------------------------------
-  // Parameters
-  // ---------------------------------------------------------------------
+
   /**
    * The string name of the configuration parameter that specifies the ending
    * time for simulation, in milliseconds. No event after this value will be
    * executed.
    */
   public static final String PAR_DURATION = "simulation.duration";
+
   /**
    * The string name of the configuration parameter that specifies how often the
    * simulator should log the current time on the console. Standard error is
@@ -65,11 +48,13 @@ public class MTSimulator
    * second.
    */
   public static final String PAR_LOGTIME = "simulation.logtime";
+
   /**
    * If this parameter is present, the order of visiting each node for
    * cycle-based protocols is shuffled at each cycle. The default is no shuffle.
    */
   // public static final String PAR_SHUFFLE = "simulation.shuffle";
+
   /**
    * String name of the configuration parameter that specifies how many bits are
    * used to order events that occurs at the same time. Defaults to 8. A value
@@ -77,41 +62,56 @@ public class MTSimulator
    * a better discrimination, but may reduce the granularity of time values.
    */
   public static final String PAR_RBITS = "simulation.timebits";
+
   /**
    * This is the prefix for initializers. These have to be of type
    * {@link Dynamics}.
    */
   public static final String PAR_INIT = "init";
+
   /**
    * This is the prefix for network dynamism managers. These have to be of type
    * {@link Dynamics}.
    */
   public static final String PAR_DYN = "dynamics";
+
   /**
    * This is the prefix for observers. These have to be of type {@link Observer}
    * .
    */
   public static final String PAR_OBS = "observer";
+
+
+
   // ---------------------------------------------------------------------
   // Fields
   // ---------------------------------------------------------------------
   public static long startTime;
+
   /** Duration for simulation, in milliseconds */
   protected static long duration;
+
   /** Log time */
   // protected static long logtime;
-  /** If true, when executing a cycle-based protocols items are shuffled */
+
+  /** If true, when executing a cycle-based protocol items are shuffled */
   // private static boolean shuffle;
+
   /** holds the observers of this simulation */
   protected static RunnableObserver[] observers = null;
+
   /** Holds the observer schedulers of this simulation */
   protected static RunnableScheduler[] obsSchedules = null;
+
   /** holds the modifiers of this simulation */
   // protected static Dynamics[] dynamics=null;
+
   /** Holds the pids of the CDProtocols to be executed in this simulation */
   protected static int[] cdprotocols = null;
+
   /** Holds the protocol schedulers of this simulation */
   protected static RunnableScheduler[] protSchedules = null;
+
   /** Ordered list of events (heap) */
   // protected static Heap heap = new Heap();
   private static ScheduledThreadPoolExecutor executor;

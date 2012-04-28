@@ -19,6 +19,7 @@
 package peernet.core;
 
 import peernet.config.*;
+import peernet.core.Engine.Type;
 import peernet.util.*;
 
 /**
@@ -150,7 +151,7 @@ protected CommonState() {}
  */
 public static long getTime()
 {
-	return time;
+	return Engine.getType()==Type.SIM ? time : System.currentTimeMillis();
 }
 
 //-----------------------------------------------------------------
@@ -237,7 +238,7 @@ public static void setPhase(int p)
 * Returns the current protocol identifier. In other words, control is
 * held by the indicated protocol on node {@link #getNode}.
 */
-public static int getPid()
+public static int getPid()  // TODO: Remove global access. Not good for multithreaded case.
 {
 	return pid;
 }

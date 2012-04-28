@@ -17,12 +17,12 @@ public class Engine
 
   public enum Type
   {
-    SIM, EMU, REAL;
+    SIM, EMU, NET;
   }
 
   public enum AddressType
   {
-    SIM, REAL;
+    SIM, NET;
   }
 
   static
@@ -38,13 +38,13 @@ public class Engine
       type = Type.EMU;
       addressType = AddressType.SIM;
     }
-    else if (typeStr.equals("real"))
+    else if (typeStr.equals("net"))
     {
-      type = Type.REAL;
-      addressType = AddressType.REAL;
+      type = Type.NET;
+      addressType = AddressType.NET;
     }
     else
-      throw new IllegalParameterException(PREFIX+"."+PAR_TYPE, "Possible types: sim, emu, real");
+      throw new IllegalParameterException(PREFIX+"."+PAR_TYPE, "Possible types: sim, emu, net");
   }
 
   public static Type getType()
@@ -55,15 +55,5 @@ public class Engine
   public static AddressType getAddressType()
   {
     return addressType;
-  }
-
-  public static boolean isAddressTypeReal()
-  {
-    return addressType == AddressType.REAL;
-  }
-
-  public static boolean isAddressTypeSim()
-  {
-    return addressType == AddressType.SIM;
   }
 }

@@ -7,7 +7,7 @@ package peernet.core;
 import peernet.config.Configuration;
 import peernet.config.IllegalParameterException;
 
-public class Engine
+public class Engine1
 {
   private static final String PREFIX = "engine";
   private static final String PAR_TYPE = "type";

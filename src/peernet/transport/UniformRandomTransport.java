@@ -3,7 +3,8 @@ package peernet.transport;
 import peernet.config.Configuration;
 import peernet.config.IllegalParameterException;
 import peernet.core.CommonState;
-import peernet.edsim.EDSimulator;
+import peernet.core.Node;
+import peernet.edsim.Engine;
 
 
 /**
@@ -14,7 +15,7 @@ import peernet.edsim.EDSimulator;
  * @author Alberto Montresor
  * @version $Revision: 1.12 $
  */
-public class UniformRandomTransport implements Transport
+public class UniformRandomTransport extends Transport
 {
   /** 
    * String name of the parameter used to configure the minimum latency.
@@ -78,6 +79,6 @@ public class UniformRandomTransport implements Transport
     long delay = (range==1 ? min : min+CommonState.r.nextLong(range));
     Address senderAddress = new AddressSim(CommonState.getNode());
 
-    EDSimulator.add(delay, senderAddress, ((AddressSim)dest).node, pid, payload);
+    Engine.add(delay, senderAddress, ((AddressSim)dest).node, pid, payload);
   }
 }

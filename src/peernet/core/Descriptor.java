@@ -4,7 +4,7 @@
  */
 package peernet.core;
 
-import peernet.core.Engine.AddressType;
+import peernet.core.Engine1.AddressType;
 import peernet.transport.Address;
 import peernet.transport.AddressInet;
 import peernet.transport.AddressSim;
@@ -33,7 +33,7 @@ public abstract class Descriptor
    */
 	public Descriptor()
 	{
-	  if (Engine.getAddressType() == AddressType.NET)
+	  if (Engine1.getAddressType() == AddressType.NET)
 	    address = new AddressInet();
 	  else
 	    address = new AddressSim();

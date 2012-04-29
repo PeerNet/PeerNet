@@ -19,7 +19,7 @@
 package peernet.core;
 
 import peernet.config.*;
-import peernet.core.Engine.Type;
+import peernet.core.Engine1.Type;
 import peernet.util.*;
 
 /**
@@ -151,7 +151,7 @@ protected CommonState() {}
  */
 public static long getTime()
 {
-	return Engine.getType()==Type.SIM ? time : System.currentTimeMillis();
+	return Engine1.getType()==Type.SIM ? time : System.currentTimeMillis();
 }
 
 //-----------------------------------------------------------------

@@ -27,8 +27,9 @@ import peernet.config.Configuration;
 import peernet.config.IllegalParameterException;
 import peernet.core.CommonState;
 import peernet.core.Control;
-import peernet.core.Engine;
-import peernet.core.Engine.Type;
+import peernet.core.Engine1;
+import peernet.core.Engine1.AddressType;
+import peernet.core.Engine1.Type;
 import peernet.core.Network;
 import peernet.core.Node;
 import peernet.core.Protocol;
@@ -88,9 +89,9 @@ import peernet.transport.Address;
  * 
  * @see Configuration
  */
-public class EDSimulator
+public class Engine
 {
-  public static final String PREFIX = "simulation";
+  private static final String PREFIX = "simulation";
 
 
   /**
@@ -99,7 +100,7 @@ public class EDSimulator
    * 
    * @config
    */
-  public static final String PAR_DURATION = "simulation.duration";
+  private static final String PAR_DURATION = "simulation.duration";
 
   /**
    * This parameter specifies how often the simulator should log the current
@@ -141,6 +142,8 @@ public class EDSimulator
    */
   private static final String PAR_CTRL = "control";
 
+  private static final String PAR_TYPE = "type";
+
   // ---------------------------------------------------------------------
   // Fields
   // ---------------------------------------------------------------------
@@ -167,11 +170,67 @@ public class EDSimulator
 
   private static NextCycleEvent nextCycleEvent = new NextCycleEvent("");
 
+  private static Engine instance = null;
+
+  
+  
+  
+  
+  
+  
+  private static final Type type;
+  private static final AddressType addressType;
+
+  public enum Type
+  {
+    SIM, EMU, NET;
+  }
+
+  public enum AddressType
+  {
+    SIM, NET;
+  }
+
+  static
+  {
+    String typeStr = Configuration.getString(PREFIX+"."+PAR_TYPE, "");
+    if (typeStr.equals("sim"))
+    {
+      type = Type.SIM;
+      addressType = AddressType.SIM;
+    }
+    else if (typeStr.equals("emu"))
+    {
+      type = Type.EMU;
+      addressType = AddressType.SIM;
+    }
+    else if (typeStr.equals("net"))
+    {
+      type = Type.NET;
+      addressType = AddressType.NET;
+    }
+    else
+      throw new IllegalParameterException(PREFIX+"."+PAR_TYPE, "Possible types: sim, emu, net");
+  }
+
+  public static Type getType()
+  {
+    return type;
+  }
+
+  public static AddressType getAddressType()
+  {
+    return addressType;
+  }
+
+
+
+
 
   // =============== initialization ======================================
   // =====================================================================
   /** to prevent construction */
-  protected EDSimulator()
+  protected Engine()
   {
   }
 
@@ -212,7 +271,7 @@ public class EDSimulator
       controls[i] = (Control) Configuration.getInstance(names[i]);
       controlSchedules[i] = new Schedule(names[i]);
     }
-    System.err.println("EDSimulator: loaded controls "+Arrays.asList(names));
+    System.err.println("Engine: loaded controls "+Arrays.asList(names));
 
     // Schedule controls execution
     int order = 0;
@@ -271,7 +330,7 @@ public class EDSimulator
     Heap.Event ev = heap.removeFirst();
     if (ev==null)
     {
-      System.err.println("EDSimulator: queue is empty, quitting"+" at time "+CommonState.getTime());
+      System.err.println("Engine: queue is empty, quitting"+" at time "+CommonState.getTime());
       return true;
     }
     long time = ev.time>>rbits;
@@ -286,7 +345,7 @@ public class EDSimulator
     }
     if (time>=endtime)
     {
-      System.err.println("EDSimulator: reached end time, quitting, leaving "+heap.size()+" unprocessed events in the queue");
+      System.err.println("Engine: reached end time, quitting, leaving "+heap.size()+" unprocessed events in the queue");
       return true;
     }
     CommonState.setTime(time);
@@ -305,16 +364,16 @@ public class EDSimulator
       {
 //        NextCycleEvent nce = (NextCycleEvent) ev.event;
 //        nce.execute();
-        CDProtocol cdp = (CDProtocol) ev.node.getProtocol(pid);
-        cdp.nextCycle(ev.node, pid);
-        long delay = cdp.nextDelay();
+        Protocol prot = ev.node.getProtocol(pid);
+        prot.nextCycle(ev.node, pid);
+        long delay = prot.nextDelay();
         if (CommonState.getTime()+delay<CDScheduler.sch[pid].until)
-          EDSimulator.add(delay, null, ev.node, pid, nextCycleEvent);
+          Engine.add(delay, null, ev.node, pid, nextCycleEvent);
 
       }
       else // call Protocol.processEvent()
       {
-        EDProtocol prot = (EDProtocol) ev.node.getProtocol(pid);
+        Protocol prot = ev.node.getProtocol(pid);
         prot.processEvent(ev.src, ev.node, pid, ev.event);
         // try {
         // EDProtocol prot = (EDProtocol) ev.node.getProtocol(pid);
@@ -349,7 +408,7 @@ public class EDSimulator
     logtime = Configuration.getLong(PAR_LOGTIME, Long.MAX_VALUE);
 
     // initialization
-    System.err.println("EDSimulator: resetting");  // XXX: change to debug() or notify()
+    System.err.println("Engine: resetting");  // XXX: change to debug() or notify()
     controls = null;
     controlSchedules = null;
 
@@ -357,9 +416,9 @@ public class EDSimulator
     nextlog = 0;
     Network.reset();
 
-    System.err.println("EDSimulator: running initializers");
+    System.err.println("Engine: running initializers");
     
-    if (Engine.getType()==Type.SIM)
+    if (getType()==Type.SIM)
       CommonState.setTime(0); // needed here
 
     runInitializers();
@@ -393,7 +452,7 @@ public class EDSimulator
     logtime = Configuration.getLong(PAR_LOGTIME, Long.MAX_VALUE);
 
     // initialization
-    System.err.println("EDSimulator: resetting");  // XXX: change to debug() or notify()
+    System.err.println("Engine: resetting");  // XXX: change to debug() or notify()
     controls = null;
     controlSchedules = null;
 
@@ -409,7 +468,7 @@ public class EDSimulator
 
     Heap controlHeap = new Heap();
     
-    System.err.println("EDSimulator: running initializers");
+    System.err.println("Engine: running initializers");
 
     //XXX CommonState.setTime(0); // needed here
     runInitializers();
@@ -476,12 +535,25 @@ public class EDSimulator
     time = (time<<rbits)|CommonState.r.nextInt(1<<rbits);
 
     Heap heap;
-    if (Engine.getType() == Type.SIM)
+    if (getType() == Type.SIM)
       heap = simHeap;
 //    else
 //    {
 //      
 //    }
 //    heap.add(time, src, node, (byte) pid, event);
+  }
+  
+  
+  public static Engine instance()
+  {
+    if (instance==null)
+    {
+      if (getType()==Type.SIM)
+        instance = new EngineSim();
+      else
+        instance = new EngineEmu();
+    }
+    return instance;
   }
 }

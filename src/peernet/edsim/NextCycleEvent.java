@@ -81,11 +81,10 @@ public class NextCycleEvent implements Cloneable
   {
     int pid = CommonState.getPid();
     Node node = CommonState.getNode();
-    CDProtocol cdp = (CDProtocol) node.getProtocol(pid);
-    cdp.nextCycle(node, pid);
+    node.getProtocol(pid).nextCycle(node, pid);
     long delay = nextDelay(CDScheduler.sch[pid].step);
     if (CommonState.getTime()+delay<CDScheduler.sch[pid].until)
-      EDSimulator.add(delay, null, node, pid, this);
+      Engine.add(delay, null, node, pid, this);
   }
 
 

@@ -10,6 +10,6 @@ import peernet.core.Protocol;
  * @author Spyros Voulgaris
  *
  */
-public interface RunnableProtocol extends Protocol, Runnable
+public interface RunnableProtocol extends Runnable
 {
 }

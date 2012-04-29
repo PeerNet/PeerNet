@@ -76,6 +76,9 @@ public class CDScheduler implements Control, NodeInitializer
    * but those entries that belong to protocols that are not {@link CDProtocol}s
    * are null.
    */
+  
+  private static final String PAR_STEP = "step";
+
   public static final Schedule[] sch;
   private final NextCycleEvent[] nce;
   private final int[] pid;
@@ -86,14 +89,18 @@ public class CDScheduler implements Control, NodeInitializer
    */
   static
   {
-    String[] names = Configuration.getNames(Node.PAR_PROT);
+    String[] names = Configuration.getNames(PAR_PROTOCOL);
     sch = new Schedule[names.length];
     for (int i = 0; i<names.length; ++i)
     {
-      if (Network.prototype.getProtocol(i) instanceof CDProtocol)
+      if (Configuration.contains(PAR_PROTOCOL+"."+names[i]+PAR_STEP))
+      //if (Network.prototype.getProtocol(i) instanceof CDProtocol)
         // with no default values for step to avoid
         // "overscheduling" due to lack of step option.
         sch[i] = new Schedule(names[i]);
+      
+      //XXX: Instead of checking for step, simply call Schedule(), and
+      // make it return null if there is no schedule defined.
     }
   }
 
@@ -110,10 +117,11 @@ public class CDScheduler implements Control, NodeInitializer
     for (int i = 0; i<prots.length; ++i)
     {
       pid[i] = Configuration.lookupPid(prots[i]);
-      if (!(Network.prototype.getProtocol(pid[i]) instanceof CDProtocol))
-      {
-        throw new IllegalParameterException(n+"."+PAR_PROTOCOL, "Only CDProtocols are accepted here");
-      }
+//XXX get back to this check to see if it's needed
+//      if (!(Network.prototype.getProtocol(pid[i]) instanceof CDProtocol))
+//      {
+//        throw new IllegalParameterException(n+"."+PAR_PROTOCOL, "Only CDProtocols are accepted here");
+//      }
       nce[i] = (NextCycleEvent) Configuration.getInstance(n+"."+PAR_NEXTC, new NextCycleEvent(null));
     }
     randstart = Configuration.contains(n+"."+PAR_RNDSTART);
@@ -184,7 +192,7 @@ public class CDScheduler implements Control, NodeInitializer
       final long delay = firstDelay(sch[pid[i]].step);
       final long nexttime = Math.max(time, sch[pid[i]].from)+delay;
       if (nexttime<sch[pid[i]].until)
-        EDSimulator.add(nexttime-time, null, n, pid[i], nceclone);
+        Engine.add(nexttime-time, null, n, pid[i], nceclone);
     }
   }
 

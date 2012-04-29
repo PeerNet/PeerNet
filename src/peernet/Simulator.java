@@ -23,7 +23,7 @@ import peernet.config.IllegalParameterException;
 import peernet.config.MissingParameterException;
 import peernet.config.ParsedProperties;
 import peernet.core.CommonState;
-import peernet.edsim.EDSimulator;
+import peernet.edsim.Engine;
 
 
 
@@ -37,7 +37,7 @@ import peernet.edsim.EDSimulator;
  * <ul>
  * <li>{@link CDSimulator}: if {@link CDSimulator#isConfigurationCycleDriven}
  * returns true</li>
- * <li>{@link EDSimulator}: if {@link EDSimulator#isConfigurationEventDriven}
+ * <li>{@link Engine}: if {@link Engine#isConfigurationEventDriven}
  * returns true</li>
  * </ul>
  * This list represents the order in which these alternatives are checked. That
@@ -53,7 +53,7 @@ public class Simulator
   // ======================================================================
   /** {@link CDSimulator} */
   public static final int CDSIM = 0;
-  /** {@link EDSimulator} */
+  /** {@link Engine} */
   public static final int EDSIM = 1;
   /** Unknown simulator */
   public static final int UNKNOWN = -1;
@@ -91,7 +91,7 @@ public class Simulator
   {
     if (simID==UNKNOWN)
     {
-      if (EDSimulator.isConfigurationEventDriven())
+      if (Engine.isConfigurationEventDriven())
       {
         simID = EDSIM;
       }
@@ -119,7 +119,7 @@ public class Simulator
    * <ul>
    * <li>{@link CDSimulator}: if {@link CDSimulator#isConfigurationCycleDriven}
    * returns true</li>
-   * <li>{@link EDSimulator}: if {@link EDSimulator#isConfigurationEventDriven}
+   * <li>{@link Engine}: if {@link Engine#isConfigurationEventDriven}
    * returns true</li>
    * </ul>
    * <p>
@@ -133,7 +133,7 @@ public class Simulator
    * @see ParsedProperties
    * @see Configuration
    * @see CDSimulator
-   * @see EDSimulator
+   * @see Engine
    */
   public static void main(String[] args)
   {
@@ -162,7 +162,7 @@ public class Simulator
       // CDSimulator.nextExperiment();
       // break;
         case EDSIM:
-          EDSimulator.nextExperiment();
+          Engine.nextExperiment();
           break;
       }
     }

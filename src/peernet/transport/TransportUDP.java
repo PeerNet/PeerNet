@@ -16,8 +16,9 @@ import java.net.SocketException;
 
 import peernet.config.Configuration;
 import peernet.core.Descriptor;
+import peernet.core.Node;
 
-public class TransportUDP implements TransportInet
+public class TransportUDP extends TransportInet
 {
 	/**
 	 * The port to listen to.
@@ -53,7 +54,7 @@ public class TransportUDP implements TransportInet
 	}
 
 
-  @Override
+
 	public void send(Address dest, int pid, Object payload)
 	{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -4,6 +4,7 @@
  */
 package peernet.transport;
 
+import peernet.core.Node;
 import peernet.core.Protocol;
 
 /**
@@ -12,10 +13,26 @@ import peernet.core.Protocol;
  * 
  * @author Spyros Voulgaris
  */
-public interface Transport extends Protocol
+public abstract class Transport extends Protocol
 {
   /**
    * Used to send a message to another node, given the node's address.
    */
-  public void send(Address dest, int pid, Object payload);
+  public abstract void send(Address dest, int pid, Object payload);
+  
+  
+
+
+  @Override
+  public final void processEvent(Address src, Node node, int pid, Object event)
+  {
+    assert false;
+  }
+
+
+  @Override
+  public final void nextCycle(Node node, int protocolID)
+  {
+    assert false;
+  }
 }

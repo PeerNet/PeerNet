@@ -6,12 +6,13 @@ package peernet.transport;
 
 import peernet.config.Configuration;
 import peernet.core.CommonState;
-import peernet.core.Engine;
-import peernet.core.Engine.AddressType;
-import peernet.edsim.EDSimulator;
+import peernet.core.Engine1;
+import peernet.core.Engine1.AddressType;
+import peernet.core.Node;
+import peernet.edsim.Engine;
 
 
-public class TransportEmu implements Transport
+public class TransportEmu extends Transport
 {
   /**
    * The delay that corresponds to the time spent on the source (and destination)
@@ -28,7 +29,7 @@ public class TransportEmu implements Transport
   public TransportEmu(String prefix)
   {
     local = Configuration.getInt(prefix + "." + PAR_LOCAL, 0);
-    assert Engine.getAddressType() == AddressType.SIM;
+    assert Engine1.getAddressType() == AddressType.SIM;
   }
 
 
@@ -41,7 +42,7 @@ public class TransportEmu implements Transport
     int latency = RouterNetwork.getLatency(senderRouter, receiverRouter) + local*2;
 
     if (latency >= 0) // if latency < 0, it's a broken link
-      EDSimulator.add(latency, senderAddress, ((AddressSim)dest).node, pid, payload);
+      Engine.add(latency, senderAddress, ((AddressSim)dest).node, pid, payload);
   }
 
   public Object clone()

@@ -16,8 +16,6 @@ import peernet.core.CommonState;
 import peernet.core.Control;
 import peernet.core.Network;
 import peernet.core.Node;
-import peernet.edsim.CDProtocol;
-import peernet.edsim.EDProtocol;
 
 
 

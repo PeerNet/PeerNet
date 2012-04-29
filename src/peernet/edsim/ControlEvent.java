@@ -68,8 +68,8 @@ class ControlEvent
     long next = schedule.getNext();
     if (next>=0 && next<CommonState.getEndTime())
     {
-      //EDSimulator.addControlEvent(next, order, this);
-      next = (next << EDSimulator.rbits) | order;
+      //Engine.addControlEvent(next, order, this);
+      next = (next << Engine.rbits) | order;
       heap.add(next, null, null, (byte)0, this);
     }
   }
@@ -89,7 +89,7 @@ class ControlEvent
     long next = schedule.getNext();
     if (next>=0 && next<CommonState.getEndTime())
     {
-      next = (next << EDSimulator.rbits) | order;
+      next = (next << Engine.rbits) | order;
       heap.add(next, null, null, (byte)0, this);
     }
     return ret;

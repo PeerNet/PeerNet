@@ -27,9 +27,6 @@ import peernet.config.Configuration;
 import peernet.config.IllegalParameterException;
 import peernet.core.CommonState;
 import peernet.core.Control;
-import peernet.core.Engine1;
-import peernet.core.Engine1.AddressType;
-import peernet.core.Engine1.Type;
 import peernet.core.Network;
 import peernet.core.Node;
 import peernet.core.Protocol;
@@ -100,7 +97,7 @@ public class Engine
    * 
    * @config
    */
-  private static final String PAR_DURATION = "simulation.duration";
+  private static final String PAR_DURATION = "duration";
 
   /**
    * This parameter specifies how often the simulator should log the current
@@ -108,7 +105,7 @@ public class Engine
    * 
    * @config
    */
-  private static final String PAR_LOGTIME = "simulation.logtime";
+  private static final String PAR_LOGTIME = "logtime";
 
   /**
    * This parameter specifies how many bits are used to order events that occur
@@ -118,7 +115,7 @@ public class Engine
    * 
    * @config
    */
-  private static final String PAR_RBITS = "simulation.timebits";
+  private static final String PAR_RBITS = "timebits";
 
   /**
    * This is the prefix for initializers. These have to be of type
@@ -314,7 +311,7 @@ public class Engine
    */
   public static final boolean isConfigurationEventDriven()
   {
-    return Configuration.contains(PAR_DURATION);
+    return Configuration.contains(PREFIX+"."+PAR_DURATION);
   }
 
 
@@ -398,14 +395,14 @@ public class Engine
    */
   public static void nextExperiment()
   {
-    rbits = Configuration.getInt(PAR_RBITS, 8);
+    rbits = Configuration.getInt(PREFIX+"."+PAR_RBITS, 8);
     if (rbits<8||rbits>=64)
-      throw new IllegalParameterException(PAR_RBITS, "This parameter should be >= 8 or < 64");
+      throw new IllegalParameterException(PREFIX+"."+PAR_RBITS, "This parameter should be >= 8 or < 64");
 
-    endtime = Configuration.getLong(PAR_DURATION);
+    endtime = Configuration.getLong(PREFIX+"."+PAR_DURATION);
     CommonState.setEndTime(endtime);
 
-    logtime = Configuration.getLong(PAR_LOGTIME, Long.MAX_VALUE);
+    logtime = Configuration.getLong(PREFIX+"."+PAR_LOGTIME, Long.MAX_VALUE);
 
     // initialization
     System.err.println("Engine: resetting");  // XXX: change to debug() or notify()
@@ -441,15 +438,15 @@ public class Engine
 
   public static void startExperiment()
   {
-    rbits = Configuration.getInt(PAR_RBITS, 8);
+    rbits = Configuration.getInt(PREFIX+"."+PAR_RBITS, 8);
     if (rbits<8||rbits>=64)
-      throw new IllegalParameterException(PAR_RBITS, "This parameter should be >= 8 or < 64");
+      throw new IllegalParameterException(PREFIX+"."+PAR_RBITS, "This parameter should be >= 8 or < 64");
 
-    endtime = Configuration.getLong(PAR_DURATION);
+    endtime = Configuration.getLong(PREFIX+"."+PAR_DURATION);
     if (CommonState.getEndTime()<0) // not initialized yet
       CommonState.setEndTime(endtime);
 
-    logtime = Configuration.getLong(PAR_LOGTIME, Long.MAX_VALUE);
+    logtime = Configuration.getLong(PREFIX+"."+PAR_LOGTIME, Long.MAX_VALUE);
 
     // initialization
     System.err.println("Engine: resetting");  // XXX: change to debug() or notify()

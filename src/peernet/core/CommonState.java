@@ -18,9 +18,10 @@
 
 package peernet.core;
 
-import peernet.config.*;
-import peernet.core.Engine1.Type;
-import peernet.util.*;
+import peernet.config.Configuration;
+import peernet.edsim.Engine;
+import peernet.edsim.Engine.Type;
+import peernet.util.ExtendedRandom;
 
 /**
  * This is the common state of the simulation all objects see.
@@ -151,7 +152,7 @@ protected CommonState() {}
  */
 public static long getTime()
 {
-	return Engine1.getType()==Type.SIM ? time : System.currentTimeMillis();
+	return Engine.getType()==Type.SIM ? time : System.currentTimeMillis();
 }
 
 //-----------------------------------------------------------------

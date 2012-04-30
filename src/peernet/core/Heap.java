@@ -14,13 +14,12 @@
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package peernet.edsim;
+package peernet.core;
 
 import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.Random;
 
-import peernet.core.Node;
 import peernet.transport.Address;
 
 

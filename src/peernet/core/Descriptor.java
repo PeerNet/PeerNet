@@ -4,8 +4,7 @@
  */
 package peernet.core;
 
-import peernet.edsim.Engine;
-import peernet.edsim.Engine.AddressType;
+import peernet.core.Engine.AddressType;
 import peernet.transport.Address;
 import peernet.transport.AddressInet;
 import peernet.transport.AddressSim;

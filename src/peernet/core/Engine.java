@@ -19,18 +19,12 @@
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package peernet.edsim;
+package peernet.core;
 
 import java.util.Arrays;
 
 import peernet.config.Configuration;
 import peernet.config.IllegalParameterException;
-import peernet.core.CommonState;
-import peernet.core.Control;
-import peernet.core.Network;
-import peernet.core.Node;
-import peernet.core.Protocol;
-import peernet.core.Schedule;
 import peernet.transport.Address;
 
 

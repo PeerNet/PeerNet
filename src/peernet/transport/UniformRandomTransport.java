@@ -3,8 +3,8 @@ package peernet.transport;
 import peernet.config.Configuration;
 import peernet.config.IllegalParameterException;
 import peernet.core.CommonState;
+import peernet.core.Engine;
 import peernet.core.Node;
-import peernet.edsim.Engine;
 
 
 /**

@@ -14,11 +14,8 @@
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package peernet.edsim;
+package peernet.core;
 
-import peernet.core.CommonState;
-import peernet.core.Control;
-import peernet.core.Schedule;
 
 
 

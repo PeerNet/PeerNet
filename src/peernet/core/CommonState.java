@@ -19,8 +19,7 @@
 package peernet.core;
 
 import peernet.config.Configuration;
-import peernet.edsim.Engine;
-import peernet.edsim.Engine.Type;
+import peernet.core.Engine.Type;
 import peernet.util.ExtendedRandom;
 
 /**

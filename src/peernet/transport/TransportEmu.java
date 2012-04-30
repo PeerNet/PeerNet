@@ -6,8 +6,8 @@ package peernet.transport;
 
 import peernet.config.Configuration;
 import peernet.core.CommonState;
-import peernet.edsim.Engine;
-import peernet.edsim.Engine.AddressType;
+import peernet.core.Engine;
+import peernet.core.Engine.AddressType;
 
 
 public class TransportEmu extends Transport

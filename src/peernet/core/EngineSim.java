@@ -2,8 +2,8 @@
  * Created on Apr 28, 2012 by Spyros Voulgaris
  *
  */
-package peernet.edsim;
+package peernet.core;
 
-public class EngineEmu extends Engine
+public class EngineSim extends Engine
 {
 }

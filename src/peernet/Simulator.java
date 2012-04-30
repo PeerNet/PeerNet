@@ -23,7 +23,7 @@ import peernet.config.IllegalParameterException;
 import peernet.config.MissingParameterException;
 import peernet.config.ParsedProperties;
 import peernet.core.CommonState;
-import peernet.edsim.Engine;
+import peernet.core.Engine;
 
 
 

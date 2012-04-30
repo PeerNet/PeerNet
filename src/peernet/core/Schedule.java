@@ -189,7 +189,24 @@ public class Schedule
     long ret = next;
     next += step;
     if (next>=until)
-      next = -1;
+      ret = -1;
     return ret;
+  }
+
+
+
+  public long nextDelay(long time)
+  {
+    long nextTime;
+
+    if (time==0) // first delay
+      nextTime = randomStart ? CommonState.r.nextLong(step) : 0;
+    else
+      nextTime = time + step;
+    
+    if (nextTime <= until)
+      return nextTime - time;
+    else
+      return -1;
   }
 }

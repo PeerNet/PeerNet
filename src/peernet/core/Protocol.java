@@ -16,8 +16,6 @@
  */
 package peernet.core;
 
-import javax.sound.midi.SysexMessage;
-
 import peernet.transport.Address;
 
 
@@ -30,7 +28,7 @@ import peernet.transport.Address;
  * @author Alberto Montresor
  * @version $Revision: 1.5 $
  */
-public abstract class Protocol
+public abstract class Protocol implements Cloneable
 {
   /**
    * This method is invoked by the scheduler to deliver events to the protcol.

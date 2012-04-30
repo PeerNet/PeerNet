@@ -42,7 +42,7 @@ import peernet.transport.Address;
  * event driven simulation the configuration has to describe a set of
  * {@link Protocol}s, a set of {@link Control}s and their ordering and a set of
  * initializers and their ordering. See parameters {@value #PAR_INIT},
- * {@value #PAR_CTRL}.
+ * {@value #PAR_CONTROL}.
  * <p>
  * One experiment run by {@link #nextExperiment} works as follows. First the
  * initializers are run in the specified order. Then the first execution of all
@@ -137,7 +137,9 @@ public class Engine
    * @see Configuration
    * @config
    */
-  private static final String PAR_CTRL = "control";
+  private static final String PAR_CONTROL = "control";
+
+  private static final String PAR_PROTOCOL = "protocol";
 
   private static final String PAR_TYPE = "type";
 
@@ -157,15 +159,16 @@ public class Engine
   /** holds the modifiers of this simulation */
   private static Control[] controls = null;
 
-  /** Holds the control schedulers of this simulation */
+  /** Holds the control schedules */
   private static Schedule[] controlSchedules = null;
+
+  /** Holds the protocol schedules */
+  private static Schedule[] protocolSchedules = null;
 
   /** Ordered list of events (heap) */
   private static Heap simHeap = null;
 
   private static long nextlog = 0;
-
-  private static NextCycleEvent nextCycleEvent = new NextCycleEvent("");
 
   private static Engine instance = null;
 
@@ -260,10 +263,10 @@ public class Engine
   private static void scheduleControls(Heap heap)
   {
     // load controls
-    String[] names = Configuration.getNames(PAR_CTRL);
+    String[] names = Configuration.getNames(PAR_CONTROL);
     controls = new Control[names.length];
     controlSchedules = new Schedule[names.length];
-    for (int i = 0; i<names.length; ++i)
+    for (int i = 0; i<names.length; i++)
     {
       controls[i] = (Control) Configuration.getInstance(names[i]);
       controlSchedules[i] = new Schedule(names[i]);
@@ -280,7 +283,28 @@ public class Engine
     }
   }
 
+  private static void scheduleProtocols()
+  {
+    // load protocols
+    String[] protocolNames = Configuration.getNames(PAR_PROTOCOL);
+    protocolSchedules = new Schedule[protocolNames.length];
+    for (int i=0; i<protocolNames.length; i++)
+      protocolSchedules[i] = new Schedule(protocolNames[i]);
+    
+    for (int i=0; i<Network.size(); i++)
+    {
+      Node node = Network.get(i);
+      for (int j=0; j<protocolNames.length; j++)
+      {
+        long delay = protocolSchedules[j].nextDelay(0);
+        if (delay >= 0)
+          Engine.add(delay, null, node, j, scheduledEvent);
+      }
+    }
+  }
 
+  private static class ScheduledEvent {};
+  private static ScheduledEvent scheduledEvent = new ScheduledEvent();
 
   // ---------------------------------------------------------------------
   /**
@@ -353,20 +377,36 @@ public class Engine
       ControlEvent ctrl = (ControlEvent) ev.event;
       return ctrl.execute();
     }
-    else if (ev.node!=Network.prototype && ev.node.isUp()) // XXX why would prototype appear here?
+    else if (ev.node.isUp())
     {
+      assert ev.node != Network.prototype;
       CommonState.setPid(pid);  // XXX try to entirely avoid CommonState
       CommonState.setNode(ev.node);
-      if (ev.event instanceof NextCycleEvent)
-      {
+//      if (ev.event instanceof NextCycleEvent)
+//      {
 //        NextCycleEvent nce = (NextCycleEvent) ev.event;
 //        nce.execute();
+//        Protocol prot = ev.node.getProtocol(pid);
+//        prot.nextCycle(ev.node, pid);
+//
+//        long delay = prot.nextDelay();
+//        if (delay == 0)
+//        long delay = CDScheduler.sch[pid].step;
+//
+//        if (delay > 0)
+//          Engine.add(delay, null, ev.node, pid, nextCycleEvent);
+//      }
+      if (ev.event instanceof ScheduledEvent)
+      {
         Protocol prot = ev.node.getProtocol(pid);
         prot.nextCycle(ev.node, pid);
-        long delay = prot.nextDelay();
-        if (CommonState.getTime()+delay<CDScheduler.sch[pid].until)
-          Engine.add(delay, null, ev.node, pid, nextCycleEvent);
 
+        long delay = prot.nextDelay();
+        if (delay == 0)
+          delay = protocolSchedules[pid].nextDelay(time);
+
+        if (delay > 0)
+          Engine.add(delay, null, ev.node, pid, scheduledEvent);
       }
       else // call Protocol.processEvent()
       {
@@ -420,6 +460,7 @@ public class Engine
 
     runInitializers();
     scheduleControls(simHeap);
+    scheduleProtocols();
 
     // Perform the actual simulation; executeNext() will tell when to stop.
     boolean exit = false;
@@ -534,11 +575,11 @@ public class Engine
     Heap heap;
     if (getType() == Type.SIM)
       heap = simHeap;
-//    else
-//    {
-//      
-//    }
-//    heap.add(time, src, node, (byte) pid, event);
+    else
+    {
+      heap = simHeap; // XXX to be changed
+    }
+    heap.add(time, src, node, (byte) pid, event);
   }
   
   
@@ -552,5 +593,11 @@ public class Engine
         instance = new EngineEmu();
     }
     return instance;
+  }
+
+
+  public void addNode()
+  {
+    
   }
 }

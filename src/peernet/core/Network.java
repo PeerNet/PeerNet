@@ -113,18 +113,16 @@ public class Network
     node = new Node[maxlen];
 
     // creating prototype node
-    Node tmp = null;
     if (!Configuration.contains(PAR_NODE))
     {
       System.err.println("Network: no node defined, using GeneralNode");
-      tmp = new GeneralNode("");
+      prototype = new GeneralNode("");
     }
     else
     {
-      tmp = (Node) Configuration.getInstance(PAR_NODE);
+      prototype = (Node) Configuration.getInstance(PAR_NODE);
     }
 
-    prototype = tmp;
     prototype.setIndex(-1);
 
     // cloning the nodes

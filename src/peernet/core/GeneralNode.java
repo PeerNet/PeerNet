@@ -19,7 +19,9 @@ package peernet.core;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import peernet.config.*;
+import peernet.config.Configuration;
+import peernet.config.FastConfig;
+import peernet.core.EngineEmu.ExecutionThread;
 
 
 
@@ -55,6 +57,8 @@ public class GeneralNode implements Node
    */
   private long ID;
 
+
+  private ExecutionThread thread;
 
 
   // ================ constructor and initialization =================
@@ -253,5 +257,21 @@ public class GeneralNode implements Node
       e.printStackTrace();
     }
     return d;
+  }
+
+
+
+  @Override
+  public ExecutionThread getThread()
+  {
+    return thread;
+  }
+
+
+
+  @Override
+  public void setThread(ExecutionThread thread)
+  {
+    this.thread = thread;
   }
 }

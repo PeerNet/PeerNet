@@ -59,13 +59,7 @@ public class Simulator
   public static final int UNKNOWN = -1;
   /** the class names of simulators used */
   protected static final String[] simName = { "peersim.cdsim.CDSimulator", "peersim.edsim.EDSimulator", };
-  /**
-   * Parameter representing the number of times the experiment is run. Defaults
-   * to 1.
-   * 
-   * @config
-   */
-  public static final String PAR_EXPS = "simulation.experiments";
+
   /**
    * If present, this parameter activates the redirection of the standard output
    * to a given PrintStream. This comes useful for processing the output of the
@@ -74,30 +68,6 @@ public class Simulator
    * @config
    */
   public static final String PAR_REDIRECT = "simulation.stdout";
-  // ==================== static fields ===================================
-  // ======================================================================
-  /** */
-  private static int simID = UNKNOWN;
-
-
-
-  // ========================== methods ===================================
-  // ======================================================================
-  /**
-   * Returns the numeric id of the simulator to invoke. At the moment this can
-   * be {@link #CDSIM}, {@link #EDSIM} or {@link #UNKNOWN}.
-   */
-  public static int getSimID()
-  {
-    if (simID==UNKNOWN)
-    {
-      if (Engine.isConfigurationEventDriven())
-      {
-        simID = EDSIM;
-      }
-    }
-    return simID;
-  }
 
 
 
@@ -143,28 +113,12 @@ public class Simulator
     PrintStream newout = (PrintStream) Configuration.getInstance(PAR_REDIRECT, System.out);
     if (newout!=System.out)
       System.setOut(newout);
-    final int SIMID = getSimID();
-    if (SIMID==UNKNOWN)
-    {
-      System.err.println("Simulator: unable to identify configuration, exiting.");
-      return;
-    }
     try
     {
-      System.err.println("Simulator: starting experiment in "+simName[SIMID]+" mode");
       System.err.println("Random seed: "+CommonState.r.getLastSeed());
       System.out.println("\n\n");
-      // XXX could be done through reflection, but
-      // this is easier to read.
-      switch (SIMID)
-      {
-      // case CDSIM:
-      // CDSimulator.nextExperiment();
-      // break;
-        case EDSIM:
-          Engine.nextExperiment();
-          break;
-      }
+      Engine engine = Engine.instance();
+      engine.startExperiment();
     }
     catch (MissingParameterException e)
     {

@@ -23,6 +23,7 @@ package peernet.core;
 
 import java.util.Arrays;
 
+import peernet.Simulator;
 import peernet.config.Configuration;
 import peernet.config.IllegalParameterException;
 import peernet.transport.Address;
@@ -80,7 +81,7 @@ import peernet.transport.Address;
  * 
  * @see Configuration
  */
-public class Engine
+public abstract class Engine
 {
   private static final String PREFIX = "simulation";
 
@@ -145,24 +146,21 @@ public class Engine
   static long endtime;
 
   /** Log time */
-  private static long logtime;
+  protected static long logtime;
 
   /** Number of bits used for random */
   static int rbits;
 
   /** holds the modifiers of this simulation */
-  private static Control[] controls = null;
+  static Control[] controls = null;
 
   /** Holds the control schedules */
-  private static Schedule[] controlSchedules = null;
+  protected static Schedule[] controlSchedules = null;
 
   /** Holds the protocol schedules */
-  private static Schedule[] protocolSchedules = null;
+  protected static Schedule[] protocolSchedules = null;
 
-  /** Ordered list of events (heap) */
-  private static Heap simHeap = null;
-
-  private static long nextlog = 0;
+  protected static long nextlog = 0;
 
   private static Engine instance = null;
 
@@ -221,14 +219,6 @@ public class Engine
 
 
 
-  // =============== initialization ======================================
-  // =====================================================================
-  /** to prevent construction */
-  protected Engine()
-  {
-  }
-
-
 
   // ---------------------------------------------------------------------
   // Private methods
@@ -236,7 +226,7 @@ public class Engine
   /**
    * Load and run initializers.
    */
-  private static void runInitializers()
+  private void runInitializers()
   {
     Object[] inits = Configuration.getInstanceArray(PAR_INIT);
     String names[] = Configuration.getNames(PAR_INIT);
@@ -254,7 +244,7 @@ public class Engine
    * 
    * @param heap
    */
-  private static void scheduleControls(Heap heap)
+  private void scheduleControls()
   {
     // load controls
     String[] names = Configuration.getNames(PAR_CONTROL);
@@ -269,15 +259,17 @@ public class Engine
 
     // Schedule controls execution
     int order = 0;
-    for (int i = 0; i<controls.length; i++)
+    for (int i=0; i<controls.length; i++)
     {
-      ControlEvent event = new ControlEvent(heap, controls[i], controlSchedules[i], order++);
-      if (order>((1<<rbits)-1))
+      if (i>Byte.MAX_VALUE)
         throw new IllegalArgumentException("Too many control objects");
+      long delay = controlSchedules[i].initialDelay();
+      if (delay >= 0)
+        add(delay,  null, null, i, null);
     }
   }
 
-  private static void scheduleProtocols()
+  private void scheduleProtocols()
   {
     // load protocols
     String[] protocolNames = Configuration.getNames(PAR_PROTOCOL);
@@ -290,15 +282,15 @@ public class Engine
       Node node = Network.get(i);
       for (int j=0; j<protocolNames.length; j++)
       {
-        long delay = protocolSchedules[j].nextDelay(0);
+        long delay = protocolSchedules[j].initialDelay();
         if (delay >= 0)
-          Engine.add(delay, null, node, j, scheduledEvent);
+          add(delay, null, node, j, scheduledEvent);
       }
     }
   }
 
-  private static class ScheduledEvent {};
-  private static ScheduledEvent scheduledEvent = new ScheduledEvent();
+  static class ScheduledEvent {};
+  protected static ScheduledEvent scheduledEvent = new ScheduledEvent();
 
   // ---------------------------------------------------------------------
   /**
@@ -321,227 +313,10 @@ public class Engine
 
 
 
-  // ---------------------------------------------------------------------
-  /**
-   * This method is used to check whether the current configuration can be used
-   * for event driven simulations. It checks for the existence of config
-   * parameter {@value #PAR_DURATION}.
-   */
-  public static final boolean isConfigurationEventDriven()
-  {
-    return Configuration.contains(PREFIX+"."+PAR_DURATION);
-  }
+  protected abstract void createHeaps();
+  protected abstract void executionLoop();
 
 
-
-  // ---------------------------------------------------------------------
-  /**
-   * Execute and remove the next event from the ordered event list.
-   * 
-   * @return true if the execution should be stopped.
-   */
-  private static boolean executeNext(Heap heap)
-  {
-    Heap.Event ev = heap.removeFirst();
-    if (ev==null)
-    {
-      System.err.println("Engine: queue is empty, quitting"+" at time "+CommonState.getTime());
-      return true;
-    }
-    long time = ev.time>>rbits;
-    if (time>=nextlog)
-    {
-      System.err.println("Current time: "+time);
-      do
-      {
-        nextlog += logtime;
-      }
-      while (time>=nextlog);
-    }
-    if (time>=endtime)
-    {
-      System.err.println("Engine: reached end time, quitting, leaving "+heap.size()+" unprocessed events in the queue");
-      return true;
-    }
-    CommonState.setTime(time);
-    int pid = ev.pid;
-    if (ev.node==null)
-    {
-      // control event; handled through a special method
-      ControlEvent ctrl = (ControlEvent) ev.event;
-      return ctrl.execute();
-    }
-    else if (ev.node.isUp())
-    {
-      assert ev.node != Network.prototype;
-      CommonState.setPid(pid);  // XXX try to entirely avoid CommonState
-      CommonState.setNode(ev.node);
-//      if (ev.event instanceof NextCycleEvent)
-//      {
-//        NextCycleEvent nce = (NextCycleEvent) ev.event;
-//        nce.execute();
-//        Protocol prot = ev.node.getProtocol(pid);
-//        prot.nextCycle(ev.node, pid);
-//
-//        long delay = prot.nextDelay();
-//        if (delay == 0)
-//        long delay = CDScheduler.sch[pid].step;
-//
-//        if (delay > 0)
-//          Engine.add(delay, null, ev.node, pid, nextCycleEvent);
-//      }
-      if (ev.event instanceof ScheduledEvent)
-      {
-        Protocol prot = ev.node.getProtocol(pid);
-        prot.nextCycle(ev.node, pid);
-
-        long delay = prot.nextDelay();
-        if (delay == 0)
-          delay = protocolSchedules[pid].nextDelay(time);
-
-        if (delay > 0)
-          Engine.add(delay, null, ev.node, pid, scheduledEvent);
-      }
-      else // call Protocol.processEvent()
-      {
-        Protocol prot = ev.node.getProtocol(pid);
-        prot.processEvent(ev.src, ev.node, pid, ev.event);
-        // try {
-        // EDProtocol prot = (EDProtocol) ev.node.getProtocol(pid);
-        // prot.processEvent(ev.node, pid, ev.event);
-        // } catch (ClassCastException e) {
-        // throw new IllegalArgumentException("Protocol " +
-        // Configuration.lookupPid(pid) +
-        // " does not implement EDProtocol; " + ev.event.getClass() );
-        // }
-      }
-    }
-    return false;
-  }
-
-
-
-  // ---------------------------------------------------------------------
-  // Public methods
-  // ---------------------------------------------------------------------
-  /**
-   * Runs an experiment, resetting everything except the random seed.
-   */
-  public static void nextExperiment()
-  {
-    rbits = Configuration.getInt(PREFIX+"."+PAR_RBITS, 8);
-    if (rbits<8||rbits>=64)
-      throw new IllegalParameterException(PREFIX+"."+PAR_RBITS, "This parameter should be >= 8 or < 64");
-
-    endtime = Configuration.getLong(PREFIX+"."+PAR_DURATION);
-    CommonState.setEndTime(endtime);
-
-    logtime = Configuration.getLong(PREFIX+"."+PAR_LOGTIME, Long.MAX_VALUE);
-
-    // initialization
-    System.err.println("Engine: resetting");  // XXX: change to debug() or notify()
-    controls = null;
-    controlSchedules = null;
-
-    simHeap = new Heap(); // XXX single heap only in simulation
-    nextlog = 0;
-    Network.reset();
-
-    System.err.println("Engine: running initializers");
-    
-    if (getType()==Type.SIM)
-      CommonState.setTime(0); // needed here
-
-    runInitializers();
-    scheduleControls(simHeap);
-    scheduleProtocols();
-
-    // Perform the actual simulation; executeNext() will tell when to stop.
-    boolean exit = false;
-    while (!exit)
-      exit = executeNext(simHeap);
-
-    // analysis after the simulation
-    CommonState.setPhase(CommonState.POST_SIMULATION);
-    for (int j = 0; j<controls.length; ++j)
-    {
-      if (controlSchedules[j].fin)
-        controls[j].execute();
-    }
-  }
-
-
-  public static void startExperiment()
-  {
-    rbits = Configuration.getInt(PREFIX+"."+PAR_RBITS, 8);
-    if (rbits<8||rbits>=64)
-      throw new IllegalParameterException(PREFIX+"."+PAR_RBITS, "This parameter should be >= 8 or < 64");
-
-    endtime = Configuration.getLong(PREFIX+"."+PAR_DURATION);
-    if (CommonState.getEndTime()<0) // not initialized yet
-      CommonState.setEndTime(endtime);
-
-    logtime = Configuration.getLong(PREFIX+"."+PAR_LOGTIME, Long.MAX_VALUE);
-
-    // initialization
-    System.err.println("Engine: resetting");  // XXX: change to debug() or notify()
-    controls = null;
-    controlSchedules = null;
-
-    //XXX heap = new Heap(); // XXX single heap only in simulation
-    nextlog = 0;
-    Network.reset();
-    
-    NodeThread[] nodeThreads = new NodeThread[Network.size()];
-    for (int i=0; i<Network.size(); i++)
-    {
-      nodeThreads[i] = new NodeThread(Network.get(i));
-    }
-
-    Heap controlHeap = new Heap();
-    
-    System.err.println("Engine: running initializers");
-
-    //XXX CommonState.setTime(0); // needed here
-    runInitializers();
-    scheduleControls(controlHeap);
-
-    // Perform the actual simulation; executeNext() will tell when to stop.
-//    boolean exit = false;
-//    while (!exit)
-//      exit = executeNext();
-
-    // analysis after the simulation
-    CommonState.setPhase(CommonState.POST_SIMULATION);
-    for (int j = 0; j<controls.length; ++j)
-    {
-      if (controlSchedules[j].fin)
-        controls[j].execute();
-    }
-  }
-
-  public static class NodeThread extends Thread
-  {
-    Node node = null;
-    Heap heap = null;
-
-    public NodeThread(Node node)
-    {
-      this.node = node;
-      this.heap = new Heap();
-    }
-    
-    public void run()
-    {
-      boolean exit = false;
-      while (!exit)
-        exit = executeNext(heap);
-      
-    }
-  }
-
-
-  // ---------------------------------------------------------------------
   /**
    * Adds a new event to be scheduled, specifying the number of time units of
    * delay, and the node and the protocol identifier to which the event will be
@@ -554,29 +329,45 @@ public class Engine
    * @param pid The identifier of the protocol to which the event will be
    *          delivered
    */
-  public static void add(long delay, Address src, Node node, int pid, Object event)
-  {
-    if (delay<0)
-      throw new IllegalArgumentException("Protocol "+node.getProtocol(pid)+" is trying to add event "+event+
-          " with a negative delay: "+delay);
-    if (pid>Byte.MAX_VALUE)
-      throw new IllegalArgumentException("This version does not support more than "+Byte.MAX_VALUE+" protocols");
-    long time = CommonState.getTime()+delay;
-    if (time>=endtime)
-      return;
-    time = (time<<rbits)|CommonState.r.nextInt(1<<rbits);
+  public abstract void add(long delay, Address src, Node node, int pid, Object event);
 
-    Heap heap;
-    if (getType() == Type.SIM)
-      heap = simHeap;
-    else
-    {
-      heap = simHeap; // XXX to be changed
-    }
-    heap.add(time, src, node, (byte) pid, event);
+
+  
+  /**
+   * Runs an experiment, resetting everything except the random seed.
+   */
+  public void startExperiment()
+  {
+    System.err.println("Engine: starting experiment in "+getType()+" mode");
+
+    rbits = Configuration.getInt(PREFIX+"."+PAR_RBITS, 8);
+    if (rbits<8||rbits>=64)
+      throw new IllegalParameterException(PREFIX+"."+PAR_RBITS, "This parameter should be >= 8 or < 64");
+
+    endtime = Configuration.getLong(PREFIX+"."+PAR_DURATION, Long.MAX_VALUE);
+    if (endtime != Long.MAX_VALUE)
+      endtime += CommonState.getTime();
+    CommonState.setEndTime(endtime);
+
+    // Logging
+    //XXX: should I keep this?
+    logtime = Configuration.getLong(PREFIX+"."+PAR_LOGTIME, Long.MAX_VALUE);
+    nextlog = 0;
+
+    // initialization
+    System.err.println("Engine: resetting");  // XXX: change to debug() or notify()
+    Network.reset();
+    createHeaps();
+    runInitializers();
+    scheduleControls();
+    scheduleProtocols();
+
+    executionLoop();
   }
-  
-  
+
+
+
+
   public static Engine instance()
   {
     if (instance==null)
@@ -586,12 +377,13 @@ public class Engine
       else
         instance = new EngineEmu();
     }
+
     return instance;
   }
 
 
   public void addNode()
   {
-    
+    assert false;
   }
 }

@@ -23,10 +23,13 @@ public class TransportEmu extends Transport
 
 
   private int local;
+  
+  private Engine engine;
 
   public TransportEmu(String prefix)
   {
     local = Configuration.getInt(prefix + "." + PAR_LOCAL, 0);
+    engine = Engine.instance();
     assert Engine.getAddressType() == AddressType.SIM;
   }
 
@@ -40,7 +43,7 @@ public class TransportEmu extends Transport
     int latency = RouterNetwork.getLatency(senderRouter, receiverRouter) + local*2;
 
     if (latency >= 0) // if latency < 0, it's a broken link
-      Engine.add(latency, senderAddress, ((AddressSim)dest).node, pid, payload);
+      engine.add(latency, senderAddress, ((AddressSim)dest).node, pid, payload);
   }
 
   public Object clone()

@@ -23,10 +23,8 @@ import peernet.transport.Address;
 
 
 /**
- * Interface to identify protocols.
+ * Protocol abstract class
  * 
- * @author Alberto Montresor
- * @version $Revision: 1.5 $
  */
 public abstract class Protocol implements Cloneable
 {

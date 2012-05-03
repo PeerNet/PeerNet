@@ -184,28 +184,31 @@ public class Schedule
    * no more time points. As a side effect, it also updates the next time point,
    * so repeated calls to this method return the scheduled times.
    */
-  public long getNext()
+//  public long getNext()
+//  {
+//    long ret = next;
+//    next += step;
+//    if (next>=until)
+//      ret = -1;
+//    return ret;
+//  }
+
+
+
+  public long initialDelay()
   {
-    long ret = next;
-    next += step;
-    if (next>=until)
-      ret = -1;
-    return ret;
+    if (randomStart)
+      return from + CommonState.r.nextLong(step);
+    else
+      return from;
   }
 
 
 
   public long nextDelay(long time)
   {
-    long nextTime;
-
-    if (time==0) // first delay
-      nextTime = randomStart ? CommonState.r.nextLong(step) : 0;
-    else
-      nextTime = time + step;
-    
-    if (nextTime <= until)
-      return nextTime - time;
+    if (time+step <= until)
+      return step;
     else
       return -1;
   }

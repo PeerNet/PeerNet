@@ -152,6 +152,10 @@ class Heap
     return ev;
   }
 
+  public long getEarliestTime()
+  {
+    return times[0];
+  }
 
 
   // --------------------------------------------------------------------------

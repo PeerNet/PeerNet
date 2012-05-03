@@ -79,6 +79,6 @@ public class UniformRandomTransport extends Transport
     long delay = (range==1 ? min : min+CommonState.r.nextLong(range));
     Address senderAddress = new AddressSim(CommonState.getNode());
 
-    Engine.add(delay, senderAddress, ((AddressSim)dest).node, pid, payload);
+    Engine.instance().add(delay, senderAddress, ((AddressSim)dest).node, pid, payload);
   }
 }

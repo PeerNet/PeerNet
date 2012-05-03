@@ -17,6 +17,8 @@
  */
 package peernet.core;
 
+import peernet.core.EngineEmu.ExecutionThread;
+
 /**
  * Class that represents one node with a network address. An {@link Network} is
  * made of a set of nodes. The functionality of this class is thin: it must be
@@ -56,7 +58,7 @@ public interface Node extends Fallible, Cloneable
    * simply because it is not possible to define it otherwise. Using this method
    * will result in undefined behavior. It is provided for the core system.
    */
-  public void setIndex(int index);
+  /*package*/ void setIndex(int index);
 
 
 
@@ -98,4 +100,9 @@ public interface Node extends Fallible, Cloneable
    * XXX: Spyros, 2007-11-02: Should I move this to the Protocol interface?
    */
   public Descriptor getDescriptor(int pid);
+  
+
+  void setThread(ExecutionThread thread);
+
+  ExecutionThread getThread();
 }

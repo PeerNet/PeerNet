@@ -93,20 +93,8 @@ public class EngineSim extends Engine
     return false;
   }
 
-  public void add(long delay, Address src, Node node, int pid, Object event)
+  public void addAtTime(long time, Address src, Node node, int pid, Object event)
   {
-    if (delay<0)
-      throw new IllegalArgumentException("Protocol "+node.getProtocol(pid)+
-          " is trying to add event "+event+
-          " with a negative delay: "+delay);
-
-    if (pid>Byte.MAX_VALUE)
-      throw new IllegalArgumentException("This version does not support more than "+Byte.MAX_VALUE+" protocols");
-
-    long time = CommonState.getTime()+delay;
-    if (time>=endtime)
-      return;
-
     time = (time<<rbits) | CommonState.r.nextInt(1<<rbits);
     simHeap.add(time, src, node, (byte) pid, event);
   }
@@ -115,5 +103,10 @@ public class EngineSim extends Engine
   protected void createHeaps()
   {
     simHeap = new Heap();
+  }
+  
+  public int pendingEvents()
+  {
+    return simHeap.size();
   }
 }

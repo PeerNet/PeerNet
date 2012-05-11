@@ -23,7 +23,6 @@ package peernet.core;
 
 import java.util.Arrays;
 
-import peernet.Simulator;
 import peernet.config.Configuration;
 import peernet.config.IllegalParameterException;
 import peernet.transport.Address;
@@ -329,8 +328,26 @@ public abstract class Engine
    * @param pid The identifier of the protocol to which the event will be
    *          delivered
    */
-  public abstract void add(long delay, Address src, Node node, int pid, Object event);
+  public void add(long delay, Address src, Node node, int pid, Object event)
+  {
+    long nextTime = CommonState.getTime()+delay;
 
+    if (delay<0)
+    {
+      System.err.println("NOT Ignoring event with negative delay: "+delay);
+//      return;
+    }
+
+//XXX Check for this somewhere in initialization, not in EACH new event!!
+//    if (pid>Byte.MAX_VALUE)
+//      throw new IllegalArgumentException("This version does not support more than "+Byte.MAX_VALUE+" protocols");
+
+    addAtTime(nextTime, src, node, pid, event);
+  }
+
+  
+  public abstract void addAtTime(long delay, Address src, Node node, int pid, Object event);
+  public abstract int pendingEvents();
 
   
   /**

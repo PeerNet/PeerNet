@@ -33,13 +33,13 @@ import peernet.transport.Address;
  * @author Alberto Montresor
  * @version $Revision: 1.8 $
  */
-class Heap
+public class Heap  // make "package"
 {
   // --------------------------------------------------------------------------
   // Constants
   // --------------------------------------------------------------------------
   /** Initial size */
-  private static final int SIZE = 65536;
+  private static final int SIZE = 1;
   // --------------------------------------------------------------------------
   // Fields
   // --------------------------------------------------------------------------

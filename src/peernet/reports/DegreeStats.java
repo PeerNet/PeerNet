@@ -159,6 +159,9 @@ private int nextDegree()
  */
 public boolean execute()
 {
+  System.out.println("Time: "+CommonState.getTime());
+  System.out.println("Pending events: "+Engine.instance().pendingEvents());
+
 	updateGraph();
 	if (!trace)
 		rp.reset(g.size());

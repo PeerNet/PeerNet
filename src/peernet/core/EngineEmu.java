@@ -4,6 +4,8 @@
  */
 package peernet.core;
 
+import java.util.concurrent.Semaphore;
+
 import peernet.transport.Address;
 
 
@@ -17,27 +19,29 @@ public class EngineEmu extends Engine
   {
     Node node = null;
     Heap heap = null;
+    Semaphore sem = null;
 
     public ExecutionThread(Node node)
     {
       this.heap = new Heap();
       this.node = node;
+      this.sem = new Semaphore(1);
     }
     
     public void run()
     {
       boolean exit = false;
-      
+
       long remainingTime;
       while (!exit)
       {
         Heap.Event event = null;
         synchronized (this)
         {
-          while ((remainingTime = heap.getEarliestTime()>>rbits - CommonState.getTime()) > 0)
+          while ((remainingTime = (heap.getEarliestTime()>>rbits) - CommonState.getTime()) > 0)
             try
             {
-              System.err.println("Thread "+node.getID()+" sleeping for "+(remainingTime));
+              //System.err.println("Thread "+node.getID()+" sleeping for "+(remainingTime));
               wait(remainingTime);
             }
             catch (InterruptedException e)
@@ -46,7 +50,6 @@ public class EngineEmu extends Engine
             }
           event = heap.removeFirst();
         }
-
         exit = executeNext(event);
       }
     }
@@ -54,6 +57,79 @@ public class EngineEmu extends Engine
     public Object clone()
     {
       return new Heap();
+    }
+
+    /**
+     * Execute and remove the next event from the ordered event list.
+     * 
+     * @return true if the execution should be stopped.
+     */
+    private boolean executeNext(Heap.Event ev)
+    {
+      long time = ev.time>>rbits;
+      if (time>=endtime) // XXX Should we also check here, or only when scheduling an event?
+        return true;
+    
+      int pid = ev.pid;
+      if (ev.node==null)  // XXX ugly way to identify control events
+      {
+        try {
+          for (int n=0; n<Network.size(); n++)
+          {
+            Node node = Network.get(n);
+            ExecutionThread thread = node.getThread();
+            thread.sem.acquire();
+          }
+        }
+        catch (InterruptedException e) {e.printStackTrace();}
+
+        boolean ret = controls[pid].execute();
+
+        for (int n=0; n<Network.size(); n++)
+        {
+          Node node = Network.get(n);
+          ExecutionThread thread = node.getThread();
+          thread.sem.release();
+        }
+
+        long delay = controlSchedules[pid].nextDelay(time);
+        if (delay>=0)
+          addAtTime(time+delay,  null, null, pid, null);
+        return ret;
+      }
+      else if (ev.node.isUp())
+      {
+        assert ev.node != Network.prototype;
+        CommonState.setPid(pid);  // XXX try to entirely avoid CommonState
+        CommonState.setNode(ev.node);
+        if (ev.event instanceof ScheduledEvent)
+        {
+          Protocol prot = ev.node.getProtocol(pid);
+
+          try {sem.acquire();}
+          catch (InterruptedException e) {e.printStackTrace();}
+
+          prot.nextCycle(ev.node, pid);
+          sem.release();
+
+          long delay = prot.nextDelay();
+          if (delay == 0)
+            delay = protocolSchedules[pid].nextDelay(time);
+    
+          if (delay > 0)
+            addAtTime(time+delay, null, ev.node, pid, scheduledEvent);
+        }
+        else // call Protocol.processEvent()
+        {
+          Protocol prot = ev.node.getProtocol(pid);
+
+          try {sem.acquire();}
+          catch (InterruptedException e) {e.printStackTrace();}
+          prot.processEvent(ev.src, ev.node, pid, ev.event);
+          sem.release();
+        }
+      }
+      return false;
     }
   }
 
@@ -77,7 +153,7 @@ public class EngineEmu extends Engine
     for (int n=0; n<Network.size(); n++)
     {
       Node node = Network.get(n);
-//      node.getThread().start();
+      node.getThread().start();
     }
 //
 //    // analysis after the simulation
@@ -89,72 +165,9 @@ public class EngineEmu extends Engine
 //    }
   }
   
-  /**
-   * Execute and remove the next event from the ordered event list.
-   * 
-   * @return true if the execution should be stopped.
-   */
-  private boolean executeNext(Heap.Event ev)
+  public void addAtTime(long time, Address src, Node node, int pid, Object event)
   {
-    long time = ev.time>>rbits;
-    if (time>=endtime)
-      return true;
-
-    int pid = ev.pid;
-    if (ev.node==null)  // control event; handled through a special method
-    {
-      boolean ret = controls[pid].execute();
-      long delay = controlSchedules[pid].nextDelay(time);
-      if (delay>=0 && delay+CommonState.getTime()<CommonState.getEndTime())
-        add(delay,  null, null, pid, null);
-      return ret;
-    }
-    else if (ev.node.isUp())
-    {
-      assert ev.node != Network.prototype;
-      CommonState.setPid(pid);  // XXX try to entirely avoid CommonState
-      CommonState.setNode(ev.node);
-      if (ev.event instanceof ScheduledEvent)
-      {
-        Protocol prot = ev.node.getProtocol(pid);
-        prot.nextCycle(ev.node, pid);
-
-        long delay = prot.nextDelay();
-        if (delay == 0)
-          delay = protocolSchedules[pid].nextDelay(time);
-
-        if (delay > 0)
-          add(delay, null, ev.node, pid, scheduledEvent);
-      }
-      else // call Protocol.processEvent()
-      {
-        Protocol prot = ev.node.getProtocol(pid);
-        prot.processEvent(ev.src, ev.node, pid, ev.event);
-      }
-    }
-    return false;
-  }
-
-  @Override
-  public void add(long delay, Address src, Node node, int pid, Object event)
-  {
-    if (delay<0)
-    {
-      System.err.println("Ignoring event with negative delay: "+delay);
-      return;
-    }
-
-    System.err.println("Adding event with delay: "+delay);
-      
-//      throw new IllegalArgumentException("Protocol "+node.getProtocol(pid)+
-//          " is trying to add event "+event+
-//          " with a negative delay: "+delay);
-
-    if (pid>Byte.MAX_VALUE)
-      throw new IllegalArgumentException("This version does not support more than "+Byte.MAX_VALUE+" protocols");
-
-    long time = CommonState.getTime()+delay;
-    if (time>=endtime)
+    if (time >= endtime)
       return;
 
     time = (time<<rbits) | CommonState.r.nextInt(1<<rbits);
@@ -170,5 +183,13 @@ public class EngineEmu extends Engine
       thread.heap.add(time, src, node, (byte) pid, event);
       thread.notify();
     }
+  }
+  
+  public int pendingEvents()
+  {
+    int events = 0;
+    for (int n=0; n<Network.size(); n++)
+      events += Network.get(n).getThread().heap.size();
+    return events;
   }
 }

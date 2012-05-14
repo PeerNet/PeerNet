@@ -27,7 +27,7 @@ public class EngineEmu extends Engine
       this.node = node;
       this.sem = new Semaphore(1);
     }
-    
+
     public void run()
     {
       boolean exit = false;
@@ -100,8 +100,8 @@ public class EngineEmu extends Engine
       else if (ev.node.isUp())
       {
         assert ev.node != Network.prototype;
-        CommonState.setPid(pid);  // XXX try to entirely avoid CommonState
-        CommonState.setNode(ev.node);
+//        CommonState.setPid(pid);  // XXX try to entirely avoid CommonState
+//        CommonState.setNode(ev.node);
         if (ev.event instanceof ScheduledEvent)
         {
           Protocol prot = ev.node.getProtocol(pid);

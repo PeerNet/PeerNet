@@ -5,9 +5,9 @@
 package peernet.transport;
 
 import peernet.config.Configuration;
-import peernet.core.CommonState;
 import peernet.core.Engine;
 import peernet.core.Engine.AddressType;
+import peernet.core.Node;
 
 
 public class TransportEmu extends Transport
@@ -34,11 +34,11 @@ public class TransportEmu extends Transport
   }
 
 
-  public void send(Address dest, int pid, Object payload)
+  public void send(Node src, Address dest, int pid, Object payload)
   {
-    int senderRouter = (int)CommonState.getNode().getID() % RouterNetwork.getSize();
+    int senderRouter = (int)src.getID() % RouterNetwork.getSize();
     int receiverRouter = dest.hashCode() % RouterNetwork.getSize();
-    Address senderAddress = new AddressSim(CommonState.getNode());
+    Address senderAddress = new AddressSim(src);
 
     int latency = RouterNetwork.getLatency(senderRouter, receiverRouter) + local*2;
 

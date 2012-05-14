@@ -18,7 +18,7 @@ public abstract class Transport extends Protocol
   /**
    * Used to send a message to another node, given the node's address.
    */
-  public abstract void send(Address dest, int pid, Object payload);
+  public abstract void send(Node src, Address dest, int pid, Object payload);
   
   
 

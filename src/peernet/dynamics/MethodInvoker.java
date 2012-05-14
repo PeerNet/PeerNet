@@ -192,8 +192,8 @@ public void initialize(Node n) {
 	{
 		for(int i=0; i<pid.length; ++i)
 		{
-			CommonState.setNode(n);
-			CommonState.setPid(pid[i]);
+//			CommonState.setNode(n);
+//			CommonState.setPid(pid[i]);
 			method[i].invoke(n.getProtocol(pid[i]));
 		}
 	}

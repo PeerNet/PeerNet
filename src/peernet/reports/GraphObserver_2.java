@@ -143,14 +143,15 @@ public abstract class GraphObserver_2 implements Control
    */
   protected void updateGraph()
   {
-    if (CommonState.getTime() != GraphObserver_2.time ||
-        CommonState.getPhase() != GraphObserver_2.phase ||
+    if (
+        CommonState.getTime() != GraphObserver_2.time ||
+        //CommonState.getPhase() != GraphObserver_2.phase ||
         pid != GraphObserver_2.lastpid)
     {
       // we need to update the graphs
       GraphObserver_2.lastpid = pid;
       GraphObserver_2.time = CommonState.getTime();
-      GraphObserver_2.phase = CommonState.getPhase();
+//      GraphObserver_2.phase = CommonState.getPhase();
       GraphObserver_2.dirg = new OverlayGraph(pid);
       if (GraphObserver_2.needUndir)
       {

@@ -73,11 +73,11 @@ public class UniformRandomTransport extends Transport
    * delay, that is drawn from the configured interval according to the uniform
    * distribution.
    */
-  public void send(Address dest, int pid, Object payload)
+  public void send(Node src, Address dest, int pid, Object payload)
   {
     // avoid calling nextLong if possible
     long delay = (range==1 ? min : min+CommonState.r.nextLong(range));
-    Address senderAddress = new AddressSim(CommonState.getNode());
+    Address senderAddress = new AddressSim(src);
 
     Engine.instance().add(delay, senderAddress, ((AddressSim)dest).node, pid, payload);
   }

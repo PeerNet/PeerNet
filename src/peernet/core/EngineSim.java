@@ -21,7 +21,7 @@ public class EngineSim extends Engine
       exit = executeNext(simHeap);
 
     // analysis after the simulation
-    CommonState.setPhase(CommonState.POST_SIMULATION);
+    //CommonState.setPhase(CommonState.POST_SIMULATION);
     for (int j = 0; j<controls.length; ++j)
     {
       if (controlSchedules[j].fin)
@@ -70,8 +70,8 @@ public class EngineSim extends Engine
     else if (ev.node.isUp())
     {
       assert ev.node != Network.prototype;
-      CommonState.setPid(pid);  // XXX try to entirely avoid CommonState
-      CommonState.setNode(ev.node);
+//      CommonState.setPid(pid);  // XXX try to entirely avoid CommonState
+//      CommonState.setNode(ev.node);
       if (ev.event instanceof ScheduledEvent)
       {
         Protocol prot = ev.node.getProtocol(pid);

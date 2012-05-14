@@ -116,10 +116,9 @@ static {
 	settings = new Object[names.length];
 	descriptorConstructors = new Constructor[names.length];
 
-  int keepCommonPid = CommonState.getPid();
 	for (int pid = 0; pid < names.length; ++pid)
 	{
-	  CommonState.setPid(pid);
+//	  CommonState.setPid(pid);
 
 	  /*
 	   * Setup linkables
@@ -177,7 +176,6 @@ static {
     else
       descriptorConstructors[pid] = null;
   }
-	CommonState.setPid(keepCommonPid);
 }
 
 // ---------------------------------------------------------------------

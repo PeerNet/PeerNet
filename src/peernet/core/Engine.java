@@ -311,9 +311,9 @@ public abstract class Engine
 //  }
 
 
-
   protected abstract void createHeaps();
-  protected abstract void executionLoop();
+
+
 
 
   /**
@@ -349,7 +349,7 @@ public abstract class Engine
   public abstract void addAtTime(long delay, Address src, Node node, int pid, Object event);
   public abstract int pendingEvents();
 
-  
+
   /**
    * Runs an experiment, resetting everything except the random seed.
    */
@@ -378,8 +378,6 @@ public abstract class Engine
     runInitializers();
     scheduleControls();
     scheduleProtocols();
-
-    executionLoop();
   }
 
 

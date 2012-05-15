@@ -6,7 +6,7 @@ package peernet.transport;
 
 import java.net.InetAddress;
 
-public abstract class TransportInet extends Transport
+public abstract class TransportNet extends Transport
 {
 	/**
 	 * Returns the IP address where this Transport is listening to.
@@ -17,4 +17,6 @@ public abstract class TransportInet extends Transport
 	 * Returns the port where this Transport is listening to.
 	 */
 	public abstract int getPort();
+
+	public abstract Packet receive();
 }

@@ -17,7 +17,6 @@
  */
 package peernet.core;
 
-import peernet.core.EngineEmu.ExecutionThread;
 
 /**
  * Class that represents one node with a network address. An {@link Network} is
@@ -100,9 +99,19 @@ public interface Node extends Fallible, Cloneable
    * XXX: Spyros, 2007-11-02: Should I move this to the Protocol interface?
    */
   public Descriptor getDescriptor(int pid);
-  
 
-  void setThread(ExecutionThread thread);
 
-  ExecutionThread getThread();
+
+//  void setExecutionThread(ExecutionThread thread);
+//  ExecutionThread getExecutionThread();
+//
+//  void setListeningThread(ListeningThread thread);
+//  ListeningThread getListeningThread();
+
+  void setHeap(Heap heap);
+  Heap getHeap();
+
+  void initLock();
+  void acquireLock();
+  void releaseLock();
 }

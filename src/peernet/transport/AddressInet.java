@@ -16,6 +16,14 @@ public class AddressInet implements Address
   protected InetAddress ip;
   protected int port;
 
+  public AddressInet(InetAddress ip, int port)
+  {
+    this.ip = ip;
+    this.port = port;
+  }
+
+
+
   public Object clone()
   {
     AddressInet addr = null;

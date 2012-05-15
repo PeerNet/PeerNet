@@ -13,8 +13,11 @@ public class EngineSim extends Engine
 
 
 
-  protected void executionLoop()
+  @Override
+  public void startExperiment()
   {
+    super.startExperiment();
+
     // Perform the actual simulation; executeNext() will tell when to stop.
     boolean exit = false;
     while (!exit)

@@ -39,8 +39,7 @@ public abstract class Protocol implements Cloneable
    * @param pid the identifier of this protocol
    * @param event the delivered event
    */
-  public abstract void processEvent(Address src, Node node, int pid,
-      Object event);
+  public abstract void processEvent(Address src, Node node, int pid, Object event);
 
 
 

@@ -34,7 +34,7 @@ public abstract class Descriptor
 	public Descriptor()
 	{
 	  if (Engine.getAddressType() == AddressType.NET)
-	    address = new AddressInet();
+	    address = new AddressInet(null, 0); //FIXME
 	  else
 	    address = new AddressSim();
 	}

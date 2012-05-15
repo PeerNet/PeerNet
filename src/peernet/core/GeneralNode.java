@@ -18,10 +18,10 @@ package peernet.core;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Semaphore;
 
 import peernet.config.Configuration;
 import peernet.config.FastConfig;
-import peernet.core.EngineEmu.ExecutionThread;
 
 
 
@@ -57,9 +57,10 @@ public class GeneralNode implements Node
    */
   private long ID;
 
-
-  private ExecutionThread thread;
-
+//  private ExecutionThread executionThread; // FIXME: remove!
+//  private ListeningThread listeningThread;
+  private Heap heap;
+  private Semaphore semaphore;
 
   // ================ constructor and initialization =================
   // =================================================================
@@ -235,10 +236,10 @@ public class GeneralNode implements Node
   public Descriptor getDescriptor(int pid)
   {
     Descriptor d = null;
-    Constructor c = FastConfig.getDescriptorConstructor(pid);
+    Constructor<Descriptor> c = FastConfig.getDescriptorConstructor(pid);
     try
     {
-      d = (Descriptor) c.newInstance(this, pid);
+      d = c.newInstance(this, pid);
     }
     catch (IllegalArgumentException e)
     {
@@ -262,16 +263,81 @@ public class GeneralNode implements Node
 
 
   @Override
-  public ExecutionThread getThread()
+  public void setHeap(Heap heap)
   {
-    return thread;
+    this.heap = heap;
   }
 
 
 
   @Override
-  public void setThread(ExecutionThread thread)
+  public Heap getHeap()
   {
-    this.thread = thread;
+    return heap;
   }
+
+
+
+  @Override
+  public void initLock()
+  {
+    semaphore = new Semaphore(1);    
+  }
+
+
+
+  @Override
+  public void acquireLock()
+  {
+    try
+    {
+      semaphore.acquire();
+    }
+    catch (InterruptedException e)  // XXX When does this happen?
+    {
+      e.printStackTrace();
+      System.exit(-1);
+    }
+  }
+
+
+
+  @Override
+  public void releaseLock()
+  {
+    semaphore.release();
+  }
+
+
+
+
+//  @Override
+//  public void setExecutionThread(ExecutionThread thread)
+//  {
+//    this.executionThread = thread;
+//  }
+//
+//
+//
+//  @Override
+//  public ExecutionThread getExecutionThread()
+//  {
+//    return executionThread;
+//  }
+//
+//
+//
+//  @Override
+//  public void setListeningThread(ListeningThread thread)
+//  {
+//    this.listeningThread = thread;
+//  }
+//
+//
+//
+//  @Override
+//  public ListeningThread getListeningThread()
+//  {
+//    return listeningThread;
+//  }
 }

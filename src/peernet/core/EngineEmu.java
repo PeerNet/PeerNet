@@ -4,157 +4,41 @@
  */
 package peernet.core;
 
-import java.util.concurrent.Semaphore;
-
 import peernet.transport.Address;
 
 
 public class EngineEmu extends Engine
 {
-  ExecutionThread controlThread = null;
-
-
-
-  public class ExecutionThread extends Thread
-  {
-    Node node = null;
-    Heap heap = null;
-    Semaphore sem = null;
-
-    public ExecutionThread(Node node)
-    {
-      this.heap = new Heap();
-      this.node = node;
-      this.sem = new Semaphore(1);
-    }
-
-    public void run()
-    {
-      boolean exit = false;
-
-      long remainingTime;
-      while (!exit)
-      {
-        Heap.Event event = null;
-        synchronized (this)
-        {
-          while ((remainingTime = (heap.getEarliestTime()>>rbits) - CommonState.getTime()) > 0)
-            try
-            {
-              //System.err.println("Thread "+node.getID()+" sleeping for "+(remainingTime));
-              wait(remainingTime);
-            }
-            catch (InterruptedException e)
-            {
-              e.printStackTrace();
-            }
-          event = heap.removeFirst();
-        }
-        exit = executeNext(event);
-      }
-    }
-
-    public Object clone()
-    {
-      return new Heap();
-    }
-
-    /**
-     * Execute and remove the next event from the ordered event list.
-     * 
-     * @return true if the execution should be stopped.
-     */
-    private boolean executeNext(Heap.Event ev)
-    {
-      long time = ev.time>>rbits;
-      if (time>=endtime) // XXX Should we also check here, or only when scheduling an event?
-        return true;
-    
-      int pid = ev.pid;
-      if (ev.node==null)  // XXX ugly way to identify control events
-      {
-        try {
-          for (int n=0; n<Network.size(); n++)
-          {
-            Node node = Network.get(n);
-            ExecutionThread thread = node.getThread();
-            thread.sem.acquire();
-          }
-        }
-        catch (InterruptedException e) {e.printStackTrace();}
-
-        boolean ret = controls[pid].execute();
-
-        for (int n=0; n<Network.size(); n++)
-        {
-          Node node = Network.get(n);
-          ExecutionThread thread = node.getThread();
-          thread.sem.release();
-        }
-
-        long delay = controlSchedules[pid].nextDelay(time);
-        if (delay>=0)
-          addAtTime(time+delay,  null, null, pid, null);
-        return ret;
-      }
-      else if (ev.node.isUp())
-      {
-        assert ev.node != Network.prototype;
-//        CommonState.setPid(pid);  // XXX try to entirely avoid CommonState
-//        CommonState.setNode(ev.node);
-        if (ev.event instanceof ScheduledEvent)
-        {
-          Protocol prot = ev.node.getProtocol(pid);
-
-          try {sem.acquire();}
-          catch (InterruptedException e) {e.printStackTrace();}
-
-          prot.nextCycle(ev.node, pid);
-          sem.release();
-
-          long delay = prot.nextDelay();
-          if (delay == 0)
-            delay = protocolSchedules[pid].nextDelay(time);
-    
-          if (delay > 0)
-            addAtTime(time+delay, null, ev.node, pid, scheduledEvent);
-        }
-        else // call Protocol.processEvent()
-        {
-          Protocol prot = ev.node.getProtocol(pid);
-
-          try {sem.acquire();}
-          catch (InterruptedException e) {e.printStackTrace();}
-          prot.processEvent(ev.src, ev.node, pid, ev.event);
-          sem.release();
-        }
-      }
-      return false;
-    }
-  }
+  Heap controlHeap = null;
 
 
   @Override
   protected void createHeaps()
   {
+    // one heap per node
     for (int n=0; n<Network.size(); n++)
-    {
-      Node node = Network.get(n);
-      node.setThread(new ExecutionThread(node));
-    }
-    controlThread = new ExecutionThread(Network.prototype);
+      Network.get(n).setHeap(new Heap());
+
+    // and one heap for all controls together
+    controlHeap = new Heap();
   }
 
 
 
-  protected void executionLoop()
+  @Override
+  public void startExperiment()
   {
-    controlThread.start();
+    super.startExperiment();
+
     for (int n=0; n<Network.size(); n++)
     {
       Node node = Network.get(n);
-      node.getThread().start();
+      node.initLock();
+      new ExecutionThread(node.getHeap()).start();
     }
+
+    new ExecutionThread(controlHeap).start();
+
 //
 //    // analysis after the simulation
 //    CommonState.setPhase(CommonState.POST_SIMULATION);
@@ -172,24 +56,128 @@ public class EngineEmu extends Engine
 
     time = (time<<rbits) | CommonState.r.nextInt(1<<rbits);
 
-    ExecutionThread thread = null;
+    Heap heap = null;
     if (node == null)  // control event
-      thread = controlThread;
+      heap = controlHeap;
     else
-      thread = node.getThread();
+      heap = node.getHeap();
 
-    synchronized (thread)
+    synchronized (heap)
     {
-      thread.heap.add(time, src, node, (byte) pid, event);
-      thread.notify();
+      heap.add(time, src, node, (byte) pid, event);
+      heap.notify();
     }
   }
-  
+
   public int pendingEvents()
   {
     int events = 0;
     for (int n=0; n<Network.size(); n++)
-      events += Network.get(n).getThread().heap.size();
+      events += Network.get(n).getHeap().size();
     return events;
+  }
+
+
+
+  /**
+   * Execute and remove the next event from the ordered event list.
+   * 
+   * @return true if the execution should be stopped.
+   */
+  protected boolean executeNext(Heap.Event ev)
+  {
+    long time = ev.time>>rbits;
+    if (time>=endtime) // XXX Should we also check here, or only when scheduling an event?
+      return true;
+  
+    int pid = ev.pid;
+    if (ev.node==null)  // XXX ugly way to identify control events
+    {
+      for (int n=0; n<Network.size(); n++) //XXX The network size might change in the meantime
+        Network.get(n).acquireLock();
+
+      boolean ret = controls[pid].execute();
+
+      for (int n=0; n<Network.size(); n++)
+        Network.get(n).releaseLock();
+
+      long delay = controlSchedules[pid].nextDelay(time);
+      if (delay>=0)
+        addAtTime(time+delay, null, null, pid, null);
+      return ret;
+    }
+    else if (ev.node.isUp())
+    {
+      assert ev.node != Network.prototype;
+//        CommonState.setPid(pid);  // XXX try to entirely avoid CommonState
+//        CommonState.setNode(ev.node);
+      if (ev.event instanceof ScheduledEvent)
+      {
+        Protocol prot = ev.node.getProtocol(pid);
+
+        ev.node.acquireLock();
+        prot.nextCycle(ev.node, pid);
+        ev.node.releaseLock();
+
+        long delay = prot.nextDelay();
+        if (delay == 0)
+          delay = protocolSchedules[pid].nextDelay(time);
+  
+        if (delay > 0)
+          addAtTime(time+delay, null, ev.node, pid, scheduledEvent);
+      }
+      else // call Protocol.processEvent()
+      {
+        Protocol prot = ev.node.getProtocol(pid);
+
+        ev.node.acquireLock();
+        prot.processEvent(ev.src, ev.node, pid, ev.event);
+        ev.node.releaseLock();
+      }
+    }
+    return false;
+  }
+
+
+
+  public class ExecutionThread extends Thread
+  {
+    private Heap heap = null;
+
+    public ExecutionThread(Heap heap)
+    {
+      this.heap = heap;
+    }
+
+    public void run()
+    {
+      boolean exit = false;
+
+      long remainingTime;
+      while (!exit)
+      {
+        Heap.Event event = null;
+        synchronized (heap)
+        {
+          while ((remainingTime = (heap.getEarliestTime()>>rbits) - CommonState.getTime()) > 0)
+            try
+            {
+              //System.err.println("Thread "+node.getID()+" sleeping for "+(remainingTime));
+              heap.wait(remainingTime);
+            }
+            catch (InterruptedException e)
+            {
+              e.printStackTrace();
+            }
+          event = heap.removeFirst();
+        }
+        exit = executeNext(event);
+      }
+    }
+
+    public Object clone()
+    {
+      return new Heap();
+    }
   }
 }

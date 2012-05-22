@@ -152,9 +152,12 @@ public class Heap  // make "package"
     return ev;
   }
 
-  public long getEarliestTime()
+  public long getNextTime()
   {
-    return times[0];
+    if (size() == 0)
+      return Long.MAX_VALUE; // Wait indefinitely, till notified
+    else
+      return times[0];
   }
 
 

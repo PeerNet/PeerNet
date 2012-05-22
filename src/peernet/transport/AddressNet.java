@@ -10,6 +10,8 @@ import java.net.UnknownHostException;
 
 public class AddressNet implements Address
 {
+  private static final long serialVersionUID = 1;
+
   /**
    * The IP Address and Port of the referenced node.
    */

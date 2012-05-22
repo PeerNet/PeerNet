@@ -20,7 +20,7 @@ import peernet.transport.AddressNet;
 
 public class BootstrapStar implements Control
 {
-  private static final String PAR_ADDRESS = "address";
+  private static final String PAR_HOST = "host";
   private static final String PAR_PORT = "port";
   private int pid;
   private Address address;
@@ -32,7 +32,7 @@ public class BootstrapStar implements Control
     try
     {
       pid = Configuration.getPid(prefix+"."+PAR_PROTOCOL);
-      String host = Configuration.getString(prefix+"."+PAR_ADDRESS);
+      String host = Configuration.getString(prefix+"."+PAR_HOST);
       int port = Configuration.getInt(prefix+"."+PAR_PORT);
       InetAddress ip;
       ip = InetAddress.getByName(host);

@@ -4,6 +4,8 @@
  */
 package peernet.core;
 
+import java.io.Serializable;
+
 import peernet.core.Engine.AddressType;
 import peernet.transport.Address;
 import peernet.transport.AddressNet;
@@ -19,8 +21,10 @@ import peernet.transport.AddressSim;
  * @author Spyros Voulgaris
  *
  */
-public class Descriptor
+public class Descriptor implements Serializable
 {
+  private static final long serialVersionUID = 1;
+
   /**
    * This is the address where this node can be contacted.
    */

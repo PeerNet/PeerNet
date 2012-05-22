@@ -8,6 +8,8 @@ import peernet.core.Node;
 
 public class AddressSim implements Address
 {
+  private static final long serialVersionUID = 1;
+
   /**
    * Keeps a reference to the respective Node object.
    * 

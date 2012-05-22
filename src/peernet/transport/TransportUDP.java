@@ -26,11 +26,12 @@ public class TransportUDP extends TransportNet
    * The port to listen to.
    */
   private static final String PAR_PORT = "port";
+
   /**
    * Stores the UDP socket used by this Transport. Note that a single socket is
    * shared by all nodes running on a JVM. This decision was made to constrain
    * network resources (e.g., ports) keeping in mind environments such as
-   * PlanetLab.
+   * the PlanetLab.
    */
   private DatagramSocket socket = null;
   private DatagramPacket dgram = null;
@@ -112,9 +113,8 @@ public class TransportUDP extends TransportNet
 
 
 
-  public Object clone()
+  public Object clone()  //XXX this should not be needed
   {
-    assert false: "Not implemented!";
     return this;
   }
 

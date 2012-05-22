@@ -149,6 +149,8 @@ public class EngineEmu extends Engine
       this.heap = heap;
     }
 
+
+
     public void run()
     {
       boolean exit = false;
@@ -159,16 +161,18 @@ public class EngineEmu extends Engine
         Heap.Event event = null;
         synchronized (heap)
         {
-          while ((remainingTime = (heap.getEarliestTime()>>rbits) - CommonState.getTime()) > 0)
+          while ( (remainingTime = (heap.getNextTime()>>rbits) - CommonState.getTime()) > 0)
+          {
             try
             {
-              //System.err.println("Thread "+node.getID()+" sleeping for "+(remainingTime));
+              System.err.println("Sleeping for "+(remainingTime));
               heap.wait(remainingTime);
             }
             catch (InterruptedException e)
             {
               e.printStackTrace();
             }
+          }
           event = heap.removeFirst();
         }
         exit = executeNext(event);

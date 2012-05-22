@@ -71,7 +71,7 @@ public class TransportUDP extends TransportNet
       oos.writeObject(pid);
       oos.writeObject(payload);
       DatagramPacket datagramPacket = new DatagramPacket(baos.toByteArray(),
-          baos.size(), ((AddressInet) dest).ip, ((AddressInet) dest).port);
+          baos.size(), ((AddressNet) dest).ip, ((AddressNet) dest).port);
       socket.send(datagramPacket);
     }
     catch (IOException e)
@@ -93,7 +93,7 @@ public class TransportUDP extends TransportNet
       ByteArrayInputStream bais = new ByteArrayInputStream(dgram.getData());
       ObjectInputStream ois = new ObjectInputStream(bais);
 
-      AddressInet srcAddr = new AddressInet(dgram.getAddress(), dgram.getPort());
+      AddressNet srcAddr = new AddressNet(dgram.getAddress(), dgram.getPort());
       int pid = (Integer) ois.readObject();
       Object event = ois.readObject();
       Packet packet = new Packet(srcAddr, pid, event);

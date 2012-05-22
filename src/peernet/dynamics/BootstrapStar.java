@@ -12,7 +12,7 @@ import peernet.core.Network;
 import peernet.core.Node;
 import peernet.core.Protocol;
 import peernet.transport.Address;
-import peernet.transport.AddressInet;
+import peernet.transport.AddressNet;
 
 
 
@@ -36,7 +36,7 @@ public class BootstrapStar implements Control
       int port = Configuration.getInt(prefix+"."+PAR_PORT);
       InetAddress ip;
       ip = InetAddress.getByName(host);
-      address = new AddressInet(ip, port);
+      address = new AddressNet(ip, port);
     }
     catch (UnknownHostException e)
     {

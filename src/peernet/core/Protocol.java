@@ -29,7 +29,7 @@ import peernet.transport.Address;
 public abstract class Protocol implements Cloneable
 {
   /**
-   * This method is invoked by the scheduler to deliver events to the protcol.
+   * This method is invoked by the scheduler to deliver events to the protocol.
    * Apart from the event object, information about the node and the protocol
    * identifier are also provided. Additional information can be accessed
    * through the {@link CommonState} class.
@@ -60,6 +60,15 @@ public abstract class Protocol implements Cloneable
     return 0;
   };
 
+
+
+  /**
+   * Gives this protocol the address of a bootstrap node. Can be called
+   * multiple times if more than one bootstrap nodes are to be provided.
+   * 
+   * @param address
+   */
+  public void addBootstrap(Node node, int pid, Address address) {}; //XXX make abstract
 
 
   /**

@@ -19,7 +19,7 @@ import peernet.transport.AddressSim;
  * @author Spyros Voulgaris
  *
  */
-public abstract class Descriptor
+public class Descriptor
 {
   /**
    * This is the address where this node can be contacted.

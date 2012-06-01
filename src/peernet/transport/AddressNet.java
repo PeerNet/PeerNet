@@ -46,4 +46,11 @@ public class AddressNet implements Address
     }
     return addr;
   }
+
+
+
+  public String toString()
+  {
+    return ""+ip+":"+port;
+  }
 }

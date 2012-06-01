@@ -291,6 +291,8 @@ public abstract class Engine
   static class ScheduledEvent {};
   protected static ScheduledEvent scheduledEvent = new ScheduledEvent();
 
+
+  
   // ---------------------------------------------------------------------
   /**
    * Adds a new event to be scheduled, specifying the number of time units of
@@ -387,10 +389,19 @@ public abstract class Engine
   {
     if (instance==null)
     {
-      if (getType()==Type.SIM)
-        instance = new EngineSim();
-      else
-        instance = new EngineEmu();
+      switch (getType())
+      {
+        case SIM:
+          instance = new EngineSim();
+          break;
+        case EMU:
+          instance = new EngineEmu();
+          break;
+        case NET:
+          instance = new EngineEmu();
+          break;
+        //XXX: Should have a default clause, for code quality.
+      }
     }
 
     return instance;

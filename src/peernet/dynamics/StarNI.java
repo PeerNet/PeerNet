@@ -92,7 +92,7 @@ public void initialize(Node n) {
 	for(int i=0; (center==null || !center.isUp()) && i<Network.size(); ++i)
 		center=Network.get(i);
 
-	Descriptor centerDescriptor = center.getDescriptor(pid);
+	Descriptor centerDescriptor = center.getProtocol(pid).getDescriptor();
 	((Linkable)n.getProtocol(pid)).addNeighbor(centerDescriptor);
 	
 	if(pack)

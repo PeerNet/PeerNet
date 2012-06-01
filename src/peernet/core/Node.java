@@ -17,6 +17,8 @@
  */
 package peernet.core;
 
+import peernet.transport.Transport;
+
 
 /**
  * Class that represents one node with a network address. An {@link Network} is
@@ -31,7 +33,15 @@ public interface Node extends Fallible, Cloneable
    * 
    * @config
    */
-  public static final String PAR_PROT = "protocol";
+  public static final String PAR_PROT = "protocol";  //XXX should not be public
+
+  /**
+   * Parameter name in configuration that attaches a transport layer protocol to
+   * a protocol.
+   * 
+   * @config
+   */
+  public static final String PAR_TRANSPORT = "transport"; //XXX should not be public
 
 
 
@@ -57,7 +67,7 @@ public interface Node extends Fallible, Cloneable
    * simply because it is not possible to define it otherwise. Using this method
    * will result in undefined behavior. It is provided for the core system.
    */
-  /*package*/ void setIndex(int index);
+  void setIndex(int index);
 
 
 
@@ -92,26 +102,13 @@ public interface Node extends Fallible, Cloneable
 
 
 
-  /**
-   * Returns a new instance of the Descriptor used for the referred protocol.
-   * Calls the constructor of the Descriptor class defined for this protocol.
-   * 
-   * XXX: Spyros, 2007-11-02: Should I move this to the Protocol interface?
-   */
-  public Descriptor getDescriptor(int pid);
-
-
-
-//  void setExecutionThread(ExecutionThread thread);
-//  ExecutionThread getExecutionThread();
-//
-//  void setListeningThread(ListeningThread thread);
-//  ListeningThread getListeningThread();
-
   void setHeap(Heap heap);
   Heap getHeap();
 
   void initLock();
   void acquireLock();
   void releaseLock();
+  Transport getTransportByPid(int pid);
+  Transport getTransport(int i);
+  int getTransports();
 }

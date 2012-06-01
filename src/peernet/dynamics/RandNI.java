@@ -105,7 +105,7 @@ public void initialize(Node n)
 	{
 		int r = CommonState.r.nextInt(Network.size()-1);
 		if (r >= n.getIndex()) r++;
-		linkable.addNeighbor(Network.get(r).getDescriptor(pid));
+		linkable.addNeighbor(Network.get(r).getProtocol(pid).getDescriptor());
 	}
 
 	if (pack) linkable.pack();

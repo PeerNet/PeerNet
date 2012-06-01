@@ -30,13 +30,14 @@ public class TransportUDP extends TransportNet
   /**
    * Stores the UDP socket used by this Transport. Note that a single socket is
    * shared by all nodes running on a JVM. This decision was made to constrain
-   * network resources (e.g., ports) keeping in mind environments such as
-   * the PlanetLab.
+   * network resources (e.g., ports) keeping in mind environments such as the
+   * PlanetLab.
    */
   private DatagramSocket socket = null;
   private DatagramPacket dgram = null;
   private byte[] recvBuffer = null;
 
+  private static Integer port = -1;
 
 
   /**
@@ -44,20 +45,8 @@ public class TransportUDP extends TransportNet
    */
   public TransportUDP(String prefix)
   {
-    int port = Configuration.getInt(prefix+"."+PAR_PORT, -1);
-    try
-    {
-      if (port<0)
-        socket = new DatagramSocket();
-      else
-        socket = new DatagramSocket(port);
-      recvBuffer = new byte[65536]; // XXX make parameterizable
-      dgram = new DatagramPacket(recvBuffer, recvBuffer.length);
-    }
-    catch (SocketException e)
-    {
-      e.printStackTrace();
-    }
+    port = Configuration.getInt(prefix+"."+PAR_PORT, -1);
+    recvBuffer = new byte[65536]; //TODO: parameterize
   }
 
 
@@ -90,10 +79,8 @@ public class TransportUDP extends TransportNet
     {
       // First, wait for a packet to be received.
       socket.receive(dgram);
-
       ByteArrayInputStream bais = new ByteArrayInputStream(dgram.getData());
       ObjectInputStream ois = new ObjectInputStream(bais);
-
       AddressNet srcAddr = new AddressNet(dgram.getAddress(), dgram.getPort());
       int pid = (Integer) ois.readObject();
       Object event = ois.readObject();
@@ -109,13 +96,6 @@ public class TransportUDP extends TransportNet
       e.printStackTrace();
     }
     return null;
-  }
-
-
-
-  public Object clone()  //XXX this should not be needed
-  {
-    return this;
   }
 
 
@@ -136,5 +116,35 @@ public class TransportUDP extends TransportNet
       return socket.getPort();
     else
       return -1;
+  }
+
+
+
+  @Override
+  public Object clone()
+  {
+    TransportUDP trans = null;
+    try
+    {
+      trans = (TransportUDP) super.clone();
+      synchronized (port)
+      {
+        if (port<0)
+          trans.socket = new DatagramSocket();
+        else
+        {
+          trans.socket = new DatagramSocket(port); // allow a list of ports
+          trans.socket.setReuseAddress(true);
+          port = -1;
+        }
+      }
+      trans.recvBuffer = recvBuffer.clone();
+      trans.dgram = new DatagramPacket(trans.recvBuffer, trans.recvBuffer.length);
+    }
+    catch (SocketException e)
+    {
+      e.printStackTrace();
+    }
+    return trans;
   }
 }

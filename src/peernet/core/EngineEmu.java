@@ -5,6 +5,8 @@
 package peernet.core;
 
 import peernet.transport.Address;
+import peernet.transport.Packet;
+import peernet.transport.TransportNet;
 
 
 public class EngineEmu extends Engine
@@ -29,6 +31,18 @@ public class EngineEmu extends Engine
   public void startExperiment()
   {
     super.startExperiment();
+
+    if (getType()==Type.NET)
+    {
+      for (int n=0; n<Network.size(); n++)
+      {
+        Node node = Network.get(n);
+        for (int j=0; j<node.getTransports(); j++)
+        {
+          new ListeningThread(node, node.getHeap(), (TransportNet) node.getTransportByPid(j)).start();
+        }
+      }
+    }
 
     for (int n=0; n<Network.size(); n++)
     {
@@ -165,7 +179,6 @@ public class EngineEmu extends Engine
           {
             try
             {
-              System.err.println("Sleeping for "+(remainingTime));
               heap.wait(remainingTime);
             }
             catch (InterruptedException e)
@@ -182,6 +195,34 @@ public class EngineEmu extends Engine
     public Object clone()
     {
       return new Heap();
+    }
+  }
+  
+  
+  public class ListeningThread extends Thread
+  {
+    Node node = null;
+    Heap heap = null;
+    TransportNet transport = null;
+
+    public ListeningThread(Node node, Heap heap, TransportNet transport)
+    {
+      this.node = node;
+      this.heap = heap;
+      this.transport = transport;
+    }
+
+    public void run()
+    {
+      while (true)
+      {
+        Packet packet = transport.receive();
+        synchronized (heap)
+        {
+          heap.add(0, packet.src, node, (byte)packet.pid, packet.event);
+          heap.notify();
+        }
+      }
     }
   }
 }

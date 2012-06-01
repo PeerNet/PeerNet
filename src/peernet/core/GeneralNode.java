@@ -16,12 +16,11 @@
  */
 package peernet.core;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.util.Vector;
 import java.util.concurrent.Semaphore;
 
 import peernet.config.Configuration;
-import peernet.config.FastConfig;
+import peernet.transport.Transport;
 
 
 
@@ -33,37 +32,44 @@ import peernet.config.FastConfig;
  */
 public class GeneralNode implements Node
 {
-  // ================= fields ========================================
-  // =================================================================
   /** used to generate unique id-s */
   private static long counterID = -1;
+
   /**
    * The protocols on this node.
    */
-  protected Protocol[] protocol = null;
+  protected Protocol[] protocols = null;
+
+  /**
+   * The transports on this node.
+   */
+  private Transport[] transports = null;
+
+  private int mappingProtTrans[] = null;
+
   /**
    * The current index of this node in the node list of the {@link Network}. It
    * can change any time. This is necessary to allow the implementation of
    * efficient graph algorithms.
    */
   private int index;
+
   /**
    * The fail state of the node.
    */
   protected int failstate = Fallible.OK;
+
   /**
    * The id of the node. It should be final, however it can't be final because
    * clone must be able to set it.
    */
   private long ID;
 
-//  private ExecutionThread executionThread; // FIXME: remove!
-//  private ListeningThread listeningThread;
   private Heap heap;
   private Semaphore semaphore;
 
-  // ================ constructor and initialization =================
-  // =================================================================
+
+
   /**
    * Used to construct the prototype node. This class currently does not have
    * specific configuration parameters and so the parameter <code>prefix</code>
@@ -73,43 +79,104 @@ public class GeneralNode implements Node
   public GeneralNode(String prefix)
   {
     String[] names = Configuration.getNames(PAR_PROT);
-//    CommonState.setNode(this);
+    // CommonState.setNode(this);
     ID = nextID();
-    protocol = new Protocol[names.length];
+    protocols = new Protocol[names.length];
+
+    // Find out how many distinct transports are being used per node.
+    mappingProtTrans = new int[names.length];
+    Vector<String> transportNames = new Vector<String>();
     for (int i = 0; i<names.length; i++)
     {
-//      CommonState.setPid(i);
+      String transportName = Configuration.getString(names[i]+"."+PAR_TRANSPORT, defaultTransportName());
+      int j = transportNames.indexOf(transportName);
+      if (j >= 0)
+        mappingProtTrans[i] = j;
+      else
+      {
+        transportNames.add(transportName);
+        mappingProtTrans[i] = transportNames.indexOf(transportName);
+      }
+    }
+
+    // Instantiate these transports
+    transports = new Transport[transportNames.size()];
+    for (int i=0; i<transports.length; i++)
+      transports[i] = (Transport) Configuration.getInstance(PAR_TRANSPORT+"."+transportNames.get(i));
+
+    for (int i = 0; i<names.length; i++)
+    {
+      // CommonState.setPid(i);
       Protocol p = (Protocol) Configuration.getInstance(names[i]);
-      protocol[i] = p;
+      protocols[i] = p;
     }
   }
 
 
 
-  // -----------------------------------------------------------------
+  private String defaultTransportName()
+  {
+    String transportName = Engine.getType().toString().toLowerCase();
+    if (Configuration.contains(PAR_TRANSPORT+"."+transportName))
+      return Configuration.getString(transportName);
+    return null;
+  }
+
+
+
+  @Override
+  public int getTransports()
+  {
+    return transports.length;
+  }
+
+
+
+  @Override
+  public Transport getTransportByPid(int pid)
+  {
+    return transports[mappingProtTrans[pid]];
+  }
+
+
+
+  @Override
+  public Transport getTransport(int i)
+  {
+    return transports[i];
+  }
+
+
+
   public Object clone()
   {
-    GeneralNode result = null;
+    GeneralNode node = null;
     try
     {
-      result = (GeneralNode) super.clone();
+      node = (GeneralNode) super.clone();
     }
     catch (CloneNotSupportedException e)
     {} // never happens
-    result.protocol = new Protocol[protocol.length];
-//    CommonState.setNode(result);
-    result.ID = nextID();
-    for (int i = 0; i<protocol.length; ++i)
+
+    node.protocols = new Protocol[protocols.length];
+    // CommonState.setNode(result);
+    node.ID = nextID();
+    for (int i = 0; i<protocols.length; ++i)
     {
-//      CommonState.setPid(i);
-      result.protocol[i] = (Protocol) protocol[i].clone();
+      // CommonState.setPid(i);
+      node.protocols[i] = (Protocol) protocols[i].clone();
+      node.protocols[i].node = node;
     }
-    return result;
+
+    node.transports = transports.clone();
+    for (int i=0; i<transports.length; i++)
+      node.transports[i] = (Transport) transports[i].clone();
+
+    return node;
   }
 
 
 
-  // -----------------------------------------------------------------
   /** returns the next unique ID */
   private long nextID()
   {
@@ -118,8 +185,6 @@ public class GeneralNode implements Node
 
 
 
-  // =============== public methods ==================================
-  // =================================================================
   public void setFailState(int failState)
   {
     // after a node is dead, all operations on it are errors by definition
@@ -135,9 +200,9 @@ public class GeneralNode implements Node
         // protocol = null;
         index = -1;
         failstate = DEAD;
-        for (int i = 0; i<protocol.length; ++i)
-          if (protocol[i] instanceof Cleanable)
-            ((Cleanable) protocol[i]).onKill();
+        for (int i = 0; i<protocols.length; ++i)
+          if (protocols[i] instanceof Cleanable)
+            ((Cleanable) protocols[i]).onKill();
         break;
       case DOWN:
         failstate = DOWN;
@@ -149,7 +214,6 @@ public class GeneralNode implements Node
 
 
 
-  // -----------------------------------------------------------------
   public int getFailState()
   {
     return failstate;
@@ -157,7 +221,6 @@ public class GeneralNode implements Node
 
 
 
-  // ------------------------------------------------------------------
   public boolean isUp()
   {
     return failstate==OK;
@@ -165,23 +228,20 @@ public class GeneralNode implements Node
 
 
 
-  // -----------------------------------------------------------------
   public Protocol getProtocol(int i)
   {
-    return protocol[i];
+    return protocols[i];
   }
 
 
 
-  // ------------------------------------------------------------------
   public int protocolSize()
   {
-    return protocol.length;
+    return protocols.length;
   }
 
 
 
-  // ------------------------------------------------------------------
   public int getIndex()
   {
     return index;
@@ -189,7 +249,6 @@ public class GeneralNode implements Node
 
 
 
-  // ------------------------------------------------------------------
   public void setIndex(int index)
   {
     this.index = index;
@@ -197,7 +256,6 @@ public class GeneralNode implements Node
 
 
 
-  // ------------------------------------------------------------------
   /**
    * Returns the ID of this node. The ID-s are generated using a counter (ie
    * they are not random).
@@ -209,14 +267,13 @@ public class GeneralNode implements Node
 
 
 
-  // ------------------------------------------------------------------
   public String toString()
   {
     StringBuffer buffer = new StringBuffer();
     buffer.append("ID: "+ID+" index: "+index+"\n");
-    for (int i = 0; i<protocol.length; ++i)
+    for (int i = 0; i<protocols.length; ++i)
     {
-      buffer.append("protocol["+i+"]="+protocol[i]+"\n");
+      buffer.append("protocol["+i+"]="+protocols[i]+"\n");
     }
     return buffer.toString();
   }
@@ -228,36 +285,6 @@ public class GeneralNode implements Node
   public int hashCode()
   {
     return (int) getID();
-  }
-
-
-
-  @Override
-  public Descriptor getDescriptor(int pid)
-  {
-    Descriptor d = null;
-    Constructor<Descriptor> c = FastConfig.getDescriptorConstructor(pid);
-    try
-    {
-      d = c.newInstance(this, pid);
-    }
-    catch (IllegalArgumentException e)
-    {
-      e.printStackTrace();
-    }
-    catch (InstantiationException e)
-    {
-      e.printStackTrace();
-    }
-    catch (IllegalAccessException e)
-    {
-      e.printStackTrace();
-    }
-    catch (InvocationTargetException e)
-    {
-      e.printStackTrace();
-    }
-    return d;
   }
 
 
@@ -281,7 +308,7 @@ public class GeneralNode implements Node
   @Override
   public void initLock()
   {
-    semaphore = new Semaphore(1);    
+    semaphore = new Semaphore(1);
   }
 
 
@@ -293,7 +320,7 @@ public class GeneralNode implements Node
     {
       semaphore.acquire();
     }
-    catch (InterruptedException e)  // XXX When does this happen?
+    catch (InterruptedException e) // XXX When does this happen?
     {
       e.printStackTrace();
       System.exit(-1);
@@ -307,37 +334,4 @@ public class GeneralNode implements Node
   {
     semaphore.release();
   }
-
-
-
-
-//  @Override
-//  public void setExecutionThread(ExecutionThread thread)
-//  {
-//    this.executionThread = thread;
-//  }
-//
-//
-//
-//  @Override
-//  public ExecutionThread getExecutionThread()
-//  {
-//    return executionThread;
-//  }
-//
-//
-//
-//  @Override
-//  public void setListeningThread(ListeningThread thread)
-//  {
-//    this.listeningThread = thread;
-//  }
-//
-//
-//
-//  @Override
-//  public ListeningThread getListeningThread()
-//  {
-//    return listeningThread;
-//  }
 }

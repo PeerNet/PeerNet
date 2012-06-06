@@ -39,7 +39,7 @@ public class EngineEmu extends Engine
         Node node = Network.get(n);
         for (int j=0; j<node.getTransports(); j++)
         {
-          new ListeningThread(node, node.getHeap(), (TransportNet) node.getTransportByPid(j)).start();
+          new ListeningThread(node, node.getHeap(), (TransportNet) node.getTransport(j)).start();
         }
       }
     }

@@ -116,7 +116,7 @@ public class Network
     if (!Configuration.contains(PAR_NODE))
     {
       System.err.println("Network: no node defined, using GeneralNode");
-      prototype = new GeneralNode("");
+      prototype = new Node("");
     }
     else
     {

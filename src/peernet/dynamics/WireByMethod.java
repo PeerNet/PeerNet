@@ -143,7 +143,7 @@ public WireByMethod(String prefix)
 			args[i]=CommonState.r;
 		else
 		{
-			// we should neve get here
+			// we should never get here
 			throw new RuntimeException("Unexpected error, please "+
 			"report this problem to the peersim team");
 		}

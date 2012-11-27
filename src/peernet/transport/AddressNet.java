@@ -49,8 +49,20 @@ public class AddressNet implements Address
 
 
 
+  @Override
+  public boolean equals(Object other)
+  {
+    return ip.equals(((AddressNet)other).ip) && port==((AddressNet)other).port;
+  }
+
+
   public String toString()
   {
     return ""+ip+":"+port;
+  }
+
+  public int hashCode()
+  {
+    return ip.hashCode()+port;
   }
 }

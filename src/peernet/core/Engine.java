@@ -82,7 +82,7 @@ import peernet.transport.Address;
  */
 public abstract class Engine
 {
-  private static final String PREFIX = "simulation";
+  private static final String PREFIX = "engine";
 
 
   /**
@@ -135,7 +135,7 @@ public abstract class Engine
 
   private static final String PAR_PROTOCOL = "protocol";
 
-  private static final String PAR_TYPE = "type";
+  private static final String PAR_MODE = "mode";
 
   // ---------------------------------------------------------------------
   // Fields
@@ -174,7 +174,7 @@ public abstract class Engine
 
   public enum Type
   {
-    SIM, EMU, NET;
+    SIM, EMU, NET, COORDINATOR;
   }
 
   public enum AddressType
@@ -184,7 +184,7 @@ public abstract class Engine
 
   static
   {
-    String typeStr = Configuration.getString(PREFIX+"."+PAR_TYPE, "");
+    String typeStr = Configuration.getString(PREFIX+"."+PAR_MODE, "");
     if (typeStr.equals("sim"))
     {
       type = Type.SIM;
@@ -200,8 +200,13 @@ public abstract class Engine
       type = Type.NET;
       addressType = AddressType.NET;
     }
+    else if (typeStr.equals("coordinator"))
+    {
+      type = Type.COORDINATOR;
+      addressType = null;
+    }
     else
-      throw new IllegalParameterException(PREFIX+"."+PAR_TYPE, "Possible types: sim, emu, net");
+      throw new IllegalParameterException(PREFIX+"."+PAR_MODE, "Possible types: sim, emu, net, coordinator");
   }
 
   public static Type getType()
@@ -336,7 +341,7 @@ public abstract class Engine
 
     if (delay<0)
     {
-      System.err.println("NOT Ignoring event with negative delay: "+delay);
+      System.err.println("NOT ignoring event with negative delay: "+delay);
 //      return;
     }
 
@@ -348,7 +353,7 @@ public abstract class Engine
   }
 
   
-  public abstract void addAtTime(long delay, Address src, Node node, int pid, Object event);
+  public abstract void addAtTime(long time, Address src, Node node, int pid, Object event);
   public abstract int pendingEvents();
 
 

@@ -31,7 +31,7 @@ import peernet.transport.OverlayGraph;
  * connections are removed, they are only added. So it can be used in
  * combination with other initializers.
  */
-public abstract class WireGraph implements Control
+public abstract class WireGraph implements WireControl
 {
   // --------------------------------------------------------------------------
   // Parameters
@@ -45,14 +45,6 @@ public abstract class WireGraph implements Control
    * @config
    */
   private static final String PAR_PROT = "protocol";
-  /**
-   * If this config property is defined, method {@link Linkable#pack()} is
-   * invoked on the specified protocol at the end of the wiring phase. Default
-   * to false.
-   * 
-   * @config
-   */
-  private static final String PAR_PACK = "pack";
   /**
    * If set, the generated graph is undirected. In other words, for each link
    * (i,j) a link (j,i) will also be added. Defaults to false.
@@ -73,8 +65,6 @@ public abstract class WireGraph implements Control
    * The protocol we want to wire.
    */
   private final int pid;
-  /** If true, method pack() is invoked on the initialized protocol */
-  private final boolean pack;
   /** If true, edges are added in an undirected fashion. */
   public final boolean undir;
   /**
@@ -82,7 +72,7 @@ public abstract class WireGraph implements Control
    * is wired each time {@link #execute} is called, as specified by
    * {@value #PAR_PROT}.
    */
-  public Graph g = null;
+  private Graph g = null;
 
 
 
@@ -97,12 +87,8 @@ public abstract class WireGraph implements Control
    */
   protected WireGraph(String prefix)
   {
-    if (Configuration.contains(prefix+"."+PAR_PROT))
-      pid = Configuration.getPid(prefix+"."+PAR_PROT);
-    else
-      pid = -10;  // XXX Why -10? Ugly!1
-    pack = Configuration.contains(prefix+"."+PAR_PACK);
-    undir = (Configuration.contains(prefix+"."+PAR_UNDIR)|Configuration.contains(prefix+"."+PAR_UNDIR_ALT));
+    pid = Configuration.getPid(prefix+"."+PAR_PROT, -10);  // XXX Why -10? Ugly!
+    undir = Configuration.contains(prefix+"."+PAR_UNDIR) | Configuration.contains(prefix+"."+PAR_UNDIR_ALT);
   }
 
 
@@ -130,19 +116,15 @@ public abstract class WireGraph implements Control
     if (gr.size()==0)
       return false;
     wire(gr);
-    if (g==null&&pack)
-    {
-      int size = Network.size();
-      for (int i = 0; i<size; i++)
-      {
-        Linkable link = (Linkable) Network.get(i).getProtocol(pid);
-        link.pack();
-      }
-    }
     return false;
   }
 
 
+
+  public final void setGraph(Graph graph)
+  {
+    g = graph;
+  }
 
   // --------------------------------------------------------------------------
   /**

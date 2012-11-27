@@ -30,7 +30,7 @@ import java.util.ArrayList;
  * The method is defined by config parameter {@value #PAR_METHOD} and
  * the protocol is by {@value #PAR_PROT}. The method must not have any
  * parameters and must return void. If no protocol is specified, then the
- * method will be invoked on all protocol in the protocol stack that define
+ * method will be invoked on all protocols in the protocol stack that define
  * it.
  * <p>
  * Although the method cannot have any parameters, it can of course read

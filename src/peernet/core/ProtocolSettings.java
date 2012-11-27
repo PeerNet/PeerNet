@@ -20,6 +20,7 @@ import java.lang.reflect.Constructor;
 
 import peernet.config.Configuration;
 import peernet.config.IllegalParameterException;
+import peernet.transport.Address;
 
 
 
@@ -70,7 +71,12 @@ public class ProtocolSettings
    */
   private final Constructor<Descriptor> descriptorConstructor;
 
-  
+  /**
+   * 
+   */
+  private final Constructor<Descriptor> descriptorConstructorGeneric;
+
+
   final int pid;
 
 
@@ -116,11 +122,14 @@ public class ProtocolSettings
 
     // Setup descriptor constructors
     Class<Descriptor> cDescriptor = Configuration.getClass(prefix+"."+PAR_DESCRIPTOR);
-    Class pars[] = { Protocol.class, int.class };
+    Class pars[] = { Node.class, int.class };
+    Class parsGeneric[] = { Address.class };
     Constructor<Descriptor> constr = null;
+    Constructor<Descriptor> constrGeneric = null;
     try
     {
       constr = cDescriptor.getConstructor(pars);
+      constrGeneric = cDescriptor.getConstructor(parsGeneric);
     }
     catch (SecurityException e)
     {
@@ -131,6 +140,7 @@ public class ProtocolSettings
       e.printStackTrace();
     }
     descriptorConstructor = constr;
+    descriptorConstructorGeneric = constrGeneric;
   }
 
 
@@ -197,5 +207,20 @@ public class ProtocolSettings
   public Constructor getDescriptorConstructor()
   {
     return descriptorConstructor;
+  }
+
+
+
+  /**
+   * Returns a constructor for the Descriptor class defined for the given
+   * protocol ID. Used to initialize descriptors to foreign peers, based
+   * exclusively on their address. If no Descriptor class has been defined
+   * for this pid, it returns null.
+   * 
+   * The returned constructor takes as arguments (Address).
+   */
+  public Constructor getAddrDescriptorConstructor()
+  {
+    return descriptorConstructorGeneric;
   }
 }

@@ -64,4 +64,9 @@ public class AddressSim implements Address
     else
       return ""+node.getID();
   }
+
+  public int hashCode()
+  {
+    return node.hashCode();
+  }
 }

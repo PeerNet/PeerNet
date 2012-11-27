@@ -28,24 +28,30 @@ public class TransportUDP extends TransportNet
   private static final String PAR_PORT = "port";
 
   /**
-   * Stores the UDP socket used by this Transport. Note that a single socket is
-   * shared by all nodes running on a JVM. This decision was made to constrain
-   * network resources (e.g., ports) keeping in mind environments such as the
-   * PlanetLab.
+   * Stores the UDP socket used by this Transport. Note that each node
+   * running on a single JVM uses its own exclusive socket.
    */
   private DatagramSocket socket = null;
   private DatagramPacket dgram = null;
   private byte[] recvBuffer = null;
 
-  private static Integer port = -1;
-
+  /**
+   * The next available port to try to bind to. Define as object rather than
+   * primitive int, so we can synchronize on it, which makes the point of
+   * synchronization cleaner.
+   */
+  private static Integer nextPort = -1;
+  private static int initPort = -1;
 
   /**
    * Default constructor.
    */
   public TransportUDP(String prefix)
   {
-    port = Configuration.getInt(prefix+"."+PAR_PORT, -1);
+    initPort = Configuration.getInt(prefix+"."+PAR_PORT, -1);
+    if (initPort != -1)
+      nextPort = initPort;
+
     recvBuffer = new byte[65536]; //TODO: parameterize
   }
 
@@ -113,9 +119,56 @@ public class TransportUDP extends TransportNet
   public int getPort()
   {
     if (socket!=null)
-      return socket.getPort();
+      return socket.getLocalPort();
     else
       return -1;
+  }
+
+
+
+  private DatagramSocket bindNextLocalPort()
+  {
+    @SuppressWarnings("hiding")
+    DatagramSocket socket = null;
+
+    synchronized (nextPort)
+    {
+      if (initPort<0)
+      {
+        try
+        {
+          socket = new DatagramSocket();
+          //socket.setReuseAddress(true); // TODO: should I use REUSEADDR?
+        }
+        catch (SocketException e)
+        {
+          socket = null;
+        }
+      }
+      else
+      {
+        while (socket==null)
+        {
+          try
+          {
+            socket = new DatagramSocket(nextPort);
+            //socket.setReuseAddress(true); // TODO: should I use REUSEADDR?
+          }
+          catch (SocketException e)
+          {
+            nextPort++;
+            if (nextPort == 65536)
+              nextPort = 1024;
+            if (nextPort == initPort)
+              return null;
+          }
+        }
+        nextPort++;
+        if (nextPort == 65536)
+          nextPort = 1024;
+      }
+    }
+    return socket;
   }
 
 
@@ -124,27 +177,11 @@ public class TransportUDP extends TransportNet
   public Object clone()
   {
     TransportUDP trans = null;
-    try
-    {
-      trans = (TransportUDP) super.clone();
-      synchronized (port)
-      {
-        if (port<0)
-          trans.socket = new DatagramSocket();
-        else
-        {
-          trans.socket = new DatagramSocket(port); // allow a list of ports
-          trans.socket.setReuseAddress(true);
-          port = -1;
-        }
-      }
-      trans.recvBuffer = recvBuffer.clone();
-      trans.dgram = new DatagramPacket(trans.recvBuffer, trans.recvBuffer.length);
-    }
-    catch (SocketException e)
-    {
-      e.printStackTrace();
-    }
+    trans = (TransportUDP) super.clone();
+    trans.socket = bindNextLocalPort();
+    trans.recvBuffer = recvBuffer.clone();
+    trans.dgram = new DatagramPacket(trans.recvBuffer, trans.recvBuffer.length);
+
     return trans;
   }
 }

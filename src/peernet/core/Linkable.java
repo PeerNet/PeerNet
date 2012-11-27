@@ -67,14 +67,5 @@ public interface Linkable extends Cleanable {
 	* Returns true if the given node is a member of the neighbor set.
 	*/
 	public boolean contains(Descriptor neighbor);
-	
-	/**
-	* A possibility for optimization. An implementation should try to
-	* compress its internal representation. Normally this is called
-	* by initializers or other components when
-	* no increase in the expected size of the neighborhood can be
-	* expected.
-	*/
-	public void pack();
 }
 

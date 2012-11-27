@@ -24,6 +24,8 @@ import peernet.config.MissingParameterException;
 import peernet.config.ParsedProperties;
 import peernet.core.CommonState;
 import peernet.core.Engine;
+import peernet.core.Engine.Type;
+import peernet.dynamics.Coordinator;
 
 
 
@@ -52,7 +54,7 @@ public class Simulator
   // ========================== static constants ==========================
   // ======================================================================
   /** {@link CDSimulator} */
-  public static final int CDSIM = 0;
+//  public static final int CDSIM = 0; //XXX remove!
   /** {@link Engine} */
   public static final int EDSIM = 1;
   /** Unknown simulator */
@@ -113,26 +115,34 @@ public class Simulator
     PrintStream newout = (PrintStream) Configuration.getInstance(PAR_REDIRECT, System.out);
     if (newout!=System.out)
       System.setOut(newout);
-    try
+
+    if (Engine.getType() == Type.COORDINATOR)
     {
-      System.err.println("Random seed: "+CommonState.r.getLastSeed());
-      System.out.println("\n\n");
-      Engine engine = Engine.instance();
-      engine.startExperiment();
+      Coordinator.start();
     }
-    catch (MissingParameterException e)
+    else
     {
-      System.err.println(e+"");
-      System.exit(1);
+      try
+      {
+        System.err.println("Random seed: "+CommonState.r.getLastSeed());
+        System.out.println("\n\n");
+        Engine engine = Engine.instance();
+        engine.startExperiment();
+      }
+      catch (MissingParameterException e)
+      {
+        System.err.println(e+"");
+        System.exit(1);
+      }
+      catch (IllegalParameterException e)
+      {
+        System.err.println(e+"");
+        System.exit(1);
+      }
+      // undocumented testing capabilities
+      if (Configuration.contains("__t"))
+        System.out.println(System.currentTimeMillis()-time);
+      // if(Configuration.contains("__x")) Network.test();
     }
-    catch (IllegalParameterException e)
-    {
-      System.err.println(e+"");
-      System.exit(1);
-    }
-    // undocumented testing capabilities
-    if (Configuration.contains("__t"))
-      System.out.println(System.currentTimeMillis()-time);
-    // if(Configuration.contains("__x")) Network.test();
   }
 }

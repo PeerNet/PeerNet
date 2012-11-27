@@ -91,7 +91,7 @@ public abstract class Protocol implements Cloneable
    * 
    * @param address
    */
-  public abstract void addBootstrap(Node node, int pid, Address address); //XXX make abstract
+  public abstract void addBootstrap(Node node, int pid, Address address);
 
 
   public void send(Address dest, int pid, Object event)
@@ -107,13 +107,42 @@ public abstract class Protocol implements Cloneable
    * XXX: Spyros, 2007-11-02: Should I move this to the Protocol interface?
    * XXX: Spyros, 2012-05-23: Yes, I should! ;-)
    */
-  public Descriptor getDescriptor()
+  public Descriptor getOwnDescriptor()
   {
     Descriptor d = null;
     Constructor<Descriptor> c = settings.getDescriptorConstructor();
     try
     {
-      d = c.newInstance(this, settings.pid);
+      d = c.newInstance(node, settings.pid);
+    }
+    catch (IllegalArgumentException e)
+    {
+      e.printStackTrace();
+    }
+    catch (InstantiationException e)
+    {
+      e.printStackTrace();
+    }
+    catch (IllegalAccessException e)
+    {
+      e.printStackTrace();
+    }
+    catch (InvocationTargetException e)
+    {
+      e.printStackTrace();
+    }
+    return d;
+  }
+
+
+
+  public Descriptor getForeignDescriptor(Address address)
+  {
+    Descriptor d = null;
+    Constructor<Descriptor> c = settings.getAddrDescriptorConstructor();
+    try
+    {
+      d = c.newInstance(address);
     }
     catch (IllegalArgumentException e)
     {

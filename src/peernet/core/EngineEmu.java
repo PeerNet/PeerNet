@@ -4,6 +4,8 @@
  */
 package peernet.core;
 
+import peernet.dynamics.BootstrapClient;
+import peernet.dynamics.BootstrapList;
 import peernet.transport.Address;
 import peernet.transport.Packet;
 import peernet.transport.TransportNet;
@@ -103,7 +105,7 @@ public class EngineEmu extends Engine
     long time = ev.time>>rbits;
     if (time>=endtime) // XXX Should we also check here, or only when scheduling an event?
       return true;
-  
+
     int pid = ev.pid;
     if (ev.node==null)  // XXX ugly way to identify control events
     {
@@ -125,10 +127,22 @@ public class EngineEmu extends Engine
       assert ev.node != Network.prototype;
 //        CommonState.setPid(pid);  // XXX try to entirely avoid CommonState
 //        CommonState.setNode(ev.node);
-      if (ev.event instanceof ScheduledEvent)
-      {
-        Protocol prot = ev.node.getProtocol(pid);
 
+      Protocol prot = ev.node.getProtocol(pid);
+
+      if (ev.event instanceof BootstrapList)
+      {
+        ev.node.acquireLock();
+        for (Address addr: ((BootstrapList)ev.event).addresses)
+        {
+          Descriptor d = prot.getForeignDescriptor(addr);
+          ((Linkable)prot).addNeighbor(d); // XXX test it
+        }
+        ev.node.releaseLock();
+        BootstrapClient.report(((BootstrapList)ev.event).coordinatorName, ev.node);
+      }
+      else if (ev.event instanceof ScheduledEvent)
+      {
         ev.node.acquireLock();
         prot.nextCycle(ev.node, pid);
         ev.node.releaseLock();
@@ -142,8 +156,6 @@ public class EngineEmu extends Engine
       }
       else // call Protocol.processEvent()
       {
-        Protocol prot = ev.node.getProtocol(pid);
-
         ev.node.acquireLock();
         prot.processEvent(ev.src, ev.node, pid, ev.event);
         ev.node.releaseLock();

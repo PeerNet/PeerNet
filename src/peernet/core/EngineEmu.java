@@ -136,7 +136,7 @@ public class EngineEmu extends Engine
         for (Address addr: ((BootstrapList)ev.event).addresses)
         {
           Descriptor d = prot.getForeignDescriptor(addr);
-          ((Linkable)prot).addNeighbor(d); // XXX test it
+          ((Linkable)prot).addNeighbor(d);
         }
         ev.node.releaseLock();
         BootstrapClient.report(((BootstrapList)ev.event).coordinatorName, ev.node);

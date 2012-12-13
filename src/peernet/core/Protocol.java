@@ -85,15 +85,6 @@ public abstract class Protocol implements Cloneable
 
 
 
-  /**
-   * Gives this protocol the address of a bootstrap node. Can be called
-   * multiple times if more than one bootstrap nodes are to be provided.
-   * 
-   * @param address
-   */
-  public abstract void addBootstrap(Node node, int pid, Address address);
-
-
   public void send(Address dest, int pid, Object event)
   {
     node.getTransportByPid(settings.pid).send(node, dest, pid, event);

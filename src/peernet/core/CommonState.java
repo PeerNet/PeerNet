@@ -65,8 +65,11 @@ public class CommonState
    * method, which is important because this is needed very often.
    */
   public static ExtendedRandom r = null;
+
+
   // ======================== initialization =========================
   // =================================================================
+
   /**
    * Configuration parameter used to define which random generator class should
    * be used. If not specified, the default implementation
@@ -76,6 +79,7 @@ public class CommonState
    * @config
    */
   public static final String PAR_RANDOM = "random";
+
   /**
    * Configuration parameter used to initialize the random seed. If it is not
    * specified the current time is used.
@@ -83,6 +87,7 @@ public class CommonState
    * @config
    */
   public static final String PAR_SEED = "random.seed";
+
   /**
    * Initializes the field {@link r} according to the configuration. Assumes
    * that the configuration is already loaded.
@@ -91,6 +96,12 @@ public class CommonState
   {
     long seed = Configuration.getLong(PAR_SEED, System.currentTimeMillis());
     initializeRandom(seed);
+
+    /* Sets start time. Assumes that the Engine class is already loaded */
+    if (Engine.getType() == Type.SIM)
+      startingTime = 0;
+    else
+      startingTime = System.currentTimeMillis();
   }
 
 
@@ -145,14 +156,11 @@ public class CommonState
   {
     if (endtime>=0)
       throw new RuntimeException("You can set endtime only once");
+
     if (t<0)
       throw new RuntimeException("No negative values are allowed");
+
     endtime = t;
-    
-    if (Engine.getType() == Type.SIM)
-      startingTime = 0;
-    else
-      startingTime = System.currentTimeMillis();
   }
 
 

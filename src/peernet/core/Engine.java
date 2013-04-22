@@ -369,8 +369,6 @@ public abstract class Engine
       throw new IllegalParameterException(PREFIX+"."+PAR_RBITS, "This parameter should be >= 8 or < 64");
 
     endtime = Configuration.getLong(PREFIX+"."+PAR_DURATION, Long.MAX_VALUE);
-    if (endtime != Long.MAX_VALUE)
-      endtime += CommonState.getTime();
     CommonState.setEndTime(endtime);
 
     // Logging
@@ -405,7 +403,8 @@ public abstract class Engine
         case NET:
           instance = new EngineEmu();
           break;
-        //XXX: Should have a default clause, for code quality.
+        default:
+          throw new IllegalParameterException(PREFIX+"."+PAR_MODE, Configuration.getString(PREFIX+"."+PAR_MODE));
       }
     }
 

@@ -77,6 +77,22 @@ public class RandPermutation implements IndexIterator
 
 
 
+  public void setPermutation(int k, int n)
+  {
+    reset(n);
+    k = Math.min(k, n);
+
+    for (int i = 0; i<k; i++)
+    {
+      int j = r.nextInt(n-i);
+      int a = buffer[i+j];
+      buffer[i+j] = buffer[i];
+      buffer[i] = a;
+    }
+  }
+
+
+
   // -------------------------------------------------------------------
   /**
    * Returns the ith element of the permutation set by {@link #setPermutation}.

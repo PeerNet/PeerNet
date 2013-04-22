@@ -28,6 +28,16 @@ Why do we need a special MaliciousProtocol interface?
 I would suggest to keep the whole thing as simple as possible.
 
 
+Scheduler:  Add pause(), and generally make it dynamically configurable
+
+PID: Find a way to make pid known to a protocol at construction time.
+     Maybe place it automatically into settings?
+     In that case, maybe remove it from nextCycle() and processEvent()?
+
+Transport: Allow for no transport, in case of auxiliary protocol.
+
+RandPermutation:  add setPermutation(k,n)
+
 
 
 EMULATION

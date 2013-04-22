@@ -114,13 +114,13 @@ public class OverlayGraph implements Graph
   {
     Linkable l = (Linkable) Network.get(i).getProtocol(protocolID);
     ArrayList<Integer> al = new ArrayList<Integer>(l.degree());
-    if (Network.get(i).isUp())
+    //FIXME: Place this line back!! XXX: if (Network.get(i).isUp())
     {
       for (int j = 0; j<l.degree(); ++j)
       {
         final Node n = ((AddressSim)l.getNeighbor(j).address).node;
         // if accessible, we include it
-        if (n.isUp())
+        //FIXME: Place this line back!! XXX: if (n.isUp())
           al.add(new Integer(n.getIndex()));
       }
     }

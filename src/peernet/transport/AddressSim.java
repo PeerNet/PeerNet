@@ -41,6 +41,19 @@ public class AddressSim implements Address
 
 
 
+  /**
+   * Getter for the 'node' referenced in this AddressSim.
+   * XXX: Might be removed from future PeerNet versions, try not to rely on it!
+   * 
+   * @return node
+   */
+  public Node getNode()
+  {
+    return node;
+  }
+
+
+
   public Object clone()
   {
     try
@@ -53,6 +66,14 @@ public class AddressSim implements Address
       System.exit(-1);
     }
     return null;
+  }
+
+
+
+  @Override
+  public boolean equals(Object other)
+  {
+    return node.equals(((AddressSim)other).node);
   }
 
 

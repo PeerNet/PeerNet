@@ -98,7 +98,7 @@ public class Descriptor implements Serializable
 	  if (Engine.getAddressType() == AddressType.NET)
 	    address = new AddressNet(localhost, ((TransportUDP)node.getTransport(0)).getPort()); //FIXME: change 0 to pid-something
 	  else
-	    address = new AddressSim();
+	    address = new AddressSim(node); //XXX: added 'node' while working on powerlaw
 	}
 
 

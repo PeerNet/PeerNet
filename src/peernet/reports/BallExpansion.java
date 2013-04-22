@@ -155,7 +155,7 @@ public boolean execute() {
 				//System.out.print(b[j] + " ");
 				j++;
 			}
-			System.out.println(CommonState.getTime()+"\t"+Network.size()+"\t"+Configuration.getInt("CC")+"\t"+numReached);
+			System.out.println(CommonState.getTime()+"\t"+Network.size()+"\t"+"\t"+numReached);
 		}
 	}
 	return false;

@@ -63,7 +63,7 @@ Should provide wrapper classes implementing Runnable, that start a new thread, a
 Controls and protocols should be executed as separate threads.
 
 There should be a single main scheduler per JVM, that invokes Protocols and Controls via new threads.
-The scheduler should compute execution times, and try to approximate them using the system clock. This way, timing errors will not accummulate.
+The scheduler should compute execution times, and try to approximate them using the system clock. This way, timing errors will not accumulate.
 
 In case two or more controls or protocols should be executed concurrently, what should we do with ordering?
 Probably ignore ordering in the Emu mode.

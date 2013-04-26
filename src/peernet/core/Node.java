@@ -121,36 +121,38 @@ public class Node implements Fallible, Cloneable
    */
   public Node(String prefix)
   {
-    String[] names = Configuration.getNames(PAR_PROTOCOL);
+    String[] protNames = Configuration.getNames(PAR_PROTOCOL);
     // CommonState.setNode(this);
     ID = nextID();
-    protocols = new Protocol[names.length];
+    protocols = new Protocol[protNames.length];
 
     // Find out how many distinct transports are being used per node.
-    mappingProtTrans = new int[names.length];
+    mappingProtTrans = new int[protNames.length];
     Vector<String> transportNames = new Vector<String>();
-    for (int i = 0; i<names.length; i++)
+    for (int i = 0; i<protNames.length; i++)
     {
-      String transportName = Configuration.getString(names[i]+"."+PAR_TRANSPORT, defaultTransportName());
-      int j = transportNames.indexOf(transportName);
-      if (j >= 0)
-        mappingProtTrans[i] = j;
-      else
-      {
+      String transportName = Configuration.getString(protNames[i]+"."+PAR_TRANSPORT, defaultTransportName());
+
+      // If the transport defined for this protocol is not in our list yet, add it
+      if (!transportNames.contains(transportName))
         transportNames.add(transportName);
-        mappingProtTrans[i] = transportNames.indexOf(transportName);
-      }
+
+      // Set the mapping from this protocol to this transport
+      int j = transportNames.indexOf(transportName);
+      assert j >= 0;
+      mappingProtTrans[i] = j;
     }
 
-    // Instantiate these transports
+    // Instantiate the transports
     transports = new Transport[transportNames.size()];
     for (int i=0; i<transports.length; i++)
       transports[i] = (Transport) Configuration.getInstance(PAR_TRANSPORT+"."+transportNames.get(i));
 
-    for (int i = 0; i<names.length; i++)
+    // Instantiate the protocols
+    for (int i = 0; i<protNames.length; i++)
     {
       // CommonState.setPid(i);
-      Protocol p = (Protocol) Configuration.getInstance(names[i]);
+      Protocol p = (Protocol) Configuration.getInstance(protNames[i]);
       protocols[i] = p;
     }
   }

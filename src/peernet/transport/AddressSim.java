@@ -73,6 +73,8 @@ public class AddressSim implements Address
   @Override
   public boolean equals(Object other)
   {
+    // The following checks whether 'node' and 'other' are references to the
+    // same object. As Node.equals() is not defined, Object.equals() is invoked.
     return node.equals(((AddressSim)other).node);
   }
 

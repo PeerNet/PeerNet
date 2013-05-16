@@ -140,6 +140,16 @@ public class Descriptor implements Serializable
 
 
 	/**
+	 * Custom hashCode() to be consistent with equals().
+	 */
+  public int hashCode()
+  {
+    return address.hashCode();
+  }
+
+
+
+	/**
 	 * clone()
 	 */
   public Object clone() throws CloneNotSupportedException

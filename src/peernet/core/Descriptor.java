@@ -24,7 +24,7 @@ import peernet.transport.TransportUDP;
  * @author Spyros Voulgaris
  *
  */
-public class Descriptor implements Serializable
+public class Descriptor implements Serializable, Cloneable
 {
   //XXX: add comments!
 
@@ -152,7 +152,7 @@ public class Descriptor implements Serializable
 	/**
 	 * clone()
 	 */
-  public Object clone() throws CloneNotSupportedException
+  public Object clone()
   {
     Descriptor descriptor = null;
     try

@@ -6,7 +6,7 @@ package peernet.transport;
 
 import java.io.Serializable;
 
-public interface Address extends Serializable
+public interface Address extends Serializable, Cloneable
 {
   public Object clone();
 }

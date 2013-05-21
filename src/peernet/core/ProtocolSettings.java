@@ -77,7 +77,10 @@ public class ProtocolSettings
   private final Constructor<Descriptor> descriptorConstructorGeneric;
 
 
-  final int pid;
+  /**
+   * The pid of this protocol instance.
+   */
+  private final int pid;
 
 
   /**
@@ -101,7 +104,6 @@ public class ProtocolSettings
     // First find and store the pid for this protocol
     String protocolName = prefix.toLowerCase().replace(PAR_PROTOCOL+".", "");
     pid = Configuration.lookupPid(protocolName);
-
 
     // Setup linkables
     if (Configuration.contains(prefix+"."+PAR_LINKABLE))
@@ -141,6 +143,16 @@ public class ProtocolSettings
     }
     descriptorConstructor = constr;
     descriptorConstructorGeneric = constrGeneric;
+  }
+
+
+
+  /**
+   * Get the pid of this protocol instance.
+   */
+  public int getPid()
+  {
+    return pid;
   }
 
 

@@ -87,7 +87,7 @@ public abstract class Protocol implements Cloneable
 
   public void send(Address dest, int pid, Object event)
   {
-    node.getTransportByPid(settings.pid).send(node, dest, pid, event);
+    node.getTransportByPid(settings.getPid()).send(node, dest, pid, event);
   }
 
 
@@ -104,7 +104,7 @@ public abstract class Protocol implements Cloneable
     Constructor<Descriptor> c = settings.getDescriptorConstructor();
     try
     {
-      d = c.newInstance(node, settings.pid);
+      d = c.newInstance(node, settings.getPid());
     }
     catch (IllegalArgumentException e)
     {

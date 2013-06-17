@@ -29,17 +29,29 @@ import java.util.Random;
  */
 public class RandPermutation implements IndexIterator
 {
-  // ======================= private fields ============================
-  // ===================================================================
+  /**
+   * The array of integers to pick from.
+   */
   private int[] buffer = null;
+
+  /**
+   * The size of the private integer array.
+   * Values are picked from the domain [0,len-1].
+   */
   private int len = 0;
+
+  /**
+   * Index of the next element to be replaced by the next() method.
+   */
   private int pointer = 0;
+
+  /**
+   * The random number generator. Assigned through the constructor.
+   */
   private final Random r;
 
 
 
-  // ======================= initialization ============================
-  // ===================================================================
   /**
    * Sets source of randomness to be used. You need to call {@link #reset} to
    * fully initialize the object.
@@ -51,8 +63,6 @@ public class RandPermutation implements IndexIterator
 
 
 
-  // ======================= public methods ============================
-  // ===================================================================
   /**
    * It calculates a random permutation of the integers from 0 to k-1. The
    * permutation can be read using method {@link #get}. If the previous
@@ -77,19 +87,19 @@ public class RandPermutation implements IndexIterator
 
 
 
-  public void setPermutation(int k, int n)
-  {
-    reset(n);
-    k = Math.min(k, n);
-
-    for (int i = 0; i<k; i++)
-    {
-      int j = r.nextInt(n-i);
-      int a = buffer[i+j];
-      buffer[i+j] = buffer[i];
-      buffer[i] = a;
-    }
-  }
+//  public void setPermutation(int k, int n)
+//  {
+//    reset(n);
+//    k = Math.min(k, n);
+//
+//    for (int i = 0; i<k; i++)
+//    {
+//      int j = r.nextInt(n-i);
+//      int a = buffer[i+j];
+//      buffer[i+j] = buffer[i];
+//      buffer[i] = a;
+//    }
+//  }
 
 
 
@@ -108,7 +118,6 @@ public class RandPermutation implements IndexIterator
 
 
 
-  // -------------------------------------------------------------------
   /**
    * It initiates a random permutation of the integers from 0 to k-1. It does
    * not actually calculate the permutation. The permutation can be read using
@@ -121,10 +130,10 @@ public class RandPermutation implements IndexIterator
     pointer = k;
     if (len==k)
       return;
-    if (buffer==null||buffer.length<k)
-    {
+
+    if (buffer==null || buffer.length<k)
       buffer = new int[k];
-    }
+
     len = k;
     for (int i = 0; i<len; ++i)
       buffer[i] = i;
@@ -132,7 +141,6 @@ public class RandPermutation implements IndexIterator
 
 
 
-  // -------------------------------------------------------------------
   /** Next random sample without replacement */
   public int next()
   {
@@ -147,30 +155,46 @@ public class RandPermutation implements IndexIterator
 
 
 
-  // -------------------------------------------------------------------
   public boolean hasNext()
   {
     return pointer>0;
   }
-  // -------------------------------------------------------------------
-  /*
-   * public static void main( String pars[] ) throws Exception {
-   * 
-   * RandPermutation rp = new RandPermutation(new Random());
-   * 
-   * int k;
-   * 
-   * k = Integer.parseInt(pars[0]); rp.setPermutation(k); for(int i=0; i<k; ++i)
-   * System.out.println(rp.get(i));
-   * 
-   * System.out.println();
-   * 
-   * k = Integer.parseInt(pars[1]); rp.reset(k); while(rp.hasNext())
-   * System.out.println(rp.next());
-   * 
-   * System.out.println();
-   * 
-   * k = Integer.parseInt(pars[2]); rp.reset(k); while(rp.hasNext())
-   * System.out.println(rp.next()); System.out.println(rp.next()); }
-   */
+
+
+
+//  public static void main(String pars[]) throws Exception
+//  {
+//    RandPermutation rp = new RandPermutation(new Random());
+//
+//    int k, n;
+//
+//    k = Integer.parseInt(pars[0]);
+//    rp.setPermutation(k);
+//    for (int i = 0; i<k; ++i)
+//      System.out.print(rp.get(i)+" ");
+//    System.out.println();
+//
+//    k = Integer.parseInt(pars[1]);
+//    rp.reset(k);
+//    while (rp.hasNext())
+//      System.out.print(rp.next()+" ");
+//    System.out.println();
+//
+//    k = Integer.parseInt(pars[2]);
+//    rp.reset(k);
+//    while (rp.hasNext())
+//      System.out.print(rp.next()+" ");
+//    System.out.println();
+//
+//    k = Integer.parseInt(pars[3]);
+//    n = Integer.parseInt(pars[4]);
+//    rp.setPermutation(k,  n);
+//    for (int i = 0; i<n; ++i)
+//      System.out.print(rp.get(i)+" ");
+//    System.out.println();
+//
+//    while (rp.hasNext())
+//      System.out.print(rp.next()+" ");
+//    System.out.println();
+//  }
 }

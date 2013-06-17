@@ -129,9 +129,10 @@ public class Node implements Fallible, Cloneable
     // Find out how many distinct transports are being used per node.
     mappingProtTrans = new int[protNames.length];
     Vector<String> transportNames = new Vector<String>();
-    for (int i = 0; i<protNames.length; i++)
+    for (int i=0; i<protNames.length; i++)
     {
-      String transportName = Configuration.getString(protNames[i]+"."+PAR_TRANSPORT, defaultTransportName());
+      //String transportName = Configuration.getString(protNames[i]+"."+PAR_TRANSPORT, defaultTransportName());
+      String transportName = Configuration.getString(protNames[i]+"."+PAR_TRANSPORT, null);  // null = default transport
 
       // If the transport defined for this protocol is not in our list yet, add it
       if (!transportNames.contains(transportName))
@@ -146,7 +147,12 @@ public class Node implements Fallible, Cloneable
     // Instantiate the transports
     transports = new Transport[transportNames.size()];
     for (int i=0; i<transports.length; i++)
-      transports[i] = (Transport) Configuration.getInstance(PAR_TRANSPORT+"."+transportNames.get(i));
+    {
+      if (transportNames.get(i) == null) // default transport
+        transports[i] = Transport.defaultTransportInstance();
+      else
+        transports[i] = (Transport) Configuration.getInstance(PAR_TRANSPORT+"."+transportNames.get(i));
+    }
 
     // Instantiate the protocols
     for (int i = 0; i<protNames.length; i++)
@@ -173,10 +179,10 @@ public class Node implements Fallible, Cloneable
     catch (CloneNotSupportedException e)
     {} // never happens
 
-    node.protocols = new Protocol[protocols.length];
+    node.protocols = protocols.clone();
     // CommonState.setNode(result);
     node.ID = nextID();
-    for (int i = 0; i<protocols.length; ++i)
+    for (int i=0; i<protocols.length; i++)
     {
       // CommonState.setPid(i);
       node.protocols[i] = (Protocol) protocols[i].clone();

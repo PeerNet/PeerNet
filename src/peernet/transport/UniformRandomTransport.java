@@ -48,7 +48,7 @@ public class UniformRandomTransport extends Transport
    */
   public UniformRandomTransport(String prefix)
   {
-    min = Configuration.getLong(prefix+"."+PAR_MINDELAY);
+    min = Configuration.getLong(prefix+"."+PAR_MINDELAY, 0);
     long max = Configuration.getLong(prefix+"."+PAR_MAXDELAY, min);
     if (max<min)
       throw new IllegalParameterException(prefix+"."+PAR_MAXDELAY,

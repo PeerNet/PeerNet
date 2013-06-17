@@ -156,3 +156,5 @@ Remove CDScheduler
 - check if there's a schedule in a Protocol, and then follow it
 
 Entirely avoiding CommonState
+
+Settings.pid (public & final) or Settings.getPid() ?

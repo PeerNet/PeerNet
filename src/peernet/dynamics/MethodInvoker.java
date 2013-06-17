@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * protocols in the protocol stack that define it.
  * <p>
  * Although the method cannot have any parameters, it can of course read
- * {@link CommonState}. It is guaranteed that the state is up-to-date, inlcuding
+ * {@link CommonState}. It is guaranteed that the state is up-to-date, including
  * eg method {@link CommonState#getNode}.
  */
 public class MethodInvoker implements Control, NodeInitializer

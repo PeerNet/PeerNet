@@ -92,7 +92,7 @@ public class RandNI implements NodeInitializer
       int r = CommonState.r.nextInt(Network.size()-1);
       if (r>=n.getIndex())
         r++;
-      linkable.addNeighbor(Network.get(r).getProtocol(pid).getOwnDescriptor());
+      linkable.addNeighbor(Network.get(r).getProtocol(pid).getDescriptor());
     }
   }
 }

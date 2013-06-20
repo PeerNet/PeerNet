@@ -10,8 +10,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import peernet.config.Configuration;
+import peernet.core.Descriptor;
 import peernet.graph.NeighborListGraph;
-import peernet.transport.Address;
 import peernet.transport.Packet;
 import peernet.transport.TransportUDP;
 
@@ -35,7 +35,7 @@ public class Coordinator
   private int pid = -1;
   private NeighborListGraph graph;
   private WireControl initializer = null;
-  private HashSet<Address> addresses;
+  private HashSet<Descriptor> descriptorSet;
 
   private String name;
 
@@ -50,7 +50,7 @@ public class Coordinator
     initializer = (WireControl) Configuration.getInstance(prefix+"."+PAR_INIT);
 
     graph = new NeighborListGraph(true); // new directed graph
-    addresses = new HashSet<Address>();
+    descriptorSet = new HashSet<Descriptor>();
 
     Timer timer = new Timer();
     timer.schedule(new TimerTask()
@@ -68,7 +68,7 @@ public class Coordinator
 
 
   private int count;
-  public synchronized void registerPeerAddress(Address address, @SuppressWarnings("hiding") int pid)
+  public synchronized void registerPeerAddress(Descriptor descr, int pid)
   {
     count++;
     if (this.pid == -1) // not set yet
@@ -77,20 +77,22 @@ public class Coordinator
 
     if (!completed)
     {
-      if (!addresses.contains(address))
+      if (!descriptorSet.contains(descr))
       {
+        descriptorSet.add(descr);
+
         // Add this node to the storage of this coordinator
-        graph.addNode(address);
-        // Check if we received sufficient nodes for this coordinator to close
-        // it
+        graph.addNode(descr);
+        // Check if we received sufficient nodes for this coordinator to close it
         if (graph.size()==numNodes)
         {
           System.out.println("Received messages from all nodes ("+numNodes+")");
           notifyNodes();
         }
-        addresses.add(address);
         System.out.println("---> "+graph.size()+" "+count);
       }
+      else
+        System.out.println("Duplicate: "+descr.address);
     }
     else
       System.out.println("Completed!! "+graph.size()+" "+count);
@@ -110,17 +112,23 @@ public class Coordinator
     // Finally, send messages to nodes to inform them of their neighbor lists
     for (int i = 0; i<graph.size(); i++)
     {
-      Address address = (Address) graph.getNode(i);
+      Descriptor descr = (Descriptor) graph.getNode(i);
       Collection<Integer> neighbors = graph.getNeighbours(i);
       BootstrapList list = new BootstrapList();
       list.coordinatorName = name;
-      list.addresses = new Address[neighbors.size()];
+      list.descriptors = new Descriptor[neighbors.size()];
 
+      System.out.print(descr.address+":\t");
       int j=0;
       for (int n: neighbors)
-        list.addresses[j++] = (Address) graph.getNode(n);
+      {
+        Descriptor d = (Descriptor) graph.getNode(n);
+        list.descriptors[j++] = d;
+        System.out.print(d.address+"  ");
+      }
+      System.out.println();
 
-      transport.send(null, address, pid, list);
+      transport.send(null, descr.address, pid, list);
     }
   }
 
@@ -137,18 +145,22 @@ public class Coordinator
     while (true)
     {
       Packet packet = transport.receive();
-      assert packet.event instanceof String;
-      String name = (String) packet.event;
+      BootstrapList bl = (BootstrapList) packet.event;
+      System.out.println("received from: "+packet.src);
+
       // If no coordinator has been created for this bootstrapId, create it
-      if (!map.containsKey(name))
+      if (!map.containsKey(bl.coordinatorName))
       {
-        Coordinator coordinator = new Coordinator(PAR_PREFIX+"."+name);
-        map.put(name, coordinator);
+        Coordinator coordinator = new Coordinator(PAR_PREFIX+"."+bl.coordinatorName);
+        map.put(bl.coordinatorName, coordinator);
       }
+
       // Fetch the appropriate coordinator from the HashMap.
-      Coordinator coordinator = map.get(name);
-      //assert packet.pid==coordinator.pid;
-      coordinator.registerPeerAddress(packet.src, packet.pid);
+      Coordinator coordinator = map.get(bl.coordinatorName);
+      assert bl.descriptors.length == 1;  // a node must have sent only its own descriptor
+      Descriptor descr = bl.descriptors[0];
+      descr.address = packet.src;
+      coordinator.registerPeerAddress(descr, packet.pid);
     }
   }
 }

@@ -133,11 +133,9 @@ public class EngineEmu extends Engine
       if (ev.event instanceof BootstrapList)
       {
         ev.node.acquireLock();
-        for (Address addr: ((BootstrapList)ev.event).addresses)
-        {
-          Descriptor d = prot.getForeignDescriptor(addr);
+        for (Descriptor d: ((BootstrapList)ev.event).descriptors)
           ((Linkable)prot).addNeighbor(d);
-        }
+
         ev.node.releaseLock();
         BootstrapClient.report(((BootstrapList)ev.event).coordinatorName, ev.node);
       }

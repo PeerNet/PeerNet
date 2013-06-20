@@ -104,18 +104,6 @@ public class Descriptor implements Serializable, Cloneable
 
 
   /**
-   * This constructor should be used to initialize descriptors of foreign peers,
-   * therefore it should initialize all fields to generic value, not to values
-   * of the calling node.
-   */
-  public Descriptor(Address address)  // TODO: lower the accessibility of Descriptor's constructors
-  {
-    this.address = address;
-  }
-
-
-
-  /**
    * Returns the ID of the node referenced by this descriptor.
    * 
    * IMPORTANT: IDs are unique for each node, both for single

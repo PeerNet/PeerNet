@@ -13,6 +13,7 @@ import java.util.TimerTask;
 
 import peernet.config.Configuration;
 import peernet.core.Control;
+import peernet.core.Descriptor;
 import peernet.core.Network;
 import peernet.core.Node;
 import peernet.core.Protocol;
@@ -65,13 +66,26 @@ public class BootstrapClient extends TimerTask implements Control
   {
     synchronized (remainingNodes)
     {
-      System.out.println("run(), remaining: "+remainingNodes.size());
+      System.out.println("run(), remaining nodes: "+remainingNodes.size());
+      try
+      {
+        Thread.sleep(System.currentTimeMillis() % 1000);
+      }
+      catch (InterruptedException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
       Collections.shuffle(remainingNodes);
+      BootstrapList bl = new BootstrapList();
+      bl.coordinatorName = coordinatorName;
+      bl.descriptors = new Descriptor[1];
       for (Node node: remainingNodes)
       {
         // TODO: Check what happens if a node has died
         Protocol prot = node.getProtocol(pid);
-        prot.send(address, pid, coordinatorName);
+        bl.descriptors[0] = prot.getOwnDescriptor();
+        prot.send(address, pid, bl);
       }
     }
   }

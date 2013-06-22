@@ -398,10 +398,10 @@ public abstract class Engine
           instance = new EngineSim();
           break;
         case EMU:
-          instance = new EngineEmu();
+          instance = new EngineNet();
           break;
         case NET:
-          instance = new EngineEmu();
+          instance = new EngineNet();
           break;
         default:
           throw new IllegalParameterException(PREFIX+"."+PAR_MODE, Configuration.getString(PREFIX+"."+PAR_MODE));

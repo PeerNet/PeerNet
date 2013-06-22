@@ -11,7 +11,7 @@ import peernet.transport.Packet;
 import peernet.transport.TransportNet;
 
 
-public class EngineEmu extends Engine
+public class EngineNet extends Engine
 {
   Heap controlHeap = null;
 

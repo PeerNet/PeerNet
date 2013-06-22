@@ -106,9 +106,21 @@ public class Node implements Fallible, Cloneable
    * Returns the ID of this node. The IDs are generated using a counter (i.e.,
    * they are not random).
    */
-  public long getID()
+  public final long getID()
   {
     return ID;
+  }
+
+
+
+  /**
+   * Sets the ID of this node.
+   * This method has 'package' access, to be used only by PeerNet.
+   * Not intended for use by the application.
+   */
+  final void setID(long id)
+  {
+    ID = id;
   }
 
 

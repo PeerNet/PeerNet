@@ -13,5 +13,6 @@ public class BootstrapList implements Serializable
   private static final long serialVersionUID = 7821791956620397834L;
 
   public String coordinatorName;
+  public long nodeId;
   public Descriptor[] descriptors;
 }

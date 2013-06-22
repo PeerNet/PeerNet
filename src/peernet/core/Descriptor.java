@@ -109,7 +109,13 @@ public class Descriptor implements Serializable, Cloneable
    * IMPORTANT: IDs are unique for each node, both for single
    * machine simulations and distributed emulations.
    */
-  //public abstract long getID();
+  public long getID()
+  {
+    if (address instanceof AddressSim)
+      return ((AddressSim)address).node.getID();
+    else
+      return ((AddressNet)address).ID;
+  }
 
 
 

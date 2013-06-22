@@ -12,6 +12,7 @@ import java.util.TimerTask;
 import peernet.config.Configuration;
 import peernet.core.Descriptor;
 import peernet.graph.NeighborListGraph;
+import peernet.transport.AddressNet;
 import peernet.transport.Packet;
 import peernet.transport.TransportUDP;
 
@@ -39,8 +40,9 @@ public class Coordinator
 
   private String name;
 
+  private static HashMap<AddressNet, Long> addressSet = new HashMap<AddressNet, Long>();
 
-
+  AddressNet addr;
   private Coordinator(String prefix)
   {
     name = prefix.substring(prefix.lastIndexOf('.') + 1);
@@ -116,9 +118,10 @@ public class Coordinator
       Collection<Integer> neighbors = graph.getNeighbours(i);
       BootstrapList list = new BootstrapList();
       list.coordinatorName = name;
+      list.nodeId = ((AddressNet)descr.address).ID;
       list.descriptors = new Descriptor[neighbors.size()];
 
-      System.out.print(descr.address+":\t");
+      System.out.print(descr.address+" id="+list.nodeId+":\t");
       int j=0;
       for (int n: neighbors)
       {
@@ -130,6 +133,29 @@ public class Coordinator
 
       transport.send(null, descr.address, pid, list);
     }
+  }
+
+
+
+  static long ID = 0;
+  protected static long assignNodeId(AddressNet address)
+  {
+    return ID++;
+  }
+
+
+
+  private static void setNodeId(AddressNet address)
+  {
+    Long assignedId = addressSet.get(address);
+
+    if (assignedId==null)
+    {
+      assignedId = assignNodeId(address);
+      addressSet.put(address, assignedId);
+    }
+
+    address.ID = assignedId;
   }
 
 
@@ -160,6 +186,7 @@ public class Coordinator
       assert bl.descriptors.length == 1;  // a node must have sent only its own descriptor
       Descriptor descr = bl.descriptors[0];
       descr.address = packet.src;
+      setNodeId((AddressNet)descr.address);
       coordinator.registerPeerAddress(descr, packet.pid);
     }
   }

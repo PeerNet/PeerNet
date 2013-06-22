@@ -132,7 +132,13 @@ public class EngineEmu extends Engine
 
       if (ev.event instanceof BootstrapList)
       {
+        BootstrapList msg = (BootstrapList)ev.event;
         ev.node.acquireLock();
+
+        // set the node id
+        ev.node.setID(msg.nodeId);
+
+        // add neighbors to the node
         for (Descriptor d: ((BootstrapList)ev.event).descriptors)
           ((Linkable)prot).addNeighbor(d);
 
@@ -148,7 +154,7 @@ public class EngineEmu extends Engine
         long delay = prot.nextDelay();
         if (delay == 0)
           delay = protocolSchedules[pid].nextDelay(time);
-  
+
         if (delay > 0)
           addAtTime(time+delay, null, ev.node, pid, scheduledEvent);
       }

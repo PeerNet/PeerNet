@@ -16,7 +16,7 @@ public class AddressSim implements Address
    * In single-machine simulated environments, a reference to Node is
    * sufficient to address the node.
    */
-  protected Node node;
+  public Node node;
 
 
 
@@ -47,10 +47,10 @@ public class AddressSim implements Address
    * 
    * @return node
    */
-  public Node getNode()
-  {
-    return node;
-  }
+//  public Node getNode()
+//  {
+//    return node;
+//  }
 
 
 

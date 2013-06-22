@@ -18,6 +18,15 @@ public class AddressNet implements Address
   protected InetAddress ip;
   protected int port;
 
+
+
+  /**
+   * The ID of the referenced node.
+   */
+  public long ID;  //XXX should be made private
+
+
+
   public AddressNet(InetAddress ip, int port)
   {
     this.ip = ip;
@@ -26,6 +35,7 @@ public class AddressNet implements Address
 
 
 
+  @Override
   public Object clone()
   {
     AddressNet addr = null;
@@ -49,20 +59,58 @@ public class AddressNet implements Address
 
 
 
-  @Override
-  public boolean equals(Object other)
+  /**
+   * Public getter for the IP address.
+   */
+  public final InetAddress getIP()
   {
-    return ip.equals(((AddressNet)other).ip) && port==((AddressNet)other).port;
+    return ip;
   }
 
 
+
+  /**
+   * Public getter for the port.
+   */
+  public final int getPort()
+  {
+    return port;
+  }
+
+
+
+  /**
+   * Default toString()
+   */
+  @Override
   public String toString()
   {
     return ""+ip+":"+port;
   }
 
-  public int hashCode()
+
+
+  /**
+   * Methods equals() and hashCode() depend on the IP address and port
+   * exclusively. They explicitly do not take the node ID into account,
+   * for protocols that are ID-agnostic.
+   */
+  @Override
+  public final int hashCode()
   {
     return ip.hashCode()+port;
+  }
+
+
+
+  /**
+   * Methods equals() and hashCode() depend on the IP address and port
+   * exclusively. They explicitly do not take the node ID into account,
+   * for protocols that are ID-agnostic.
+   */
+  @Override
+  public final boolean equals(Object other)
+  {
+    return ip.equals(((AddressNet)other).ip) && port==((AddressNet)other).port;
   }
 }

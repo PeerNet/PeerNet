@@ -20,7 +20,7 @@ import peernet.transport.TransportUDP;
 
 
 
-public class Coordinator
+public class BootstrapServer
 {
   private final static String PAR_PREFIX = "coordinator";
   private final static String PAR_TRANSPORT = "transport";
@@ -43,7 +43,7 @@ public class Coordinator
   private static HashMap<AddressNet, Long> addressSet = new HashMap<AddressNet, Long>();
 
   AddressNet addr;
-  private Coordinator(String prefix)
+  private BootstrapServer(String prefix)
   {
     name = prefix.substring(prefix.lastIndexOf('.') + 1);
     numNodes = Configuration.getInt(prefix+"."+PAR_SIZE, Integer.MAX_VALUE);
@@ -164,9 +164,9 @@ public class Coordinator
   {
     transport = new TransportUDP(PAR_TRANSPORT);
     transport = (TransportUDP) transport.clone();
-    System.out.println("Coordinator listening at port "+transport.getPort());
+    System.out.println("BootstrapServer listening at port "+transport.getPort());
 
-    HashMap<String, Coordinator> map = new HashMap<String, Coordinator>();
+    HashMap<String, BootstrapServer> map = new HashMap<String, BootstrapServer>();
 
     while (true)
     {
@@ -177,12 +177,12 @@ public class Coordinator
       // If no coordinator has been created for this bootstrapId, create it
       if (!map.containsKey(bl.coordinatorName))
       {
-        Coordinator coordinator = new Coordinator(PAR_PREFIX+"."+bl.coordinatorName);
+        BootstrapServer coordinator = new BootstrapServer(PAR_PREFIX+"."+bl.coordinatorName);
         map.put(bl.coordinatorName, coordinator);
       }
 
       // Fetch the appropriate coordinator from the HashMap.
-      Coordinator coordinator = map.get(bl.coordinatorName);
+      BootstrapServer coordinator = map.get(bl.coordinatorName);
       assert bl.descriptors.length == 1;  // a node must have sent only its own descriptor
       Descriptor descr = bl.descriptors[0];
       descr.address = packet.src;

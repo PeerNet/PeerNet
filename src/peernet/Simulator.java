@@ -25,7 +25,7 @@ import peernet.config.ParsedProperties;
 import peernet.core.CommonState;
 import peernet.core.Engine;
 import peernet.core.Engine.Type;
-import peernet.dynamics.Coordinator;
+import peernet.dynamics.BootstrapServer;
 
 
 
@@ -118,7 +118,7 @@ public class Simulator
 
     if (Engine.getType() == Type.COORDINATOR)
     {
-      Coordinator.start();
+      BootstrapServer.start();
     }
     else
     {

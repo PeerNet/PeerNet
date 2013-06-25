@@ -146,26 +146,7 @@ public class EngineNet extends Engine
 
       else if (ev.event instanceof BootstrapMessage)
       {
-        BootstrapMessage msg = (BootstrapMessage)ev.event;
-
-        switch (msg.type)
-        {
-          case REQUEST_ACK:
-            ev.node.setID(msg.nodeId);
-            break;
-
-          case RESPONSE:
-            ev.node.acquireLock();
-            // add neighbors to the node
-//            for (Descriptor d: ((BootstrapMessage)ev.event).descriptors)
-//              ((Linkable)prot).addNeighbor(d);
-            ev.node.releaseLock();
-            break;
-
-          default:
-            throw new RuntimeException("Received BootstrapMessage of unknown type: "+msg.type);
-        }
-        BootstrapClient.report(ev.node, msg);
+        BootstrapClient.report(ev.node, (BootstrapMessage)ev.event);
       }
 
       else // call Protocol.processEvent()

@@ -16,6 +16,7 @@ import peernet.config.Configuration;
 import peernet.core.CommonState;
 import peernet.core.Control;
 import peernet.core.Descriptor;
+import peernet.core.Linkable;
 import peernet.core.Network;
 import peernet.core.Node;
 import peernet.core.Protocol;
@@ -41,6 +42,8 @@ public class BootstrapClient extends TimerTask implements Control
   private String coordinatorName;
   private ArrayList<Node> remainingNodes;
   private Timer timer;
+
+  private boolean bootstrapped = false;
 
   public BootstrapClient(String prefix)
   {
@@ -122,6 +125,8 @@ public class BootstrapClient extends TimerTask implements Control
         assert false;
 
       case REQUEST_ACK:
+        node.setID(msg.nodeId);
+
         synchronized (b.remainingNodes)
         {
           b.remainingNodes.remove(node);
@@ -131,11 +136,21 @@ public class BootstrapClient extends TimerTask implements Control
         break;
 
       case RESPONSE:
+        Protocol prot = node.getProtocol(b.pid);
+
+        if (!b.bootstrapped)  // add neighbors to the node
+        {
+          b.bootstrapped = true;
+          node.acquireLock();
+          for (Descriptor d: msg.descriptors)
+            ((Linkable)prot).addNeighbor(d);
+          node.releaseLock();
+        }
+
         BootstrapMessage ack = new BootstrapMessage(Type.RESPONSE_ACK);
         ack.coordinatorName = msg.coordinatorName;
         ack.descriptors = null;
 
-        Protocol prot = node.getProtocol(b.pid);
         if (CommonState.r.nextDouble() < 0.01)
           System.out.println("** node "+node.getID()+"  bs: "+b.address);
 

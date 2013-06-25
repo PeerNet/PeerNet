@@ -118,7 +118,7 @@ public class Node implements Fallible, Cloneable
    * This method has 'package' access, to be used only by PeerNet.
    * Not intended for use by the application.
    */
-  final void setID(long id)
+  public final void setID(long id)
   {
     ID = id;
   }

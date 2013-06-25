@@ -124,6 +124,12 @@ public class BootstrapServer extends TimerTask
         uninformedNodes.remove(src);
         System.out.print("\r---> "+uninformedNodes.size());
         System.out.flush();
+        if (uninformedNodes.size() == 0)
+        {
+          this.cancel();
+          System.out.println("\n\nBootstrapping is now complete. Exiting.\n");
+          System.exit(0);
+        }
         break;
 
       case REQUEST_ACK:

@@ -98,7 +98,7 @@ public abstract class Protocol implements Cloneable
    * XXX: Spyros, 2007-11-02: Should I move this to the Protocol interface?
    * XXX: Spyros, 2012-05-23: Yes, I should! ;-)
    */
-  public Descriptor getDescriptor()
+  public Descriptor createDescriptor()
   {
     Descriptor d = null;
     Constructor<Descriptor> c = settings.getDescriptorConstructor();

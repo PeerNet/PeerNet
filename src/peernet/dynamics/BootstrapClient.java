@@ -8,15 +8,19 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import peernet.config.Configuration;
+import peernet.core.CommonState;
 import peernet.core.Control;
 import peernet.core.Descriptor;
 import peernet.core.Network;
 import peernet.core.Node;
 import peernet.core.Protocol;
+import peernet.dynamics.BootstrapServer.BootstrapMessage;
+import peernet.dynamics.BootstrapServer.BootstrapMessage.Type;
 import peernet.transport.Address;
 import peernet.transport.AddressNet;
 
@@ -77,15 +81,15 @@ public class BootstrapClient extends TimerTask implements Control
         e.printStackTrace();
       }
       Collections.shuffle(remainingNodes);
-      BootstrapList bl = new BootstrapList();
-      bl.coordinatorName = coordinatorName;
-      bl.descriptors = new Descriptor[1];
+      BootstrapMessage msg = new BootstrapMessage(Type.REQUEST);
+      msg.coordinatorName = coordinatorName;
+      msg.descriptors = new Descriptor[1];
       for (Node node: remainingNodes)
       {
         // TODO: Check what happens if a node has died
         Protocol prot = node.getProtocol(pid);
-        bl.descriptors[0] = prot.getDescriptor();
-        prot.send(address, pid, bl);
+        msg.descriptors[0] = prot.getDescriptor();
+        prot.send(address, pid, msg);
       }
     }
   }
@@ -98,24 +102,59 @@ public class BootstrapClient extends TimerTask implements Control
     for (int n = 0; n<Network.size(); n++)
       remainingNodes.add(Network.get(n));
 
+    Random r = new Random(System.currentTimeMillis());
+    int timeOffset = r.nextInt(2000);
+    
     timer = new Timer();
-    timer.schedule(this, 0, 2000);
+    timer.schedule(this, timeOffset, 2000);
     return false;
   }
 
 
 
-  public static void report(String coordinatorName, Node node)
+  public static void report(Node node, BootstrapMessage msg)
   {
-    BootstrapClient b = map.get(coordinatorName);
-    synchronized (b.remainingNodes)
+    BootstrapClient b = map.get(msg.coordinatorName);
+
+    switch (msg.type)
     {
-      b.remainingNodes.remove(node);
-      if (b.remainingNodes.size() == 0)  // cancel periodic task
-      {
-        b.timer.cancel();
-        System.out.println("CANCELLING TIMER");
-      }
+      case REQUEST:
+        assert false;
+
+      case REQUEST_ACK:
+        synchronized (b.remainingNodes)
+        {
+          b.remainingNodes.remove(node);
+          if (b.remainingNodes.size() == 0)  // cancel periodic task
+            b.timer.cancel();
+        }
+        break;
+
+      case RESPONSE:
+        BootstrapMessage ack = new BootstrapMessage(Type.RESPONSE_ACK);
+        ack.coordinatorName = msg.coordinatorName;
+        ack.descriptors = null;
+
+        Protocol prot = node.getProtocol(b.pid);
+        if (CommonState.r.nextDouble() < 0.01)
+          System.out.println("** node "+node.getID()+"  bs: "+b.address);
+
+        try
+        {
+          Thread.sleep(CommonState.r.nextInt(1000));
+        }
+        catch (InterruptedException e)
+        {
+          e.printStackTrace();
+        }
+        prot.send(b.address, b.pid, ack);
+        break;
+
+      case RESPONSE_ACK:
+        assert false;
+
+      default:
+        throw new RuntimeException("Received BootstrapMessage of unknown type: "+msg.type);
     }
   }
 }

@@ -5,7 +5,7 @@
 package peernet.core;
 
 import peernet.dynamics.BootstrapClient;
-import peernet.dynamics.BootstrapList;
+import peernet.dynamics.BootstrapServer.BootstrapMessage;
 import peernet.transport.Address;
 import peernet.transport.Packet;
 import peernet.transport.TransportNet;
@@ -130,22 +130,7 @@ public class EngineNet extends Engine
 
       Protocol prot = ev.node.getProtocol(pid);
 
-      if (ev.event instanceof BootstrapList)
-      {
-        BootstrapList msg = (BootstrapList)ev.event;
-        ev.node.acquireLock();
-
-        // set the node id
-        ev.node.setID(msg.nodeId);
-
-        // add neighbors to the node
-        for (Descriptor d: ((BootstrapList)ev.event).descriptors)
-          ((Linkable)prot).addNeighbor(d);
-
-        ev.node.releaseLock();
-        BootstrapClient.report(((BootstrapList)ev.event).coordinatorName, ev.node);
-      }
-      else if (ev.event instanceof ScheduledEvent)
+      if (ev.event instanceof ScheduledEvent)
       {
         ev.node.acquireLock();
         prot.nextCycle(ev.node, pid);
@@ -158,6 +143,31 @@ public class EngineNet extends Engine
         if (delay > 0)
           addAtTime(time+delay, null, ev.node, pid, scheduledEvent);
       }
+
+      else if (ev.event instanceof BootstrapMessage)
+      {
+        BootstrapMessage msg = (BootstrapMessage)ev.event;
+
+        switch (msg.type)
+        {
+          case REQUEST_ACK:
+            ev.node.setID(msg.nodeId);
+            break;
+
+          case RESPONSE:
+            ev.node.acquireLock();
+            // add neighbors to the node
+//            for (Descriptor d: ((BootstrapMessage)ev.event).descriptors)
+//              ((Linkable)prot).addNeighbor(d);
+            ev.node.releaseLock();
+            break;
+
+          default:
+            throw new RuntimeException("Received BootstrapMessage of unknown type: "+msg.type);
+        }
+        BootstrapClient.report(ev.node, msg);
+      }
+
       else // call Protocol.processEvent()
       {
         ev.node.acquireLock();

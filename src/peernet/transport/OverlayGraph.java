@@ -190,13 +190,11 @@ public class OverlayGraph implements Graph
       // Set the inverse edge
       Linkable jProt = (Linkable) Network.get(j).getProtocol(protocolID);
       Descriptor iDescr = Network.get(i).getProtocol(protocolID).createDescriptor();
-      ((AddressSim)iDescr.address).node = Network.get(i);
       jProt.addNeighbor(iDescr);
     }
     // Set the direct edge
     Linkable iProt = (Linkable) Network.get(i).getProtocol(protocolID);
     Descriptor jDescr = Network.get(j).getProtocol(protocolID).createDescriptor();
-    ((AddressSim)jDescr.address).node = Network.get(j);
     iProt.addNeighbor(jDescr);
 
     return true;

@@ -16,16 +16,7 @@ public class AddressSim implements Address
    * In single-machine simulated environments, a reference to Node is
    * sufficient to address the node.
    */
-  public Node node;
-
-
-
-  /**
-   * Default constructor
-   */
-  public AddressSim()
-  {
-  }
+  public final Node node;
 
 
 

@@ -12,6 +12,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import peernet.config.Configuration;
 import peernet.core.Node;
@@ -72,7 +73,8 @@ public class TransportUDP extends TransportNet
     }
     catch (IOException e)
     {
-      e.printStackTrace();
+      // No problem failing to send a packet.
+      // It is most likely due to full networks buffers.
     }
   }
 
@@ -90,7 +92,14 @@ public class TransportUDP extends TransportNet
       AddressNet srcAddr = new AddressNet(dgram.getAddress(), dgram.getPort());
       int pid = (Integer) ois.readObject();
       Object event = ois.readObject();
+
+      assert srcAddr!=null : "TransportUDP.receive().srcAddr is null!";
+      assert event!=null : "TransportUDP.receive().event is null!";
+
       Packet packet = new Packet(srcAddr, pid, event);
+
+      assert packet!=null : "TransportUDP.receive().packet is null!";
+
       return packet;
     }
     catch (ClassNotFoundException e)
@@ -99,7 +108,17 @@ public class TransportUDP extends TransportNet
     }
     catch (IOException e)
     {
+      try
+      {
+        System.out.println("myhost="+InetAddress.getLocalHost().getHostName());
+      }
+      catch (UnknownHostException e1)
+      {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
       e.printStackTrace();
+      System.exit(-1);
     }
     return null;
   }

@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,7 +44,7 @@ public class BootstrapClient extends TimerTask implements Control
   private ArrayList<Node> remainingNodes;
   private Timer timer;
 
-  private boolean bootstrapped = false;
+  private HashSet<Long> bootstrappedNodes;
 
   public BootstrapClient(String prefix)
   {
@@ -63,6 +64,7 @@ public class BootstrapClient extends TimerTask implements Control
 
     remainingNodes = new ArrayList<Node>();
     coordinatorName = Configuration.getString(prefix+"."+PAR_COORDINATOR, "");
+    bootstrappedNodes = new HashSet<Long>();
 
     map.put(coordinatorName, this);
   }
@@ -136,23 +138,29 @@ public class BootstrapClient extends TimerTask implements Control
         break;
 
       case RESPONSE:
+        node.setID(msg.nodeId);
+
         Protocol prot = node.getProtocol(b.pid);
 
-        if (!b.bootstrapped)  // add neighbors to the node
+        synchronized (b.bootstrappedNodes)
         {
-          b.bootstrapped = true;
-          node.acquireLock();
-          for (Descriptor d: msg.descriptors)
-            ((Linkable)prot).addNeighbor(d);
-          node.releaseLock();
+          if (!b.bootstrappedNodes.contains(node.getID())) // not bootstrapped yet
+          {
+            b.bootstrappedNodes.add(node.getID());
+            node.acquireLock();
+            for (Descriptor d: msg.descriptors)
+              ((Linkable)prot).addNeighbor(d);
+            node.releaseLock();
+          }
+          else
+          {
+            System.out.println("BC for node "+node.getID()+" is already bootstrapped.");
+          }
         }
 
         BootstrapMessage ack = new BootstrapMessage(Type.RESPONSE_ACK);
         ack.coordinatorName = msg.coordinatorName;
         ack.descriptors = null;
-
-        if (CommonState.r.nextDouble() < 0.01)
-          System.out.println("** node "+node.getID()+"  bs: "+b.address);
 
         try
         {

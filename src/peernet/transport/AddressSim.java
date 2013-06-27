@@ -32,19 +32,6 @@ public class AddressSim implements Address
 
 
 
-  /**
-   * Getter for the 'node' referenced in this AddressSim.
-   * XXX: Might be removed from future PeerNet versions, try not to rely on it!
-   * 
-   * @return node
-   */
-//  public Node getNode()
-//  {
-//    return node;
-//  }
-
-
-
   public Object clone()
   {
     try

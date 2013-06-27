@@ -20,13 +20,6 @@ public class AddressNet implements Address
 
 
 
-  /**
-   * The ID of the referenced node.
-   */
-  public long ID;  //XXX should be made private
-
-
-
   public AddressNet(InetAddress ip, int port)
   {
     this.ip = ip;

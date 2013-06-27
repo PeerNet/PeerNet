@@ -118,7 +118,7 @@ public class Simulator
 
     if (Engine.getType() == Type.COORDINATOR)
     {
-      BootstrapServer.start();
+      BootstrapServer bootstrapper = new BootstrapServer();
     }
     else
     {

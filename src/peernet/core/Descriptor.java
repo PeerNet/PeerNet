@@ -26,8 +26,6 @@ import peernet.transport.TransportUDP;
  */
 public class Descriptor implements Serializable, Cloneable
 {
-  //XXX: add comments!
-
   private static final long serialVersionUID = 1;
   public static InetAddress localhost;
 
@@ -88,6 +86,13 @@ public class Descriptor implements Serializable, Cloneable
    */
   public Address address;
 
+  
+  
+  /**
+   * The ID of the reference node.
+   */
+  public long ID;
+
 
 
   /**
@@ -95,10 +100,14 @@ public class Descriptor implements Serializable, Cloneable
    */
 	public Descriptor(Node node, int pid)
 	{
+	  // set the address
 	  if (Engine.getAddressType() == AddressType.NET)
 	    address = new AddressNet(localhost, ((TransportUDP)node.getTransport(0)).getPort()); //FIXME: change 0 to pid-something
 	  else
-	    address = new AddressSim(node); //XXX: added 'node' while working on powerlaw
+	    address = new AddressSim(node);
+
+	  // set the ID
+	  ID = node.getID();
 	}
 
 
@@ -111,10 +120,11 @@ public class Descriptor implements Serializable, Cloneable
    */
   public long getID()
   {
-    if (address instanceof AddressSim)
-      return ((AddressSim)address).node.getID();
-    else
-      return ((AddressNet)address).ID;
+    return ID;
+//    if (address instanceof AddressSim)
+//      return ((AddressSim)address).node.getID();
+//    else
+//      return ((AddressNet)address).ID;
   }
 
 

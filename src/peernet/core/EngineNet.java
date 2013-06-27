@@ -224,6 +224,10 @@ public class EngineNet extends Engine
       while (true)
       {
         Packet packet = transport.receive();
+
+        assert packet!=null : "packet is null!";
+        assert packet.src!=null : "packet.src is null!";
+        assert packet.event!=null : "packet.event is null!";
         synchronized (heap)
         {
           heap.add(0, packet.src, node, (byte)packet.pid, packet.event);

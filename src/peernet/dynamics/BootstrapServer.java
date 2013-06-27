@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Vector;
 
 import peernet.config.Configuration;
 import peernet.core.Control;
@@ -23,7 +23,7 @@ import peernet.transport.TransportUDP;
 
 
 
-public class BootstrapServer extends TimerTask
+public class BootstrapServer
 {
   /**
    * Coordinator prefix
@@ -52,208 +52,290 @@ public class BootstrapServer extends TimerTask
    */
   private final static String PAR_INIT = "init";
 
-
-
   private static TransportUDP transport = null;
+  static long ID = 0;
 
-  private int numNodes;
-  private int timeout;
-  private boolean completed;
-  private int pid = -1;
-  private NeighborListGraph graph;
-  private WireControl initializer = null;
-  private HashMap<Address, Integer> uninformedNodes;
-
-  private String name;
-
-  private static HashMap<AddressNet, Long> addressSet = new HashMap<AddressNet, Long>();
-  private int msgsReceived = 0;
+  private HashMap<Descriptor, Long> addressSet = new HashMap<Descriptor, Long>();
+  private HashMap<String, Coordinator> map = new HashMap<String, Coordinator>();
 
   AddressNet addr;
+  Timer timer;
 
 
 
-  private BootstrapServer(String prefix)
+  public BootstrapServer()
   {
-    name = prefix.substring(prefix.lastIndexOf('.') + 1);
-    numNodes = Configuration.getInt(prefix+"."+PAR_SIZE);
-    timeout = Configuration.getInt(prefix+"."+PAR_TIMEOUT, -1);
+    transport = new TransportUDP(PAR_TRANSPORT);
+    transport = (TransportUDP) transport.clone();
 
-    initializer = (WireControl) Configuration.getInstance(prefix+"."+PAR_INIT);
-
-    graph = new NeighborListGraph(true); // new directed graph
-    uninformedNodes = new HashMap<Address, Integer>();
+    new Thread(new NetworkListener()).start();
   }
 
 
 
-  private synchronized void process(Address src, int pid, BootstrapMessage msg)
-  {
-    msgsReceived++;
-
-    switch (msg.type)
-    {
-      case REQUEST:
-        if (this.pid == -1) // not set yet
-          this.pid = pid;
-        assert this.pid == pid; // once set, all incoming requests should be for the same pid
-
-        // each node is supposed to send only its own descriptor
-        assert msg.descriptors.length == 1;  
-
-        Descriptor descr = msg.descriptors[0];
-        descr.address = src;  // set the node's address in its descriptor
-        
-        // Set the node ID in its address
-        setNodeId((AddressNet)descr.address);
-
-        // register the node in local topology structure
-        addToTopology(descr);
-
-        // Send ACK so that the node stops trying to register
-        BootstrapMessage ack = new BootstrapMessage(Type.REQUEST_ACK);
-        ack.nodeId = descr.getID();
-        ack.descriptors = null;
-        ack.coordinatorName = msg.coordinatorName;
-        transport.send(null, descr.address, pid, ack);
-
-        break;
-
-      case RESPONSE_ACK:
-        // Ok, this node is now informed. Stop sending it bootstrap information.
-        uninformedNodes.remove(src);
-        System.out.print("\r---> "+uninformedNodes.size());
-        System.out.flush();
-        if (uninformedNodes.size() == 0)
-        {
-          this.cancel();
-          System.out.println("\n\nBootstrapping is now complete. Exiting.\n");
-          System.exit(0);
-        }
-        break;
-
-      case REQUEST_ACK:
-        assert false;
-
-      case RESPONSE:
-        assert false;
-
-      default:
-        break;
-    }
-  }
-
-
-
-  @Override
-  public synchronized void run()
-  {
-    System.out.println("\n\nSending bootstrapping information to "+uninformedNodes.size()+" nodes");
-
-    int counter = 0;
-    for (int index: uninformedNodes.values())
-    {
-      Descriptor descr = (Descriptor) graph.getNode(index);
-      Collection<Integer> neighbors = graph.getNeighbours(index);
-
-      BootstrapMessage msg = new BootstrapMessage(Type.RESPONSE);
-      msg.coordinatorName = name;
-      msg.nodeId = descr.getID();
-      msg.descriptors = new Descriptor[neighbors.size()];
-
-      int j=0;
-      for (int n: neighbors)
-      {
-        Descriptor d = (Descriptor) graph.getNode(n);
-        msg.descriptors[j++] = d;
-      }
-      transport.send(null, descr.address, pid, msg);
-
-      counter++;
-      System.out.print("\r<--- "+counter);
-      System.out.flush();
-    }
-    
-    System.out.println("\n\nReceiving ACKs from these nodes");
-  }
-
-
-
-  private synchronized void addToTopology(Descriptor descr)
-  {
-    if (!completed)
-    {
-      if (uninformedNodes.isEmpty())  // this is the first node registering
-      {
-        new Timer().schedule(new TimerTask()
-        {
-          public void run()
-          {
-            if (!completed)
-            {
-              System.out.println("\n\nTimeout expired. Received messages from "+graph.size()+" nodes");
-              buildTopology();
-            }
-          }
-        }, timeout);
-      }
-
-      if (!uninformedNodes.containsKey(descr.address))
-      {
-        int index = graph.addNode(descr); // Add node to local overlay
-
-        uninformedNodes.put(descr.address, index); // Add address to list of uninformed nodes
-
-        if (graph.size()==numNodes) // If all nodes have registered,
-          buildTopology();          // build the topology and notify them.
-        System.out.print("\r---> "+graph.size());
-      }
-      else
-        System.out.println("Duplicate: "+descr.address);
-      System.out.flush();
-    }
-    else
-    {
-      // deal with late comers
-    }
-  }
-
-
-
-  private synchronized void buildTopology()
-  {
-    // First, set coordinator to completed
-    completed = true;
-
-    // Now run the appropriate wiring algorithm to design the overlay
-    initializer.setGraph(graph);
-    initializer.execute();
-
-    // And finally start the timer for informing all nodes of their neighbors
-    new Timer().schedule(this, 0, 1900);
-  }
-
-
-
-  static long ID = 0;
-  protected static long assignNodeId(AddressNet address)
+  protected long assignNodeId(Descriptor descr)
   {
     return ID++;
   }
 
 
 
-  private static void setNodeId(AddressNet address)
+  private void setNodeId(Descriptor descr)
   {
-    Long assignedId = addressSet.get(address);
-
+    Long assignedId = addressSet.get(descr);
     if (assignedId==null)
     {
-      assignedId = assignNodeId(address);
-      addressSet.put(address, assignedId);
+      assignedId = assignNodeId(descr);
+      addressSet.put(descr, assignedId);
+    }
+    descr.ID = assignedId;
+  }
+
+
+
+  private class Coordinator
+  {
+    private int numNodes;
+    private int timeout;
+    private boolean completed;
+    private int pid = -1;
+    private NeighborListGraph graph;
+    private WireControl initializer = null;
+    private HashMap<Address, Integer> uninformedNodes;
+    private String name;
+    
+    private int responsesRound;
+    private int acksTotal;
+    private int acksRound;
+
+
+    private Coordinator(String prefix)
+    {
+      name = prefix.substring(prefix.lastIndexOf('.')+1);
+      numNodes = Configuration.getInt(prefix+"."+PAR_SIZE);
+      timeout = Configuration.getInt(prefix+"."+PAR_TIMEOUT, -1);
+      initializer = (WireControl) Configuration
+          .getInstance(prefix+"."+PAR_INIT);
+      graph = new NeighborListGraph(true); // new directed graph
+      uninformedNodes = new HashMap<Address, Integer>();
+      timer = new Timer();
     }
 
-    address.ID = assignedId;
+
+
+    private void printProgress()
+    {
+      System.out.print("\r"+addressSet.size()+"\t"+acksTotal+'\t'+responsesRound+'\t'+acksRound);
+    }
+
+
+
+    private void process(Address src, int pid, BootstrapMessage msg)
+    {
+      switch (msg.type)
+      {
+        case REQUEST:
+          if (this.pid==-1) // not set yet
+            this.pid = pid;
+
+          assert this.pid==pid; // once set, all incoming requests should be for
+                                // the same pid
+
+          // each node is supposed to send only its own descriptor
+          assert msg.descriptors.length==1;
+
+          Descriptor descr = msg.descriptors[0];
+          descr.address = src; // set the node's address in its descriptor
+
+          // Set the node ID in its address
+          setNodeId(descr);
+
+          // register the node in local topology structure
+          registerNewNode(descr);
+
+          // Send ACK so that the node stops trying to register
+          BootstrapMessage ack = new BootstrapMessage(Type.REQUEST_ACK);
+          ack.nodeId = descr.getID();
+          ack.descriptors = null;
+          ack.coordinatorName = msg.coordinatorName;
+          transport.send(null, descr.address, pid, ack);
+          break;
+
+        case RESPONSE_ACK:
+          // Ok, this node is now informed. Stop sending it bootstrap information.
+          if (uninformedNodes.remove(src) != null)
+          {
+            acksTotal++;
+            acksRound++;
+            printProgress();
+          }
+          break;
+
+        case REQUEST_ACK:
+          assert false;
+
+        case RESPONSE:
+          assert false;
+
+        default:
+          break;
+      }
+    }
+
+
+
+    private synchronized void registerNewNode(Descriptor descr)
+    {
+      if (!completed)
+      {
+//        if (uninformedNodes.isEmpty()) // this is the first node registering
+//        {
+//          new Timer().schedule(new TimerTask()
+//          {
+//            public void run()
+//            {
+//              if (!completed)
+//              {
+//                System.out
+//                    .println("\n\nTimeout expired. Received messages from "+
+//                        graph.size()+" nodes");
+//                buildTopology();
+//              }
+//            }
+//          }, timeout);
+//        }
+        if (!uninformedNodes.containsKey(descr.address))
+        {
+          int index = graph.addNode(descr); // Add node to local overlay
+          uninformedNodes.put(descr.address, index); // Add address to list of uninformed nodes
+
+          printProgress();
+
+          if (!completed && graph.size()==numNodes) // If all nodes have registered,
+          {
+            completed = true;
+            buildTopology(); // build the topology and notify them.
+          }
+        }
+      }
+      else
+      {
+        // deal with late comers
+      }
+    }
+
+
+
+    private synchronized void buildTopology()
+    {
+      // Run the appropriate wiring algorithm to design the overlay
+      initializer.setGraph(graph);
+      initializer.execute();
+
+      // And finally start the thread that informs all nodes of their neighbors
+      new Thread(new ResponseSender()).start();
+    }
+
+
+
+    private void sendResponses()
+    {
+      while (true)
+      {
+        Vector<Integer> indexes;
+        synchronized (uninformedNodes)
+        {
+          indexes = new Vector<Integer>(uninformedNodes.values());
+        }
+
+        System.out.println("\nGoing to send "+indexes.size()+" responses.");
+        acksRound = 0;
+        responsesRound = indexes.size();
+
+        for (int index: indexes)
+        {
+          Descriptor descr = (Descriptor) graph.getNode(index);
+          Collection<Integer> neighbors = graph.getNeighbours(index);
+
+          BootstrapMessage msg = new BootstrapMessage(Type.RESPONSE);
+          msg.coordinatorName = name;
+          msg.nodeId = descr.getID();
+          msg.descriptors = new Descriptor[neighbors.size()];
+
+          int j = 0;
+          for (int n: neighbors)
+          {
+            Descriptor d = (Descriptor) graph.getNode(n);
+            msg.descriptors[j++] = d;
+          }
+
+          transport.send(null, descr.address, pid, msg);
+        }
+
+        try
+        {
+          Thread.sleep(10000);
+        }
+        catch (InterruptedException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
+
+
+
+    private class ResponseSender implements Runnable
+    {
+      @Override
+      public void run()
+      {
+        sendResponses();
+        try
+        {
+          Thread.sleep(2000);
+        }
+        catch (InterruptedException e)
+        {
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+
+
+
+  public class NetworkListener implements Runnable
+  {
+    @Override
+    public void run()
+    {
+      while (true)
+      {
+        Packet packet = transport.receive();
+        if (!(packet.event instanceof BootstrapMessage))
+          continue;
+        BootstrapMessage msg = (BootstrapMessage) packet.event;
+        if (msg.type!=Type.REQUEST&&msg.type!=Type.RESPONSE_ACK)
+        {
+          System.out.println(" *** Received "+msg.type+" from "+packet.src);
+          continue;
+        }
+        // If no coordinator has been created for this bootstrapId, create it
+        if (!map.containsKey(msg.coordinatorName))
+        {
+          Coordinator coordinator = new Coordinator(PAR_PREFIX+"."+msg.coordinatorName);
+          map.put(msg.coordinatorName, coordinator);
+          System.out.println("BootstrapServer listening at port "+
+              transport.getPort()+", waiting for "+coordinator.numNodes+
+              " nodes, or "+coordinator.timeout+" milliseconds.");
+        }
+        // Fetch the appropriate coordinator from the HashMap.
+        Coordinator coordinator = map.get(msg.coordinatorName);
+        coordinator.process(packet.src, packet.pid, msg);
+      }
+    }
   }
 
 
@@ -262,12 +344,8 @@ public class BootstrapServer extends TimerTask
   {
     private static final long serialVersionUID = 7821791956620397834L;
 
-    public enum Type
-    {
-      REQUEST,
-      REQUEST_ACK,
-      RESPONSE,
-      RESPONSE_ACK
+    public enum Type {
+      REQUEST, REQUEST_ACK, RESPONSE, RESPONSE_ACK
     }
 
     public Type type;
@@ -275,49 +353,11 @@ public class BootstrapServer extends TimerTask
     public long nodeId;
     public Descriptor[] descriptors;
 
+
+
     public BootstrapMessage(Type type)
     {
       this.type = type;
-    }
-  }
-
-
-
-  public static void start()
-  {
-    transport = new TransportUDP(PAR_TRANSPORT);
-    transport = (TransportUDP) transport.clone();
-
-    HashMap<String, BootstrapServer> map = new HashMap<String, BootstrapServer>();
-
-    while (true)
-    {
-      Packet packet = transport.receive();
-
-      if (!(packet.event instanceof BootstrapMessage))
-        continue;
-
-      BootstrapMessage msg = (BootstrapMessage) packet.event;
-
-      if (msg.type!=Type.REQUEST && msg.type!=Type.RESPONSE_ACK)
-      {
-        System.out.println(" *** Received "+msg.type+" from "+packet.src);
-        continue;
-      }
-
-      // If no coordinator has been created for this bootstrapId, create it
-      if (!map.containsKey(msg.coordinatorName))
-      {
-        BootstrapServer coordinator = new BootstrapServer(PAR_PREFIX+"."+msg.coordinatorName);
-        map.put(msg.coordinatorName, coordinator);
-        System.out.println("BootstrapServer listening at port "+transport.getPort()+", waiting for "+coordinator.numNodes+" nodes, or "+coordinator.timeout+" milliseconds.");
-      }
-
-      // Fetch the appropriate coordinator from the HashMap.
-      BootstrapServer coordinator = map.get(msg.coordinatorName);
-
-      coordinator.process(packet.src, packet.pid, msg);
-      //coordinator.registerPeerAddress(descr, packet.pid);
     }
   }
 }

@@ -152,10 +152,6 @@ public class BootstrapClient extends TimerTask implements Control
               ((Linkable)prot).addNeighbor(d);
             node.releaseLock();
           }
-          else
-          {
-            System.out.println("BC for node "+node.getID()+" is already bootstrapped.");
-          }
         }
 
         BootstrapMessage ack = new BootstrapMessage(Type.RESPONSE_ACK);

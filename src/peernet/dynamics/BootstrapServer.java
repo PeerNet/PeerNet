@@ -55,7 +55,7 @@ public class BootstrapServer
   private static TransportUDP transport = null;
   static long ID = 0;
 
-  private HashMap<Descriptor, Long> addressSet = new HashMap<Descriptor, Long>();
+  private HashMap<Address, Long> addressToIdMap = new HashMap<Address, Long>();
   private HashMap<String, Coordinator> map = new HashMap<String, Coordinator>();
 
   AddressNet addr;
@@ -82,11 +82,11 @@ public class BootstrapServer
 
   private void setNodeId(Descriptor descr)
   {
-    Long assignedId = addressSet.get(descr);
+    Long assignedId = addressToIdMap.get(descr.address);
     if (assignedId==null)
     {
       assignedId = assignNodeId(descr);
-      addressSet.put(descr, assignedId);
+      addressToIdMap.put(descr.address, assignedId);
     }
     descr.ID = assignedId;
   }
@@ -125,7 +125,7 @@ public class BootstrapServer
 
     private void printProgress()
     {
-      System.out.print("\r"+addressSet.size()+"\t"+acksTotal+'\t'+responsesRound+'\t'+acksRound);
+      System.out.print("\r"+addressToIdMap.size()+"\t"+acksTotal+'\t'+responsesRound+'\t'+acksRound);
     }
 
 
@@ -352,7 +352,6 @@ public class BootstrapServer
     public String coordinatorName;
     public long nodeId;
     public Descriptor[] descriptors;
-
 
 
     public BootstrapMessage(Type type)

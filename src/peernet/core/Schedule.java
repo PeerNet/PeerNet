@@ -133,7 +133,7 @@ public class Schedule
             "\" together");
       long at = Configuration.getLong(prefix+"."+PAR_AT);
       from = at;
-      until = at+1;
+      until = at;
       step = 1;
     }
     else // AT not defined

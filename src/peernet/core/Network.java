@@ -33,7 +33,7 @@ import java.util.Arrays;
  * cases by allowing all the components to directly reach the fields of this
  * class without having to store a reference.
  * <p>
- * The network is a set of nodes implemented via an array list for the sake of
+ * The network is a set of nodes implemented via an array for the sake of
  * efficiency. Each node has an array of protocols. The protocols within a node
  * can interact directly as defined by their implementation, and can be imagined
  * as processes running in a common local environment (i.e., the node). This
@@ -54,6 +54,7 @@ public class Network
    * @config
    */
   private static final String PAR_NODE = "network.node";
+
   /**
    * This config property defines the initial capacity of the overlay network.
    * See also {@link #getCapacity}. If not set then {@value #PAR_SIZE} will be
@@ -64,6 +65,7 @@ public class Network
    * @config
    */
   private static final String PAR_MAXSIZE = "network.maxSize";
+
   /**
    * This config property defines the initial size of the overlay network. This
    * property is required.
@@ -71,20 +73,18 @@ public class Network
    * @config
    */
   private static final String PAR_SIZE = "network.size";
+
   /**
-   * The node array. This is not a private array, which is not nice, but
-   * efficiency has the highest priority here. The main purpose is to allow the
-   * package quick reading of the contents in a maximally flexible way.
-   * Nevertheless, methods of this class should be used instead of the array
-   * when modifying the contents. Because this array is not private, it is
-   * necessary to know that the actual node set is only the first
+   * The node array. The actual node set consists of only the first
    * {@link #size()} items of the array.
    */
-  static Node[] node = null;
+  private static Node[] nodes = null;
+
   /**
    * Actual size of the network.
    */
   private static int len;
+
   /**
    * The prototype node which is used to populate the simulation via cloning.
    * After all the nodes have been cloned, {@link Control} components can be
@@ -103,14 +103,14 @@ public class Network
   public static void reset()
   {
     prototype = null;
-    node = null;
+    nodes = null;
 
     len = Configuration.getInt(PAR_SIZE);
     int maxlen = Configuration.getInt(PAR_MAXSIZE, len);
     if (maxlen<len)
       throw new IllegalArgumentException(PAR_MAXSIZE+" is less than "+PAR_SIZE);
 
-    node = new Node[maxlen];
+    nodes = new Node[maxlen];
 
     // creating prototype node
     if (!Configuration.contains(PAR_NODE))
@@ -128,8 +128,8 @@ public class Network
     // cloning the nodes
     for (int i = 0; i<len; ++i)
     {
-      node[i] = (Node) prototype.clone();
-      node[i].setIndex(i);
+      nodes[i] = (Node) prototype.clone();
+      nodes[i].setIndex(i);
     }
   }
 
@@ -160,12 +160,12 @@ public class Network
    */
   private static void setCapacity(int newSize)
   {
-    if (node==null || newSize!=node.length)
+    if (nodes==null || newSize!=nodes.length)
     {
       Node[] newnodes = new Node[newSize];
-      final int l = Math.min(node.length, newSize);
-      System.arraycopy(node, 0, newnodes, 0, l);
-      node = newnodes;
+      final int l = Math.min(nodes.length, newSize);
+      System.arraycopy(nodes, 0, newnodes, 0, l);
+      nodes = newnodes;
       if (len>newSize)
         len = newSize;
     }
@@ -180,7 +180,7 @@ public class Network
    */
   public static int getCapacity()
   {
-    return node.length;
+    return nodes.length;
   }
 
 
@@ -190,13 +190,18 @@ public class Network
    * The node will be appended to the end of the list. If necessary, the
    * capacity of the internal array is increased.
    */
-  public static void add(Node n)
+  static Node addNode()
   {
-    if (len==node.length)
-      setCapacity(3*node.length/2+1);
-    node[len] = n;
+    if (len==nodes.length)
+      setCapacity(3*nodes.length/2+1);
+
+    Node n = (Node) Network.prototype.clone();
+
+    nodes[len] = n;
     n.setIndex(len);
     len++;
+
+    return n;
   }
 
 
@@ -210,7 +215,7 @@ public class Network
    */
   public static Node get(int index)
   {
-    return node[index];
+    return nodes[index];
   }
 
 
@@ -223,8 +228,8 @@ public class Network
   {
     for (int i = 0; i<len; i++)
     {
-      if (node[i].getID()==ID)
-        return node[i];
+      if (nodes[i].getID()==ID)
+        return nodes[i];
     }
     return null;
   }
@@ -238,8 +243,8 @@ public class Network
    */
   public static Node remove()
   {
-    Node n = node[len-1]; // if len was zero this throws and exception
-    node[len-1] = null;
+    Node n = nodes[len-1]; // if len was zero this throws and exception
+    nodes[len-1] = null;
     len--;
     n.setFailState(Fallible.DEAD);
     return n;
@@ -272,11 +277,11 @@ public class Network
    */
   public static void swap(int i, int j)
   {
-    Node n = node[i];
-    node[i] = node[j];
-    node[j] = n;
-    node[j].setIndex(j);
-    node[i].setIndex(i);
+    Node n = nodes[i];
+    nodes[i] = nodes[j];
+    nodes[j] = n;
+    nodes[j].setIndex(j);
+    nodes[i].setIndex(i);
   }
 
 
@@ -302,27 +307,8 @@ public class Network
    */
   public static void sort(Comparator<? super Node> c)
   {
-    Arrays.sort(node, 0, len, c);
+    Arrays.sort(nodes, 0, len, c);
     for (int i = 0; i<len; i++)
-      node[i].setIndex(i);
+      nodes[i].setIndex(i);
   }
-  // ------------------------------------------------------------------
-  // public static void test() {
-  //
-  // System.err.println("number of nodes = "+len);
-  // System.err.println("capacity (max number of nodes) = "+node.length);
-  // for(int i=0; i<len; ++i)
-  // {
-  // System.err.println("node["+i+"]");
-  // System.err.println(node[i].toString());
-  // }
-  //
-  // if(prototype==null) return;
-  // for(int i=0; i<prototype.protocolSize(); ++i)
-  // {
-  // if( prototype.getProtocol(i) instanceof Linkable )
-  // peersim.graph.GraphIO.writeUCINET_DL(
-  // new OverlayGraph(i),System.err);
-  // }
-  // }
 }

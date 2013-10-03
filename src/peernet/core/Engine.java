@@ -25,6 +25,7 @@ import java.util.Arrays;
 
 import peernet.config.Configuration;
 import peernet.config.IllegalParameterException;
+import peernet.dynamics.NodeInitializer;
 import peernet.transport.Address;
 
 
@@ -273,27 +274,54 @@ public abstract class Engine
     }
   }
 
+
+
+  /**
+   * Private method that schedules the first execution of a node's protocols.
+   * 
+   * @param node
+   */
+  private void scheduleProtocols(Node node)
+  {
+    for (int j=0; j<protocolSchedules.length; j++)
+    {
+      long delay = protocolSchedules[j].initialDelay();
+      if (delay >= 0)
+        add(delay, null, node, j, scheduledEvent);
+    }
+  }
+
+
+
+  /**
+   * Private method that loads the schedule of each protocol, and then
+   * applies them on all nodes.
+   */
   private void scheduleProtocols()
   {
-    // load protocols
+    // Load protocol schedules
     String[] protocolNames = Configuration.getNames(PAR_PROTOCOL);
     protocolSchedules = new Schedule[protocolNames.length];
     for (int i=0; i<protocolNames.length; i++)
       protocolSchedules[i] = new Schedule(protocolNames[i]);
-    
+
+    // Schedule protocols for all nodes
     for (int i=0; i<Network.size(); i++)
     {
       Node node = Network.get(i);
-      for (int j=0; j<protocolNames.length; j++)
-      {
-        long delay = protocolSchedules[j].initialDelay();
-        if (delay >= 0)
-          add(delay, null, node, j, scheduledEvent);
-      }
+      scheduleProtocols(node);
     }
   }
 
-  static class ScheduledEvent {};
+
+
+  /**
+   * This is a dummy class without any fields, used for scheduling periodic
+   * events (i.e., for nextCycle).
+   * 
+   * @author spyros
+   */
+  protected static class ScheduledEvent {};
   protected static ScheduledEvent scheduledEvent = new ScheduledEvent();
 
 
@@ -412,8 +440,28 @@ public abstract class Engine
   }
 
 
-  public void addNode()
+
+  /**
+   * Allows the addition of a new node during the course of an experiment,
+   * typically to simulate churn. It adds the node to the Network, runs the
+   * provided {@link NodeInitializer}s, and then schedules its protocols for
+   * execution.
+   * 
+   * @return
+   */
+  public Node addNode(NodeInitializer[] inits)
   {
-    assert false;
+    // Create and insert new node in the Network
+    Node n = Network.addNode();
+
+    // Run NodeInitializer instances
+    for (int i=0; i<inits.length; ++i)
+      inits[i].initialize(n);
+
+    // Schedule new node's protocol for execution
+    scheduleProtocols(n);
+
+    // Return the new node
+    return n;
   }
 }

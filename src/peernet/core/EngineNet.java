@@ -124,7 +124,6 @@ public class EngineNet extends Engine
     }
     else if (ev.node.isUp())
     {
-      assert ev.node != Network.prototype;
 //        CommonState.setPid(pid);  // XXX try to entirely avoid CommonState
 //        CommonState.setNode(ev.node);
 

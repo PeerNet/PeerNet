@@ -116,18 +116,13 @@ protected final NodeInitializer[] inits;
  * do that. The default algorithm adds the given number of nodes after calling
  * all the configured initializers on them.
  * 
- * @param n
+ * @param k
  *          the number of nodes to add, must be non-negative.
  */
-protected void add(int n)
+protected void add(int k)
 {
-	for (int i = 0; i < n; ++i) {
-		Node newnode = (Node) Network.prototype.clone();
-		for (int j = 0; j < inits.length; ++j) {
-			inits[j].initialize(newnode);
-		}
-		Network.add(newnode);
-	}
+  for (; k>0; k--)
+    Engine.instance().addNode(inits);
 }
 
 // ------------------------------------------------------------------
@@ -184,6 +179,7 @@ public DynamicNetwork(String prefix)
  */
 public final boolean execute()
 {
+  System.out.println("time is "+CommonState.getTime());
 	if (add == 0)
 		return false;
 	if (!substitute) {

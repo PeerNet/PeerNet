@@ -67,7 +67,7 @@ public class EngineSim extends Engine
       boolean ret = controls[pid].execute();
       long delay = controlSchedules[pid].nextDelay(time);
       if (delay>=0)
-        add(delay,  null, null, pid, null);
+        addEventIn(delay,  null, null, pid, null);
       return ret;
     }
     else if (ev.node.isUp())
@@ -84,7 +84,7 @@ public class EngineSim extends Engine
           delay = protocolSchedules[pid].nextDelay(time);
 
         if (delay > 0)
-          add(delay, null, ev.node, pid, scheduledEvent);
+          addEventIn(delay, null, ev.node, pid, scheduledEvent);
       }
       else // call Protocol.processEvent()
       {
@@ -95,7 +95,7 @@ public class EngineSim extends Engine
     return false;
   }
 
-  public void addAtTime(long time, Address src, Node node, int pid, Object event)
+  public void addEventAt(long time, Address src, Node node, int pid, Object event)
   {
     time = (time<<rbits) | CommonState.r.nextInt(1<<rbits);
     simHeap.add(time, src, node, (byte) pid, event);

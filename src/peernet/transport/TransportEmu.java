@@ -44,7 +44,7 @@ public class TransportEmu extends Transport
     Address senderAddress = new AddressSim(src);
     int latency = RouterNetwork.getLatency(senderRouter, receiverRouter)+local*2;
     if (latency>=0) // if latency < 0, it's a broken link
-      engine.add(latency, senderAddress, ((AddressSim) dest).node, pid, payload);
+      engine.addEventIn(latency, senderAddress, ((AddressSim) dest).node, pid, payload);
   }
 
 

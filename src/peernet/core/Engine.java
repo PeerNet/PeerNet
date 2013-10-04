@@ -270,7 +270,7 @@ public abstract class Engine
         throw new IllegalArgumentException("Too many control objects");
       long delay = controlSchedules[i].initialDelay();
       if (delay >= 0)
-        add(delay,  null, null, i, null);
+        addEventIn(delay,  null, null, i, null);
     }
   }
 
@@ -287,7 +287,7 @@ public abstract class Engine
     {
       long delay = protocolSchedules[j].initialDelay();
       if (delay >= 0)
-        add(delay, null, node, j, scheduledEvent);
+        addEventIn(delay, null, node, j, scheduledEvent);
     }
   }
 
@@ -363,7 +363,7 @@ public abstract class Engine
    * @param pid The identifier of the protocol to which the event will be
    *          delivered
    */
-  public void add(long delay, Address src, Node node, int pid, Object event)
+  public void addEventIn(long delay, Address src, Node node, int pid, Object event)
   {
     long nextTime = CommonState.getTime()+delay;
 
@@ -377,11 +377,11 @@ public abstract class Engine
 //    if (pid>Byte.MAX_VALUE)
 //      throw new IllegalArgumentException("This version does not support more than "+Byte.MAX_VALUE+" protocols");
 
-    addAtTime(nextTime, src, node, pid, event);
+    addEventAt(nextTime, src, node, pid, event);
   }
 
   
-  public abstract void addAtTime(long time, Address src, Node node, int pid, Object event);
+  public abstract void addEventAt(long time, Address src, Node node, int pid, Object event);
   public abstract int pendingEvents();
 
 

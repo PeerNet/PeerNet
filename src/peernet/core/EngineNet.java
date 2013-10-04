@@ -65,7 +65,7 @@ public class EngineNet extends Engine
 //    }
   }
   
-  public void addAtTime(long time, Address src, Node node, int pid, Object event)
+  public void addEventAt(long time, Address src, Node node, int pid, Object event)
   {
     if (time >= endtime)
       return;
@@ -119,7 +119,7 @@ public class EngineNet extends Engine
 
       long delay = controlSchedules[pid].nextDelay(time);
       if (delay>=0)
-        addAtTime(time+delay, null, null, pid, null);
+        addEventAt(time+delay, null, null, pid, null);
       return ret;
     }
     else if (ev.node.isUp())
@@ -140,7 +140,7 @@ public class EngineNet extends Engine
           delay = protocolSchedules[pid].nextDelay(time);
 
         if (delay > 0)
-          addAtTime(time+delay, null, ev.node, pid, scheduledEvent);
+          addEventAt(time+delay, null, ev.node, pid, scheduledEvent);
       }
 
       else if (ev.event instanceof BootstrapMessage)

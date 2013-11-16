@@ -38,7 +38,7 @@ import peernet.config.IllegalParameterException;
  * In this simple implementation the valid times will be
  * <tt>from, from+step, from+2*step, etc,</tt> where the last element is
  * strictly less than <tt>until</tt>. Alternatively, if <tt>at</tt> is defined,
- * then the schedule will be a single time point. If FINAL is defined, it is
+ * then the schedule will be a single time point. If <tt>final</tt> is defined, it is
  * also added to the set of active time points. It refers to the time after the
  * simulation has finished (see {@link CommonState#getPhase}).
  */
@@ -82,7 +82,7 @@ public class Schedule
    * @see CommonState#getPhase
    * @config
    */
-  private static final String PAR_FINAL = "FINAL";
+  private static final String PAR_FINAL = "final";
 
   /**
    * If set, it means that the initial execution of the given protocol is

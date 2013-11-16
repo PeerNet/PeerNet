@@ -21,6 +21,7 @@ import java.util.Vector;
 import java.util.concurrent.Semaphore;
 
 import peernet.config.Configuration;
+import peernet.core.Engine.Type;
 import peernet.transport.Transport;
 
 
@@ -205,6 +206,9 @@ public class Node implements Fallible, Cloneable
     for (int i=0; i<transports.length; i++)
       node.transports[i] = (Transport) transports[i].clone();
 
+    if (Engine.getType()==Type.NET || Engine.getType()==Type.EMU)
+      node.semaphore = new Semaphore(1);
+
     return node;
   }
 
@@ -370,13 +374,6 @@ public class Node implements Fallible, Cloneable
   public Heap getHeap()
   {
     return heap;
-  }
-
-
-
-  public void initLock()
-  {
-    semaphore = new Semaphore(1);
   }
 
 

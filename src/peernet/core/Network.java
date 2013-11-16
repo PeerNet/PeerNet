@@ -90,7 +90,7 @@ public class Network
    * After all the nodes have been cloned, {@link Control} components can be
    * applied to perform any further initialization.
    */
-  public static Node prototype = null;
+  private static Node prototype = null;
 
 
 

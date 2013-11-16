@@ -30,7 +30,7 @@ import peernet.config.IllegalParameterException;
  * a boolean value.
  * 
  * The concept of time depends on the simulation model. Current time has to be
- * set by the simulation engine, irrespective of the model, and can be read
+ * set by the simulation engine, irrespectively of the model, and can be read
  * using {@link CommonState#getTime()}. This scheduler is interpreted over those
  * time points.
  * 

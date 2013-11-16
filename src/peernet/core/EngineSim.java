@@ -111,4 +111,20 @@ public class EngineSim extends Engine
   {
     return simHeap.size();
   }
+
+
+
+  @Override
+  public void blockingInitializerStart()
+  {
+    throw new RuntimeException("Blocking initializers not applicable to SIM mode");
+  }
+
+
+
+  @Override
+  public void blockingInitializerDone()
+  {
+    throw new RuntimeException("Blocking initializers not applicable to SIM mode");
+  }
 }

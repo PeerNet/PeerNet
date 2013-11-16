@@ -17,6 +17,8 @@ import peernet.config.Configuration;
 import peernet.core.CommonState;
 import peernet.core.Control;
 import peernet.core.Descriptor;
+import peernet.core.Engine;
+import peernet.core.EngineNet;
 import peernet.core.Linkable;
 import peernet.core.Network;
 import peernet.core.Node;
@@ -35,6 +37,7 @@ public class BootstrapClient extends TimerTask implements Control
   private final static String PAR_SERVER = "host"; //XXX change to addr:port
   private final static String PAR_PORT = "port";
   private final static String PAR_COORDINATOR = "coordinator";
+  private final static String PAR_SEQUENTIAL_ID = "SEQ";
 
   private static HashMap<String, BootstrapClient> map = new HashMap<String, BootstrapClient>();
 
@@ -43,6 +46,8 @@ public class BootstrapClient extends TimerTask implements Control
   private String coordinatorName;
   private ArrayList<Node> remainingNodes;
   private Timer timer;
+  private int seq;
+  private int numNodes = -1;
 
   private HashSet<Long> bootstrappedNodes;
 
@@ -65,6 +70,7 @@ public class BootstrapClient extends TimerTask implements Control
     remainingNodes = new ArrayList<Node>();
     coordinatorName = Configuration.getString(prefix+"."+PAR_COORDINATOR, "");
     bootstrappedNodes = new HashSet<Long>();
+    seq = Configuration.getInt(PAR_SEQUENTIAL_ID, -1);
 
     map.put(coordinatorName, this);
   }
@@ -75,7 +81,7 @@ public class BootstrapClient extends TimerTask implements Control
   {
     synchronized (remainingNodes)
     {
-      System.out.println("run(), remaining nodes: "+remainingNodes.size());
+      System.out.println("Worker: "+seq+"  remaining nodes: "+remainingNodes.size());
       try
       {
         Thread.sleep(System.currentTimeMillis() % 1000);
@@ -104,12 +110,17 @@ public class BootstrapClient extends TimerTask implements Control
   @Override
   public boolean execute()
   {
+    System.out.println("STARTING BootstrapClient.execute()");
+    Engine.instance().blockingInitializerStart();
+
+    numNodes = Network.size();
     for (int n = 0; n<Network.size(); n++)
       remainingNodes.add(Network.get(n));
 
     Random r = new Random(System.currentTimeMillis());
     int timeOffset = r.nextInt(2000);
-    
+    timeOffset = 0; //XXX remove this!!
+
     timer = new Timer();
     timer.schedule(this, timeOffset, 2000);
     return false;
@@ -151,6 +162,9 @@ public class BootstrapClient extends TimerTask implements Control
             for (Descriptor d: msg.descriptors)
               ((Linkable)prot).addNeighbor(d);
             node.releaseLock();
+
+            if (b.bootstrappedNodes.size() == b.numNodes)
+              Engine.instance().blockingInitializerDone();
           }
         }
 

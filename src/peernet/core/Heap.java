@@ -33,7 +33,7 @@ import peernet.transport.Address;
  * @author Alberto Montresor
  * @version $Revision: 1.8 $
  */
-public class Heap  // make "package"
+/*package*/ class Heap
 {
   // --------------------------------------------------------------------------
   // Constants

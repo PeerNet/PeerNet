@@ -368,10 +368,7 @@ public abstract class Engine
     long nextTime = CommonState.getTime()+delay;
 
     if (delay<0)
-    {
-      System.err.println("NOT ignoring event with negative delay: "+delay);
-//      return;
-    }
+      System.err.println("Event with negative delay: "+delay);
 
 //XXX Check for this somewhere in initialization, not in EACH new event!!
 //    if (pid>Byte.MAX_VALUE)
@@ -380,9 +377,11 @@ public abstract class Engine
     addEventAt(nextTime, src, node, pid, event);
   }
 
-  
+
   public abstract void addEventAt(long time, Address src, Node node, int pid, Object event);
   public abstract int pendingEvents();
+  public abstract void blockingInitializerStart();
+  public abstract void blockingInitializerDone();
 
 
   /**

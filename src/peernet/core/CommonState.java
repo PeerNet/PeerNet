@@ -48,8 +48,8 @@ public class CommonState
   /**
    * The maxival value {@link #time} can ever take.
    */
-  private static long endtime = -1;
-  private static long startingTime = -1;
+  private static long endTime = -1;
+  private static long zeroTime = -1;
 
   /**
    * Number of used bits in the long representation of time, calculated based on
@@ -96,12 +96,6 @@ public class CommonState
   {
     long seed = Configuration.getLong(PAR_SEED, System.currentTimeMillis());
     initializeRandom(seed);
-
-    /* Sets start time. Assumes that the Engine class is already loaded */
-    if (Engine.getType() == Type.SIM)
-      startingTime = 0;
-    else
-      startingTime = System.currentTimeMillis();
   }
 
 
@@ -116,22 +110,43 @@ public class CommonState
   // ======================= methods =================================
   // =================================================================
   /**
-   * Returns current time. In event-driven simulations, returns the current time
+   * Returns current time.
+   * 
+   * In SIM mode, this is the simulation time (in ticks).
+   * 
+   * In EMU and NET mode, this is the number of milliseconds elapsed since
+   * the start of the experiment. Note that time starts counting 
+   * 
+   * In event-driven simulations, returns the current time
    * (a long-value). In cycle-driven simulations, returns the current cycle (a
    * long that can safely be cast into an integer).
    */
   public static long getTime()
   {
-    return Engine.getType()==Type.SIM ? time : System.currentTimeMillis()-startingTime;
+    if (Engine.getType()==Type.SIM)
+      return time;
+    else
+    {
+      if (zeroTime==-1)
+        return 0;
+      else
+        return System.currentTimeMillis()-zeroTime;
+    }
   }
 
 
+  static void timeStartsNow()
+  {
+    if (zeroTime!=-1)
+      throw new IllegalStateException("Cannot reset time to zero for a second time");
 
+    zeroTime = System.currentTimeMillis();
+  }
 
   /**
    * Sets the current time.
    */
-  public static void setTime(long t)
+  static void setTime(long t)
   {
     time = t;
   }
@@ -144,7 +159,7 @@ public class CommonState
    */
   public static long getEndTime()
   {
-    return endtime;
+    return endTime;
   }
 
 
@@ -154,13 +169,13 @@ public class CommonState
    */
   public static void setEndTime(long t)
   {
-    if (endtime>=0)
+    if (endTime>=0)
       throw new RuntimeException("You can set endtime only once");
 
     if (t<0)
       throw new RuntimeException("No negative values are allowed");
 
-    endtime = t;
+    endTime = t;
   }
 
 

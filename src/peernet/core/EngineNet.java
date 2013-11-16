@@ -4,16 +4,23 @@
  */
 package peernet.core;
 
+import java.util.concurrent.CountDownLatch;
+
 import peernet.dynamics.BootstrapClient;
 import peernet.dynamics.BootstrapServer.BootstrapMessage;
 import peernet.transport.Address;
 import peernet.transport.Packet;
 import peernet.transport.TransportNet;
+import peernet.util.CountLatch;
 
 
 public class EngineNet extends Engine
 {
   Heap controlHeap = null;
+
+  private CountLatch blockingInitializers = new CountLatch(0);
+
+
 
 
   @Override
@@ -34,6 +41,8 @@ public class EngineNet extends Engine
   {
     super.startExperiment();
 
+    // If we are in NET mode, start a network listener per node
+    // (or more network listeners, if nodes define multiple Transports)
     if (getType()==Type.NET)
     {
       for (int n=0; n<Network.size(); n++)
@@ -46,13 +55,20 @@ public class EngineNet extends Engine
       }
     }
 
+    // Wait for initializers to complete
+    blockingInitializers.await();
+
+    // Now let time start rolling!
+    CommonState.timeStartsNow();
+
+    // Either in NET or EMU mode, start a thread per node.
     for (int n=0; n<Network.size(); n++)
     {
       Node node = Network.get(n);
-      node.initLock();
       new ExecutionThread(node.getHeap()).start();
     }
 
+    // And create a single thread for control messages
     new ExecutionThread(controlHeap).start();
 
 //
@@ -64,7 +80,9 @@ public class EngineNet extends Engine
 //        controls[j].execute();
 //    }
   }
-  
+
+
+
   public void addEventAt(long time, Address src, Node node, int pid, Object event)
   {
     if (time >= endtime)
@@ -85,6 +103,8 @@ public class EngineNet extends Engine
     }
   }
 
+
+
   public int pendingEvents()
   {
     int events = 0;
@@ -97,6 +117,7 @@ public class EngineNet extends Engine
 
   /**
    * Execute and remove the next event from the ordered event list.
+   * This is called by each node's own execution thread individually.
    * 
    * @return true if the execution should be stopped.
    */
@@ -143,11 +164,6 @@ public class EngineNet extends Engine
           addEventAt(time+delay, null, ev.node, pid, scheduledEvent);
       }
 
-      else if (ev.event instanceof BootstrapMessage)
-      {
-        BootstrapClient.report(ev.node, (BootstrapMessage)ev.event);
-      }
-
       else // call Protocol.processEvent()
       {
         ev.node.acquireLock();
@@ -156,6 +172,22 @@ public class EngineNet extends Engine
       }
     }
     return false;
+  }
+
+
+
+  @Override
+  public void blockingInitializerStart()
+  {
+    blockingInitializers.countUp();
+  }
+
+
+
+  @Override
+  public void blockingInitializerDone()
+  {
+    blockingInitializers.countDown();
   }
 
 
@@ -204,7 +236,8 @@ public class EngineNet extends Engine
     }
   }
   
-  
+
+
   public class ListeningThread extends Thread
   {
     Node node = null;
@@ -227,10 +260,16 @@ public class EngineNet extends Engine
         assert packet!=null : "packet is null!";
         assert packet.src!=null : "packet.src is null!";
         assert packet.event!=null : "packet.event is null!";
-        synchronized (heap)
+
+        if (packet.event instanceof BootstrapMessage)
+          BootstrapClient.report(node, (BootstrapMessage)packet.event);
+        else
         {
-          heap.add(0, packet.src, node, (byte)packet.pid, packet.event);
-          heap.notify();
+          synchronized (heap)
+          {
+            heap.add(0, packet.src, node, (byte)packet.pid, packet.event);
+            heap.notify();
+          }
         }
       }
     }

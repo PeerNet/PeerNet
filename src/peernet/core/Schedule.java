@@ -157,23 +157,14 @@ public class Schedule
 
 
 
-  // ===================== public methods ==============================
-  // ===================================================================
-  /** true if given time point is covered by this scheduler */
+  /**
+   * Returns true if the given time point is covered by this scheduler
+   */
   public boolean active(long time)
   {
-    if (time<from||time>=until)
+    if (time<from || time>until)
       return false;
     return (time-from)%step==0;
-  }
-
-
-
-  // -------------------------------------------------------------------
-  /** true if current time point is covered by this scheduler */
-  public boolean active()
-  {
-    return active(CommonState.getTime());
   }
 
 
@@ -184,18 +175,18 @@ public class Schedule
    * no more time points. As a side effect, it also updates the next time point,
    * so repeated calls to this method return the scheduled times.
    */
-//  public long getNext()
-//  {
-//    long ret = next;
-//    next += step;
-//    if (next>=until)
-//      ret = -1;
-//    return ret;
-//  }
+  public long getNext()
+  {
+    long ret = next;
+    next += step;
+    if (next>=until)
+      ret = -1;
+    return ret;
+  }
 
 
 
-  public long initialDelay()
+  /*package*/ long initialDelay()
   {
     if (randomStart)
       return from + CommonState.r.nextLong(step);
@@ -205,7 +196,7 @@ public class Schedule
 
 
 
-  public long nextDelay(long time)
+  /*package*/ long nextDelay(long time)
   {
     if (time+step <= until)
       return step;

@@ -74,7 +74,7 @@ public class ProtocolSettings
   /**
    * The pid of this protocol instance.
    */
-  private final int pid;
+  final int pid;
 
 
   /**

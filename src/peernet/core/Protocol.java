@@ -39,16 +39,33 @@ public abstract class Protocol implements Cloneable
    */
   public static final String PAR_SETTINGS = "settings"; //XXX should not be public
 
+  /**
+   * Settings of this protocol
+   */
   protected ProtocolSettings settings;
 
-  protected Node node;
+  /**
+   * The Node this protocol belongs to. Available through the public
+   * <code>getNode()</code> method.
+   */
+  Node node;
 
   public Protocol(String prefix)
   {
     if (Configuration.contains(prefix+"."+PAR_SETTINGS)) // custom settings
       settings = (ProtocolSettings)Configuration.getInstance(prefix+"."+PAR_SETTINGS);
-    else // dafault settings
+    else // default settings
       settings = new ProtocolSettings(prefix+"."+PAR_SETTINGS);
+  }
+
+  public Node getNode()
+  {
+    return node;
+  }
+
+  public int getPid()
+  {
+    return settings.pid;
   }
 
   /**
@@ -78,7 +95,7 @@ public abstract class Protocol implements Cloneable
 
 
 
-  public long nextDelay()
+  public long nextDelay()  //XXX What is this????
   {
     return 0;
   }

@@ -18,7 +18,6 @@ import peernet.core.CommonState;
 import peernet.core.Control;
 import peernet.core.Descriptor;
 import peernet.core.Engine;
-import peernet.core.EngineNet;
 import peernet.core.Linkable;
 import peernet.core.Network;
 import peernet.core.Node;
@@ -82,21 +81,34 @@ public class BootstrapClient extends TimerTask implements Control
     synchronized (remainingNodes)
     {
       System.out.println("Worker: "+seq+"  remaining nodes: "+remainingNodes.size());
-      try
-      {
-        Thread.sleep(System.currentTimeMillis() % 1000);
-      }
-      catch (InterruptedException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+//      try
+//      {
+//        Thread.sleep(System.currentTimeMillis() % 1000);
+//      }
+//      catch (InterruptedException e)
+//      {
+//        // TODO Auto-generated catch block
+//        e.printStackTrace();
+//      }
       Collections.shuffle(remainingNodes);
       BootstrapMessage msg = new BootstrapMessage(Type.REQUEST);
       msg.coordinatorName = coordinatorName;
       msg.descriptors = new Descriptor[1];
       for (Node node: remainingNodes)
       {
+        if (node.getID() % 3==0)
+        {
+          try
+          {
+            Thread.sleep(1);
+          }
+          catch (InterruptedException e)
+          {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        }
+
         // TODO: Check what happens if a node has died
         Protocol prot = node.getProtocol(pid);
         msg.descriptors[0] = prot.createDescriptor();
@@ -119,7 +131,7 @@ public class BootstrapClient extends TimerTask implements Control
 
     Random r = new Random(System.currentTimeMillis());
     int timeOffset = r.nextInt(2000);
-    timeOffset = 0; //XXX remove this!!
+//    timeOffset = 0; //XXX remove this!!
 
     timer = new Timer();
     timer.schedule(this, timeOffset, 2000);

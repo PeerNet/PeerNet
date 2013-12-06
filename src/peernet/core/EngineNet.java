@@ -153,7 +153,7 @@ public class EngineNet extends Engine
       if (ev.event instanceof ScheduledEvent)
       {
         ev.node.acquireLock();
-        prot.nextCycle(ev.node, pid);
+        prot.nextCycle();
         ev.node.releaseLock();
 
         long delay = prot.nextDelay();
@@ -167,7 +167,7 @@ public class EngineNet extends Engine
       else // call Protocol.processEvent()
       {
         ev.node.acquireLock();
-        prot.processEvent(ev.src, ev.node, pid, ev.event);
+        prot.processEvent(ev.src, ev.event);
         ev.node.releaseLock();
       }
     }

@@ -77,7 +77,7 @@ public class EngineSim extends Engine
       if (ev.event instanceof ScheduledEvent)
       {
         Protocol prot = ev.node.getProtocol(pid);
-        prot.nextCycle(ev.node, pid);
+        prot.nextCycle();
 
         long delay = prot.nextDelay();
         if (delay == 0)
@@ -89,7 +89,7 @@ public class EngineSim extends Engine
       else // call Protocol.processEvent()
       {
         Protocol prot = ev.node.getProtocol(pid);
-        prot.processEvent(ev.src, ev.node, pid, ev.event);
+        prot.processEvent(ev.src, ev.event);
       }
     }
     return false;

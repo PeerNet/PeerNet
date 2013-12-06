@@ -141,7 +141,7 @@ public class ProtocolSettings
   /**
    * Get the pid of this protocol instance.
    */
-  public int getPid()
+  int getPid()
   {
     return pid;
   }

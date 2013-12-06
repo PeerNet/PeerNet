@@ -70,28 +70,21 @@ public abstract class Protocol implements Cloneable
 
   /**
    * This method is invoked by the scheduler to deliver events to the protocol.
-   * Apart from the event object, information about the node and the protocol
-   * identifier are also provided. Additional information can be accessed
-   * through the {@link CommonState} class.
+   * The parameters passed are the address of the sender, and the event object.
    * 
-   * @param from the address of the event's sender
-   * @param node the local node
-   * @param pid the identifier of this protocol
+   * @param src the address of the event's sender
    * @param event the delivered event
    */
-  public abstract void processEvent(Address src, Node node, int pid, Object event);
+  public abstract void processEvent(Address src, Object event);
 
 
 
   /**
    * A protocol which is defined by performing an algorithm in more or less
    * regular periodic intervals. This method is called by the simulator engine
-   * once in each cycle with the appropriate parameters.
-   * 
-   * @param node the node on which this component is run
-   * @param protocolID the id of this protocol in the protocol array
+   * once in each cycle.
    */
-  public abstract void nextCycle(Node node, int protocolID);
+  public abstract void nextCycle();
 
 
 

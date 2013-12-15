@@ -28,16 +28,16 @@ import peernet.transport.Address;
 /**
  * Protocol abstract class
  * 
+ * XXX: Add documentation
  */
 public abstract class Protocol implements Cloneable
 {
   /**
-   * Parameter name in configuration that attaches a transport layer protocol to
-   * a protocol.
+   * Parameter for assigning a settings class to a protocol.
    * 
    * @config
    */
-  public static final String PAR_SETTINGS = "settings"; //XXX should not be public
+  static final String PAR_SETTINGS = "settings";
 
   /**
    * Settings of this protocol
@@ -149,7 +149,7 @@ public abstract class Protocol implements Cloneable
     Protocol protocol = null;
     try
     {
-      // We intentionally do shallow cloning of ProtocolSettings
+      // We intentionally do shallow cloning of the Settings instance
       protocol = (Protocol) super.clone();
     }
     catch (CloneNotSupportedException e)

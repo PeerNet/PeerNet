@@ -136,6 +136,8 @@ public abstract class Engine
 
   private static final String PAR_PROTOCOL = "protocol";
 
+  private static final String PAR_SCHEDULE = "schedule";
+
   private static final String PAR_MODE = "mode";
 
   // ---------------------------------------------------------------------
@@ -158,7 +160,7 @@ public abstract class Engine
   protected static Schedule[] controlSchedules = null;
 
   /** Holds the protocol schedules */
-  protected static Schedule[] protocolSchedules = null;
+  protected static Schedule[][] protocolSchedules = null;
 
   protected static long nextlog = 0;
 
@@ -283,11 +285,16 @@ public abstract class Engine
    */
   private void scheduleProtocols(Node node)
   {
-    for (int j=0; j<protocolSchedules.length; j++)
+    int pid = 0;
+    for (Schedule[] schedList: protocolSchedules)
     {
-      long delay = protocolSchedules[j].initialDelay();
-      if (delay >= 0)
-        addEventIn(delay, null, node, j, scheduledEvent);
+      for (Schedule sched: schedList)
+      {
+        long delay = sched.initialDelay();
+        if (delay >= 0)
+          addEventIn(delay, null, node, pid, sched);
+      }
+      pid++; // advance pid to the next protocol
     }
   }
 
@@ -301,9 +308,33 @@ public abstract class Engine
   {
     // Load protocol schedules
     String[] protocolNames = Configuration.getNames(PAR_PROTOCOL);
-    protocolSchedules = new Schedule[protocolNames.length];
+    protocolSchedules = new Schedule[protocolNames.length][];
+
+    // Load the schedules of each protocol
     for (int i=0; i<protocolNames.length; i++)
-      protocolSchedules[i] = new Schedule(protocolNames[i]);
+    {
+      String[] scheduleNames = Configuration.getNames(protocolNames[i]+"."+PAR_SCHEDULE);
+      protocolSchedules[i] = new Schedule[scheduleNames.length+1];
+
+      // Instantiate first the default schedule
+      protocolSchedules[i][0] = new Schedule(protocolNames[i]);
+      protocolSchedules[i][0].schedId = 0;
+
+      // And now instantiate additional schedules (if present)
+      for (int j=0; j<scheduleNames.length; j++)
+      {
+        String strSchedId = Configuration.suffix(scheduleNames[j]);
+        if (!strSchedId.matches("^[0-9]+$"))
+          throw new IllegalParameterException(scheduleNames[j], "Schedule identifiers have to be numeric. E.g., try "+protocolNames[i]+"."+PAR_SCHEDULE+".1");
+
+        int schedId = Integer.valueOf(strSchedId);
+        if (schedId <= 0)
+          throw new IllegalParameterException(scheduleNames[j], "Schedule identifiers have to be greater than zero. E.g., try "+protocolNames[i]+"."+PAR_SCHEDULE+".1");
+
+        protocolSchedules[i][j+1] = new Schedule(scheduleNames[j]);
+        protocolSchedules[i][j+1].schedId = schedId;
+      }
+    }
 
     // Schedule protocols for all nodes
     for (int i=0; i<Network.size(); i++)
@@ -315,17 +346,6 @@ public abstract class Engine
 
 
 
-  /**
-   * This is a dummy class without any fields, used for scheduling periodic
-   * events (i.e., for nextCycle).
-   * 
-   * @author spyros
-   */
-  protected static class ScheduledEvent {};
-  protected static ScheduledEvent scheduledEvent = new ScheduledEvent();
-
-
-  
   // ---------------------------------------------------------------------
   /**
    * Adds a new event to be scheduled, specifying the number of time units of

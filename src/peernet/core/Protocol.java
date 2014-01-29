@@ -84,7 +84,7 @@ public abstract class Protocol implements Cloneable
    * regular periodic intervals. This method is called by the simulator engine
    * once in each cycle.
    */
-  public abstract void nextCycle();
+  public abstract void nextCycle(int schedId);
 
 
 

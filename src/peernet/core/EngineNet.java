@@ -4,8 +4,6 @@
  */
 package peernet.core;
 
-import java.util.concurrent.CountDownLatch;
-
 import peernet.dynamics.BootstrapClient;
 import peernet.dynamics.BootstrapServer.BootstrapMessage;
 import peernet.transport.Address;
@@ -150,18 +148,18 @@ public class EngineNet extends Engine
 
       Protocol prot = ev.node.getProtocol(pid);
 
-      if (ev.event instanceof ScheduledEvent)
+      if (ev.event instanceof Schedule)
       {
         ev.node.acquireLock();
-        prot.nextCycle();
+        prot.nextCycle(((Schedule)ev.event).schedId);
         ev.node.releaseLock();
 
         long delay = prot.nextDelay();
         if (delay == 0)
-          delay = protocolSchedules[pid].nextDelay(time);
+          delay = ((Schedule)ev.event).nextDelay(time);
 
         if (delay > 0)
-          addEventAt(time+delay, null, ev.node, pid, scheduledEvent);
+          addEventAt(time+delay, null, ev.node, pid, ev.event);
       }
 
       else // call Protocol.processEvent()

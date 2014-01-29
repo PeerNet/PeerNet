@@ -97,11 +97,13 @@ public class Schedule
   private static final String PAR_RANDOMSTART = "randstart";
 
 
+  public int schedId;
   public long step;
   public long from;
   public long until;
   public boolean fin;
   public boolean randomStart;
+
 
   /** The next scheduled time point. */
   protected long next;

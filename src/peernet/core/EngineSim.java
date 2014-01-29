@@ -74,17 +74,17 @@ public class EngineSim extends Engine
     {
 //      CommonState.setPid(pid);  // XXX try to entirely avoid CommonState
 //      CommonState.setNode(ev.node);
-      if (ev.event instanceof ScheduledEvent)
+      if (ev.event instanceof Schedule)
       {
         Protocol prot = ev.node.getProtocol(pid);
-        prot.nextCycle();
+        prot.nextCycle(((Schedule)ev.event).schedId);
 
         long delay = prot.nextDelay();
         if (delay == 0)
-          delay = protocolSchedules[pid].nextDelay(time);
+          delay = ((Schedule)ev.event).nextDelay(time);
 
         if (delay > 0)
-          addEventIn(delay, null, ev.node, pid, scheduledEvent);
+          addEventIn(delay, null, ev.node, pid, ev.event);
       }
       else // call Protocol.processEvent()
       {

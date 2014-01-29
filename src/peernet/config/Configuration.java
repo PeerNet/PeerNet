@@ -18,7 +18,7 @@
 
 package peernet.config;
 
-import java.util.*;
+import java.util.Properties;
 
 /**
  * Fully static class to store configuration information. It defines a
@@ -662,4 +662,8 @@ public static String[] getNames(String name)
 	return config.getNames(name);
 }
 
+public static String suffix(String name)
+{
+  return name.substring(name.lastIndexOf('.')+1);
+}
 }

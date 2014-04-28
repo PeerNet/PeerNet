@@ -58,12 +58,12 @@ public abstract class Protocol implements Cloneable
       settings = new ProtocolSettings(prefix+"."+PAR_SETTINGS);
   }
 
-  public Node getNode()
+  public Node myNode()
   {
     return node;
   }
 
-  public int getPid()
+  public int myPid()
   {
     return settings.pid;
   }

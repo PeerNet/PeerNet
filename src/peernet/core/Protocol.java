@@ -37,7 +37,7 @@ public abstract class Protocol implements Cloneable
    * 
    * @config
    */
-  static final String PAR_SETTINGS = "settings";
+  public static final String PAR_SETTINGS = "settings";
 
   /**
    * Settings of this protocol

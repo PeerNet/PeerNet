@@ -136,7 +136,7 @@ public class Descriptor implements Serializable, Cloneable
 	 * @param otherDescriptor
 	 * @return
 	 */
-	public final boolean equals(Object otherDescriptor)
+	public /*final*/ boolean equals(Object otherDescriptor)
 	{
 	  return address.equals( ((Descriptor)otherDescriptor).address );
 	}
@@ -146,7 +146,7 @@ public class Descriptor implements Serializable, Cloneable
 	/**
 	 * Custom hashCode() to be consistent with equals().
 	 */
-  public final int hashCode()
+  public /*final*/ int hashCode()
   {
     return address.hashCode();
   }

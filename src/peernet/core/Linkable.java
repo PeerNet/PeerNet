@@ -60,7 +60,7 @@ public interface Linkable extends Cleanable
    * @return true if the neighbor has been inserted; false if the node is
    *         already a neighbor of this node
    */
-  public boolean addNeighbor(Descriptor neighbour);
+  public boolean addNeighbor(Descriptor neighbor);
 
 
 

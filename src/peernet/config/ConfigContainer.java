@@ -543,7 +543,7 @@ public Class getClass(String name)
 	}
 }
 
-private Class getClazz(String name)
+private Class<?> getClazz(String name)
 {
 	String classname = config.getProperty(name);
 	if (classname == null) {
@@ -620,7 +620,7 @@ private Class getClazz(String name)
  *          default value
  * @see #getClass(String)
  */
-public Class getClass(String name, Class def)
+public Class getClass(String name, Class<?> def)
 {
 
 	try {

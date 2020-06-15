@@ -68,15 +68,6 @@ public abstract class Protocol implements Cloneable
     return settings.pid;
   }
 
-  /**
-   * This method is invoked by the scheduler to deliver events to the protocol.
-   * The parameters passed are the address of the sender, and the event object.
-   * 
-   * @param src the address of the event's sender
-   * @param event the delivered event
-   */
-  public abstract void processEvent(Address src, Object event);
-
 
 
   /**
@@ -85,6 +76,17 @@ public abstract class Protocol implements Cloneable
    * once in each cycle.
    */
   public abstract void nextCycle(int schedId);
+
+
+
+  /**
+   * This method is invoked by the scheduler to deliver events to the protocol.
+   * The parameters passed are the address of the sender, and the event object.
+   * 
+   * @param src the address of the event's sender
+   * @param event the delivered event
+   */
+  public abstract void processEvent(Address src, Object event);
 
 
 

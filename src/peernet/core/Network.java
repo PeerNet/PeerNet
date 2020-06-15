@@ -78,7 +78,7 @@ public class Network
    * The node array. The actual node set consists of only the first
    * {@link #size()} items of the array.
    */
-  private static Node[] nodes = null;
+  public static Node[] nodes = null;
 
   /**
    * Actual size of the network.

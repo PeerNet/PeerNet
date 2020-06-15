@@ -31,7 +31,7 @@ public class BootstrapServer
   private final static String PAR_PREFIX = "coordinator";
 
   /**
-   * Tranport prefix
+   * Transport prefix
    */
   private final static String PAR_TRANSPORT = "transport";
 
@@ -67,11 +67,16 @@ public class BootstrapServer
   {
     transport = new TransportUDP(PAR_TRANSPORT);
     transport = (TransportUDP) transport.clone();
+  }
 
+  
+  
+  public void start()
+  {
     new Thread(new NetworkListener()).start();
   }
 
-
+  
 
   protected long assignNodeId(Descriptor descr)
   {

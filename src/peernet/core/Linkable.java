@@ -48,7 +48,7 @@ public interface Linkable extends Cleanable
    * IndexOutOfBounds exception if i is negative or larger than or equal to
    * {@link #degree}.
    */
-  public Descriptor getNeighbor(int i);
+  public Peer getNeighbor(int i);
 
 
 
@@ -60,12 +60,12 @@ public interface Linkable extends Cleanable
    * @return true if the neighbor has been inserted; false if the node is
    *         already a neighbor of this node
    */
-  public boolean addNeighbor(Descriptor neighbor);
+  public boolean addNeighbor(Peer neighbor);
 
 
 
   /**
    * Returns true if the given node is a member of the neighbor set.
    */
-  public boolean contains(Descriptor neighbor);
+  public boolean contains(Peer neighbor);
 }

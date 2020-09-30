@@ -24,7 +24,6 @@ import peernet.transport.Address;
 
 
 
-
 /**
  * Protocol abstract class
  * 
@@ -104,19 +103,19 @@ public abstract class Protocol implements Cloneable
 
 
   /**
-   * Returns a new instance of the Descriptor used for the referred protocol.
-   * Calls the constructor of the Descriptor class defined for this protocol.
+   * Returns a new instance of the Peer used for the referred protocol.
+   * Calls the constructor of the Peer class defined for this protocol.
    * 
    * XXX: Spyros, 2007-11-02: Should I move this to the Protocol interface?
    * XXX: Spyros, 2012-05-23: Yes, I should! ;-)
    */
-  public Descriptor createDescriptor()
+  public Peer myself()
   {
-    Descriptor d = null;
-    Constructor<Descriptor> c = settings.getDescriptorConstructor();
+    Peer p = null;
+    Constructor<Peer> c = settings.getPeerConstructor();
     try
     {
-      d = c.newInstance(node, settings.getPid());
+      p = c.newInstance(node, settings.getPid());
     }
     catch (IllegalArgumentException e)
     {
@@ -134,7 +133,7 @@ public abstract class Protocol implements Cloneable
     {
       e.printStackTrace();
     }
-    return d;
+    return p;
   }
 
 

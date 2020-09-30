@@ -20,9 +20,6 @@ import java.lang.reflect.Constructor;
 
 import peernet.config.Configuration;
 import peernet.config.IllegalParameterException;
-import peernet.transport.Address;
-
-
 
 
 
@@ -53,12 +50,12 @@ public class ProtocolSettings
   private static final String PAR_PROTOCOL = "protocol";
 
   /**
-   * Parameter name in configuration that attaches a transport layer protocol to
-   * a protocol.
+   * Parameter name in configuration that defines the class
+   * that represents neighboring peers for a given protocol.
    * 
    * @config
    */
-  private static final String PAR_DESCRIPTOR = "descriptor";
+  private static final String PAR_PEER = "peer";
 
   /**
    * This array stores the protocol ids of the {@link peernet.core.Linkable}
@@ -69,7 +66,7 @@ public class ProtocolSettings
   /**
    * 
    */
-  private final Constructor<Descriptor> descriptorConstructor;
+  private final Constructor<Peer> peerConstructor;
 
   /**
    * The pid of this protocol instance.
@@ -116,14 +113,14 @@ public class ProtocolSettings
 
 
 
-    // Setup descriptor constructors
-    Class<Descriptor> cDescriptor = Configuration.getClass(prefix+"."+PAR_DESCRIPTOR);
-    Class pars[] = { Node.class, int.class };
-    Constructor<Descriptor> constr = null;
-    Constructor<Descriptor> constrGeneric = null;
+    // Setup Peer constructors
+    Class<Peer> cPeer = Configuration.getClass(prefix+"."+PAR_PEER);
+    Class<?> pars[] = { Node.class, int.class };
+    Constructor<Peer> constr = null;
+
     try
     {
-      constr = cDescriptor.getConstructor(pars);
+      constr = cPeer.getConstructor(pars);
     }
     catch (SecurityException e)
     {
@@ -133,7 +130,8 @@ public class ProtocolSettings
     {
       e.printStackTrace();
     }
-    descriptorConstructor = constr;
+
+    peerConstructor = constr;
   }
 
 
@@ -201,14 +199,14 @@ public class ProtocolSettings
 
 
   /**
-   * Returns a constructor for the Descriptor class defined for the given
-   * protocol ID. If no Descriptor class has been defined for this pid, it
+   * Returns a constructor for the Peer class defined for the given
+   * protocol ID. If no Peer class has been defined for this pid, it
    * returns null.
    * 
    * The returned constructor takes as arguments (Node, int).
    */
-  public Constructor getDescriptorConstructor()
+  public Constructor getPeerConstructor()
   {
-    return descriptorConstructor;
+    return peerConstructor;
   }
 }

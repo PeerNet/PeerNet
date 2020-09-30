@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import peernet.core.Descriptor;
+import peernet.core.Peer;
 import peernet.core.Linkable;
 import peernet.core.Network;
 import peernet.core.Node;
@@ -99,7 +99,7 @@ public class OverlayGraph implements Graph
       return false;
 
     Linkable l = (Linkable) Network.get(i).getProtocol(protocolID);
-    Descriptor d = Network.get(j).getProtocol(protocolID).createDescriptor();
+    Peer d = Network.get(j).getProtocol(protocolID).myself();
     return l.contains(d);
   }
 
@@ -188,14 +188,14 @@ public class OverlayGraph implements Graph
     if (!wireDirected)
     {
       // Set the inverse edge
-      Linkable jProt = (Linkable) Network.get(j).getProtocol(protocolID);
-      Descriptor iDescr = Network.get(i).getProtocol(protocolID).createDescriptor();
-      jProt.addNeighbor(iDescr);
+      Linkable protocol_j = (Linkable) Network.get(j).getProtocol(protocolID);
+      Peer peer_i = Network.get(i).getProtocol(protocolID).myself();
+      protocol_j.addNeighbor(peer_i);
     }
     // Set the direct edge
-    Linkable iProt = (Linkable) Network.get(i).getProtocol(protocolID);
-    Descriptor jDescr = Network.get(j).getProtocol(protocolID).createDescriptor();
-    iProt.addNeighbor(jDescr);
+    Linkable protocol_i = (Linkable) Network.get(i).getProtocol(protocolID);
+    Peer peer_j = Network.get(j).getProtocol(protocolID).myself();
+    protocol_i.addNeighbor(peer_j);
 
     return true;
   }

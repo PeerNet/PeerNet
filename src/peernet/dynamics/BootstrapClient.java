@@ -16,7 +16,7 @@ import java.util.TimerTask;
 import peernet.config.Configuration;
 import peernet.core.CommonState;
 import peernet.core.Control;
-import peernet.core.Descriptor;
+import peernet.core.Peer;
 import peernet.core.Engine;
 import peernet.core.Linkable;
 import peernet.core.Network;
@@ -93,7 +93,7 @@ public class BootstrapClient extends TimerTask implements Control
       Collections.shuffle(remainingNodes);
       BootstrapMessage msg = new BootstrapMessage(Type.REQUEST);
       msg.coordinatorName = coordinatorName;
-      msg.descriptors = new Descriptor[1];
+      msg.peers = new Peer[1];
       for (Node node: remainingNodes)
       {
         if (node.getID() % 3==0)
@@ -111,7 +111,7 @@ public class BootstrapClient extends TimerTask implements Control
 
         // TODO: Check what happens if a node has died
         Protocol prot = node.getProtocol(pid);
-        msg.descriptors[0] = prot.createDescriptor();
+        msg.peers[0] = prot.myself();
         prot.send(address, pid, msg);
       }
     }
@@ -171,7 +171,7 @@ public class BootstrapClient extends TimerTask implements Control
           {
             b.bootstrappedNodes.add(node.getID());
             node.acquireLock();
-            for (Descriptor d: msg.descriptors)
+            for (Peer d: msg.peers)
               ((Linkable)prot).addNeighbor(d);
             node.releaseLock();
 
@@ -182,7 +182,7 @@ public class BootstrapClient extends TimerTask implements Control
 
         BootstrapMessage ack = new BootstrapMessage(Type.RESPONSE_ACK);
         ack.coordinatorName = msg.coordinatorName;
-        ack.descriptors = null;
+        ack.peers = null;
 
         try
         {

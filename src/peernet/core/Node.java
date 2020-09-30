@@ -144,7 +144,6 @@ public class Node implements Fallible, Cloneable
     Vector<String> transportNames = new Vector<String>();
     for (int i=0; i<protNames.length; i++)
     {
-      //String transportName = Configuration.getString(protNames[i]+"."+PAR_TRANSPORT, defaultTransportName());
       String transportName = Configuration.getString(protNames[i]+"."+PAR_TRANSPORT, null);  // null = default transport
 
       // If the transport defined for this protocol is not in our list yet, add it

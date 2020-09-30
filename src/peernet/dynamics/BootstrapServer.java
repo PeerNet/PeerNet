@@ -11,7 +11,7 @@ import java.util.Vector;
 
 import peernet.config.Configuration;
 import peernet.core.Control;
-import peernet.core.Descriptor;
+import peernet.core.Peer;
 import peernet.dynamics.BootstrapServer.BootstrapMessage.Type;
 import peernet.graph.NeighborListGraph;
 import peernet.transport.Address;
@@ -78,22 +78,22 @@ public class BootstrapServer
 
   
 
-  protected long assignNodeId(Descriptor descr)
+  protected long assignNodeId(Peer peer)
   {
     return ID++;
   }
 
 
 
-  private void setNodeId(Descriptor descr)
+  private void setNodeId(Peer peer)
   {
-    Long assignedId = addressToIdMap.get(descr.address);
+    Long assignedId = addressToIdMap.get(peer.address);
     if (assignedId==null)
     {
-      assignedId = assignNodeId(descr);
-      addressToIdMap.put(descr.address, assignedId);
+      assignedId = assignNodeId(peer);
+      addressToIdMap.put(peer.address, assignedId);
     }
-    descr.ID = assignedId;
+    peer.ID = assignedId;
   }
 
 
@@ -146,24 +146,24 @@ public class BootstrapServer
           assert this.pid==pid; // once set, all incoming requests should be for
                                 // the same pid
 
-          // each node is supposed to send only its own descriptor
-          assert msg.descriptors.length==1;
+          // each node is supposed to send only its own peer
+          assert msg.peers.length==1;
 
-          Descriptor descr = msg.descriptors[0];
-          descr.address = src; // set the node's address in its descriptor
+          Peer p = msg.peers[0];
+          p.address = src; // set the node's public IP address
 
           // Set the node ID in its address
-          setNodeId(descr);
+          setNodeId(p);
 
           // register the node in local topology structure
-          registerNewNode(descr);
+          registerNewNode(p);
 
           // Send ACK so that the node stops trying to register
           BootstrapMessage ack = new BootstrapMessage(Type.REQUEST_ACK);
-          ack.nodeId = descr.getID();
-          ack.descriptors = null;
+          ack.nodeId = p.getID();
+          ack.peers = null;
           ack.coordinatorName = msg.coordinatorName;
-          transport.send(null, descr.address, pid, ack);
+          transport.send(null, p.address, pid, ack);
           break;
 
         case RESPONSE_ACK:
@@ -189,7 +189,7 @@ public class BootstrapServer
 
 
 
-    private synchronized void registerNewNode(Descriptor descr)
+    private synchronized void registerNewNode(Peer peer)
     {
       if (!completed)
       {
@@ -209,10 +209,10 @@ public class BootstrapServer
 //            }
 //          }, timeout);
 //        }
-        if (!uninformedNodes.containsKey(descr.address))
+        if (!uninformedNodes.containsKey(peer.address))
         {
-          int index = graph.addNode(descr); // Add node to local overlay
-          uninformedNodes.put(descr.address, index); // Add address to list of uninformed nodes
+          int index = graph.addNode(peer); // Add node to local overlay
+          uninformedNodes.put(peer.address, index); // Add address to list of uninformed nodes
 
           printProgress();
 
@@ -259,22 +259,22 @@ public class BootstrapServer
 
         for (int index: indexes)
         {
-          Descriptor descr = (Descriptor) graph.getNode(index);
+          Peer peer = (Peer) graph.getNode(index);
           Collection<Integer> neighbors = graph.getNeighbours(index);
 
           BootstrapMessage msg = new BootstrapMessage(Type.RESPONSE);
           msg.coordinatorName = name;
-          msg.nodeId = descr.getID();
-          msg.descriptors = new Descriptor[neighbors.size()];
+          msg.nodeId = peer.getID();
+          msg.peers = new Peer[neighbors.size()];
 
           int j = 0;
           for (int n: neighbors)
           {
-            Descriptor d = (Descriptor) graph.getNode(n);
-            msg.descriptors[j++] = d;
+            Peer p = (Peer) graph.getNode(n);
+            msg.peers[j++] = p;
           }
 
-          transport.send(null, descr.address, pid, msg);
+          transport.send(null, peer.address, pid, msg);
         }
 
         try
@@ -356,7 +356,7 @@ public class BootstrapServer
     public Type type;
     public String coordinatorName;
     public long nodeId;
-    public Descriptor[] descriptors;
+    public Peer[] peers;
 
 
     public BootstrapMessage(Type type)

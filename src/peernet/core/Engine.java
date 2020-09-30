@@ -466,7 +466,7 @@ public abstract class Engine
    * provided {@link NodeInitializer}s, and then schedules its protocols for
    * execution.
    * 
-   * @return
+   * @return Reference to new node
    */
   public Node addNode(NodeInitializer[] inits)
   {

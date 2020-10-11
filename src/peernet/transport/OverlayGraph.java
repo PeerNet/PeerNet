@@ -99,7 +99,7 @@ public class OverlayGraph implements Graph
       return false;
 
     Linkable l = (Linkable) Network.get(i).getProtocol(protocolID);
-    Peer d = Network.get(j).getProtocol(protocolID).myself();
+    Peer d = Network.get(j).getProtocol(protocolID).myPeer();
     return l.contains(d);
   }
 
@@ -189,12 +189,12 @@ public class OverlayGraph implements Graph
     {
       // Set the inverse edge
       Linkable protocol_j = (Linkable) Network.get(j).getProtocol(protocolID);
-      Peer peer_i = Network.get(i).getProtocol(protocolID).myself();
+      Peer peer_i = Network.get(i).getProtocol(protocolID).myPeer();
       protocol_j.addNeighbor(peer_i);
     }
     // Set the direct edge
     Linkable protocol_i = (Linkable) Network.get(i).getProtocol(protocolID);
-    Peer peer_j = Network.get(j).getProtocol(protocolID).myself();
+    Peer peer_j = Network.get(j).getProtocol(protocolID).myPeer();
     protocol_i.addNeighbor(peer_j);
 
     return true;
@@ -221,14 +221,14 @@ public class OverlayGraph implements Graph
       return 0;
 
     Linkable l = (Linkable) Network.get(i).getProtocol(protocolID);
-    int numNeighbours = 0;
+    int numNeighbors = 0;
     for (int j = 0; j<l.degree(); ++j)
     {
       final Node n = ((AddressSim)l.getNeighbor(j).address).node;
       if (n.isUp())
-        numNeighbours++;
+        numNeighbors++;
     }
-    return numNeighbours;
+    return numNeighbors;
   }
 
 
@@ -243,7 +243,7 @@ public class OverlayGraph implements Graph
   {
     if (!Network.get(i).isUp())
       return 0;
-    Linkable lble = (Linkable) Network.get(i).getProtocol(protocolID);
-    return lble.degree();
+    Linkable l = (Linkable) Network.get(i).getProtocol(protocolID);
+    return l.degree();
   }
 }

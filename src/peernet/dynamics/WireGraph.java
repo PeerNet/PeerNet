@@ -39,8 +39,8 @@ public abstract class WireGraph implements WireControl
   /**
    * The {@link Linkable} protocol to operate on. If it is not specified, then
    * operates on {@link #g}. If {@link #g} is null, {@link #execute} throws an
-   * Exception. Note that if {@link #g} is set, it will be used irrespective of
-   * the setting of the protocol in this field.
+   * Exception. Note that if {@link #g} is set, it will be used irrespectively
+   * of the setting of the protocol in this field.
    * 
    * @config
    */

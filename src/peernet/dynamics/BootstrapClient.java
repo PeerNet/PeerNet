@@ -111,7 +111,7 @@ public class BootstrapClient extends TimerTask implements Control
 
         // TODO: Check what happens if a node has died
         Protocol prot = node.getProtocol(pid);
-        msg.peers[0] = prot.myself();
+        msg.peers[0] = prot.myPeer();
         prot.send(address, pid, msg);
       }
     }

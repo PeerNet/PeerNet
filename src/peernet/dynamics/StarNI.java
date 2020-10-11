@@ -75,7 +75,7 @@ public class StarNI implements NodeInitializer
       return;
     for (int i = 0; (center==null || !center.isUp()) && i<Network.size(); ++i)
       center = Network.get(i);
-    Peer centerPeer = center.getProtocol(pid).myself();
+    Peer centerPeer = center.getProtocol(pid).myPeer();
     ((Linkable) n.getProtocol(pid)).addNeighbor(centerPeer);
   }
 }

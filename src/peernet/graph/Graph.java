@@ -27,8 +27,9 @@ import java.util.Collection;
 * Implementations might return objects that represent the
 * nodes or edges, although this is not required.
 *
-* Undirected graphs are modeled by the interface as directed graphs in which
-* every edge (i,j) has a corresponding reverse edge (j,i).
+* Undirected graphs are modeled by the interface as directed
+* graphs in which every edge (i,j) has a corresponding
+* reverse edge (j,i).
 */
 public interface Graph {
 

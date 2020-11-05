@@ -383,12 +383,12 @@ public abstract class Engine
    * @param pid The identifier of the protocol to which the event will be
    *          delivered
    */
-  public void addEventIn(long delay, Address src, Node node, int pid, Object event)
+  void addEventIn(long delay, Address src, Node node, int pid, Object event)
   {
-    long nextTime = CommonState.getTime()+delay;
-
     if (delay<0)
       System.err.println("Event with negative delay: "+delay);
+
+    long nextTime = CommonState.getTime()+delay;
 
 //XXX Check for this somewhere in initialization, not in EACH new event!!
 //    if (pid>Byte.MAX_VALUE)
@@ -398,14 +398,14 @@ public abstract class Engine
   }
 
 
-  public abstract void addEventAt(long time, Address src, Node node, int pid, Object event);
-  public abstract int pendingEvents();
+  abstract void addEventAt(long time, Address src, Node node, int pid, Object event);
+  abstract int pendingEvents();
   public abstract void blockingInitializerStart();
   public abstract void blockingInitializerDone();
 
 
   /**
-   * Runs an experiment, resetting everything except the random seed.
+   * Runs an experiment, resetting everything but the random seed.
    */
   public void startExperiment()
   {

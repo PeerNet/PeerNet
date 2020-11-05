@@ -5,8 +5,8 @@ package peernet.transport;
 
 import peernet.config.Configuration;
 import peernet.core.Engine;
-import peernet.core.Engine.AddressType;
 import peernet.core.Node;
+import peernet.core.Engine.AddressType;
 
 
 
@@ -44,7 +44,7 @@ public class TransportEmu extends Transport
     Address senderAddress = new AddressSim(src);
     int latency = RouterNetwork.getLatency(senderRouter, receiverRouter)+local*2;
     if (latency>=0) // if latency < 0, it's a broken link
-      engine.addEventIn(latency, senderAddress, ((AddressSim) dest).node, pid, payload);
+      addEventIn(latency, senderAddress, ((AddressSim) dest).node, pid, payload);
   }
 
 

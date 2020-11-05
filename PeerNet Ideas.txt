@@ -158,3 +158,12 @@ Remove CDScheduler
 Entirely avoiding CommonState
 
 Settings.pid (public & final) or Settings.getPid() ?
+
+Protocol.schedule(long dt, Object event)
+
+Change Transport structure
+
+Remove linkable from Configuration
+
+Make Peer the default class. Do not require to explicitly mention it in the config file.
+

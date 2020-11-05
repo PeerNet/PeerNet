@@ -83,9 +83,25 @@ public abstract class Protocol implements Cloneable
    * The parameters passed are the address of the sender, and the event object.
    * 
    * @param src the address of the event's sender
-   * @param event the delivered event
+   * @param event the delivered object
    */
   public abstract void processEvent(Address src, Object event);
+
+
+
+  /**
+   * Schedules an internal event.
+   * 
+   * Arranges an <code>event</code> Object to be delivered to the
+   * same node, same protocol, in <code>delay</code> time units.
+   * 
+   * @param delay   the time units in which the event will be triggered
+   * @param event   the object to be delivered
+   */
+  public final void schedule(long delay, Object event)
+  {
+    Engine.instance().addEventIn(delay, null, node, settings.pid, event);
+  }
 
 
 

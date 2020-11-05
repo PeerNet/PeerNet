@@ -9,6 +9,7 @@ import java.util.Properties;
 import peernet.config.Configuration;
 import peernet.core.Engine;
 import peernet.core.Node;
+import peernet.core.EngineAgent;
 
 
 
@@ -25,7 +26,7 @@ import peernet.core.Node;
  * 
  * @author Spyros Voulgaris
  */
-public abstract class Transport implements Cloneable
+public abstract class Transport extends EngineAgent implements Cloneable
 {
   /**
    * Parameter name in configuration that attaches a transport layer protocol to

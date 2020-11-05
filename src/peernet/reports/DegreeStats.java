@@ -160,7 +160,7 @@ private int nextDegree()
 public boolean execute()
 {
   System.out.println("Time: "+CommonState.getTime());
-  System.out.println("Pending events: "+Engine.instance().pendingEvents());
+  System.out.println("Pending events: "+CommonState.getPendingEvents());
 
 	updateGraph();
 	if (!trace)

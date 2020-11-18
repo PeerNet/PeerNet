@@ -78,7 +78,7 @@ public class Network
    * The node array. The actual node set consists of only the first
    * {@link #size()} items of the array.
    */
-  public static Node[] nodes = null;
+  private static Node[] nodes = null;
 
   /**
    * Actual size of the network.
@@ -226,7 +226,7 @@ public class Network
    */
   public static Node getByID(int ID)
   {
-    for (int i = 0; i<len; i++)
+    for (int i=0; i<len; i++)
     {
       if (nodes[i].getID()==ID)
         return nodes[i];
@@ -241,7 +241,7 @@ public class Network
    * The node at the end of the list is removed. Returns the removed node. It
    * also sets the fail state of the node to {@link Fallible#DEAD}.
    */
-  public static Node remove()
+  public static Node removeLast()
   {
     Node n = nodes[len-1]; // if len was zero this throws and exception
     nodes[len-1] = null;
@@ -266,7 +266,7 @@ public class Network
     if (i<0||i>=len)
       throw new IndexOutOfBoundsException(""+i);
     swap(i, len-1);
-    return remove();
+    return removeLast();
   }
 
 
@@ -275,7 +275,7 @@ public class Network
   /**
    * Swaps the two nodes at the given indices.
    */
-  public static void swap(int i, int j)
+  private static void swap(int i, int j)
   {
     Node n = nodes[i];
     nodes[i] = nodes[j];

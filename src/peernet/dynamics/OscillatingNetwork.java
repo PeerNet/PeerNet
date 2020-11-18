@@ -159,11 +159,8 @@ protected void add(int k)
  */
 protected void remove(int n)
 {
-	for (int i = 0; i < n; ++i) {
-		Network.swap(Network.size() - 1,
-			CommonState.r.nextInt(Network.size()));
-		Network.remove();
-	}
+  for (int i=0; i<n; ++i)
+    Network.remove(CommonState.r.nextInt(Network.size()));
 }
 
 // ------------------------------------------------------------------

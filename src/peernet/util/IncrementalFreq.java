@@ -34,16 +34,20 @@ public class IncrementalFreq implements Cloneable
   /** The number of items inserted. */
   private int n;
 
+  /** The min, max, and sum of all items inserted */
+  private int min;
+  private int max;
+  private double sum;
+
   /**
    * freq[i] holds the frequency of i. primitive implementation, to be changed
    */
-
   private int[] freq = null;
+
   /**
    * The capacity, if larger than 0. Added values larger than or equal to this
    * one will be ignored.
    */
-
   private final int N;
 
 
@@ -78,7 +82,7 @@ public class IncrementalFreq implements Cloneable
    */
   public void reset()
   {
-    if (freq==null||N==0)
+    if (freq==null || N==0)
       freq = new int[0];
     else
       for (int i = 0; i<freq.length; ++i)
@@ -108,20 +112,35 @@ public class IncrementalFreq implements Cloneable
    */
   public void add(int i, int k)
   {
-    if (N>0&&i>=N)
+    if (N>0 && i>=N)
       return;
-    if (i<0||k<=0)
+
+    if (i<0 || k<=0)
       return;
+
     // Increase number of items by k.
     n += k;
+
+    // Update min
+    if (i<min)
+      min = i;
+
+    // Update max
+    if (i>max)
+      max = i;
+
+    // Update sum
+    sum += i*k;
+
     // If index i is out of bounds for the current array of counters,
     // increase the size of the array to i+1.
-    if (i>=freq.length)
+    if (i >= freq.length)
     {
       int tmp[] = new int[i+1];
       System.arraycopy(freq, 0, tmp, 0, freq.length);
       freq = tmp;
     }
+
     // Finally, increase counter i by k.
     freq[i] += k;
   }
@@ -142,7 +161,7 @@ public class IncrementalFreq implements Cloneable
   /** Returns the number of occurrences of the given integer. */
   public int getFreq(int i)
   {
-    if (i>=0&&i<freq.length)
+    if (i>=0 && i<freq.length)
       return freq[i];
     else
       return 0;
@@ -150,8 +169,40 @@ public class IncrementalFreq implements Cloneable
 
 
 
+  /** The maximum of the data items */
+  public int getMax()
+  {
+    return max;
+  }
+
+
+
+  /** The minimum of the data items */
+  public int getMin()
+  {
+    return min;
+  }
+
+
+
+  /** The sum of the data items */
+  public double getSum()
+  {
+    return sum;
+  }
+
+
+
+  /** The average of the data items */
+  public double getAverage()
+  {
+    return sum/n;
+  }
+
+
+
   /**
-   * Performs an element-by-element vector substraction of the frequency
+   * Performs an element-by-element vector subtraction of the frequency
    * vectors. If <code>strict</code> is true, it throws an
    * IllegalArgumentException if <code>this</code> is not strictly larger than
    * <code>other</code> (element by element) (Note that both frequency vectors
@@ -164,23 +215,40 @@ public class IncrementalFreq implements Cloneable
   public void remove(IncrementalFreq other, boolean strict)
   {
     // check if other has non-zero elements in non-overlapping part
-    if (strict&&other.freq.length>freq.length)
-    {
-      for (int i = other.freq.length-1; i>=freq.length; --i)
-      {
-        if (other.freq[i]!=0)
+    if (strict && other.freq.length > freq.length)
+      for (int i=other.freq.length-1; i>=freq.length; --i)
+        if (other.freq[i] != 0)
           throw new IllegalArgumentException();
-      }
-    }
+
     final int minLength = Math.min(other.freq.length, freq.length);
-    for (int i = minLength-1; i>=0; i--)
+    for (int i=minLength-1; i>=0; i--)
     {
-      if (strict&&freq[i]<other.freq[i])
+      if (strict && freq[i]<other.freq[i])
         throw new IllegalArgumentException();
+
       final int remove = Math.min(other.freq[i], freq[i]);
       n -= remove;
       freq[i] -= remove;
+      sum -= i*remove;
     }
+
+    // Recompute min
+    min = Integer.MAX_VALUE;
+    for (int i=freq.length-1; i>=0; i--)
+      if (freq[i] > 0)
+      {
+        max = i;
+        break;
+      }
+
+    // Recompute max
+    max = Integer.MIN_VALUE;
+    for (int i=0; i<freq.length-1; i++)
+      if (freq[i] > 0)
+      {
+        min = i;
+        break;
+      }
   }
 
 
@@ -197,10 +265,8 @@ public class IncrementalFreq implements Cloneable
    */
   public void printAll(PrintStream out)
   {
-    for (int i = 0; i<freq.length; ++i)
-    {
+    for (int i=0; i<freq.length; ++i)
       out.println(i+" "+freq[i]);
-    }
   }
 
 
@@ -215,11 +281,9 @@ public class IncrementalFreq implements Cloneable
    */
   public void print(PrintStream out)
   {
-    for (int i = 0; i<freq.length; ++i)
-    {
+    for (int i=0; i<freq.length; ++i)
       if (freq[i]!=0)
         out.println(i+" "+freq[i]);
-    }
   }
 
 
@@ -227,11 +291,11 @@ public class IncrementalFreq implements Cloneable
   public String toString()
   {
     String result = "";
+
     for (int i = 0; i<freq.length; ++i)
-    {
       if (freq[i]!=0)
         result = result+" ("+i+","+freq[i]+")";
-    }
+
     return result;
   }
 
@@ -241,15 +305,16 @@ public class IncrementalFreq implements Cloneable
   public String toArithmeticExpression()
   {
     String result = "";
+
     for (int i = freq.length-1; i>=0; i--)
-    {
       if (freq[i]!=0)
         result = result+freq[i]+"*"+i+"+";
-    }
+
     if (result.equals(""))
       result = "(empty)";
     else
       result = result.substring(0, result.length()-1);
+
     return result;
   }
 
@@ -258,8 +323,10 @@ public class IncrementalFreq implements Cloneable
   public Object clone() throws CloneNotSupportedException
   {
     IncrementalFreq result = (IncrementalFreq) super.clone();
+
     if (freq!=null)
       result.freq = freq.clone();
+
     return result;
   }
 
@@ -274,14 +341,18 @@ public class IncrementalFreq implements Cloneable
   {
     IncrementalFreq other = (IncrementalFreq) obj;
     final int minlength = Math.min(other.freq.length, freq.length);
-    for (int i = minlength-1; i>=0; i--)
+
+    for (int i=minlength-1; i>=0; i--)
       if (freq[i]!=other.freq[i])
         return false;
+
     if (freq.length>minlength)
       other = this;
-    for (int i = minlength; i<other.freq.length; i++)
+
+    for (int i=minlength; i<other.freq.length; i++)
       if (other.freq[i]!=0)
         return false;
+
     return true;
   }
 }

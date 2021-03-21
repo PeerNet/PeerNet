@@ -175,4 +175,11 @@ public abstract class Protocol implements Cloneable
     }
     return protocol;
   }
+
+
+
+  public String toString()
+  {
+    return ""+myNode().getID()+".P"+myPid();
+  }
 }

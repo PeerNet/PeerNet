@@ -243,7 +243,7 @@ public class Network
    */
   public static Node removeLast()
   {
-    Node n = nodes[len-1]; // if len was zero this throws and exception
+    Node n = nodes[len-1]; // if len was zero this throws an exception
     nodes[len-1] = null;
     len--;
     n.setFailState(Fallible.DEAD);

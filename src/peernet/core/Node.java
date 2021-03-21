@@ -295,13 +295,14 @@ public class Node implements Fallible, Cloneable
 
 
   /** Sets a node's fail state to <code>failState</code> */
-  public void setFailState(int failState)
+  public void setFailState(int _failstate)
   {
     // after a node is dead, all operations on it are errors by definition
-    if (failstate==DEAD&&failState!=DEAD)
+    if (failstate==DEAD && _failstate!=DEAD)
       throw new IllegalStateException(
           "Cannot change fail state: node is already DEAD");
-    switch (failState)
+
+    switch (_failstate)
     {
       case OK:
         failstate = OK;
@@ -318,7 +319,7 @@ public class Node implements Fallible, Cloneable
         failstate = DOWN;
         break;
       default:
-        throw new IllegalArgumentException("failState="+failState);
+        throw new IllegalArgumentException("failState="+_failstate);
     }
   }
 

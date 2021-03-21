@@ -153,16 +153,17 @@ protected void remove(int n)
  */
 public DynamicNetwork(String prefix)
 {
-	add = Configuration.getDouble(prefix + "." + PAR_ADD);
-	substitute = Configuration.contains(prefix + "." + PAR_SUBST);
-	Object[] tmp = Configuration.getInstanceArray(prefix + "." + PAR_INIT);
-	inits = new NodeInitializer[tmp.length];
-	for (int i = 0; i < tmp.length; ++i) {
-		//System.out.println("Inits " + tmp[i]);
-		inits[i] = (NodeInitializer) tmp[i];
-	}
-	maxsize=Configuration.getInt(prefix+"."+PAR_MAX,Network.getCapacity());
-	minsize = Configuration.getInt(prefix + "." + PAR_MIN, 0);
+  add = Configuration.getDouble(prefix + "." + PAR_ADD);
+  substitute = Configuration.contains(prefix + "." + PAR_SUBST);
+  Object[] tmp = Configuration.getInstanceArray(prefix + "." + PAR_INIT);
+  inits = new NodeInitializer[tmp.length];
+  for (int i = 0; i < tmp.length; ++i)
+  {
+    //System.out.println("Inits " + tmp[i]);
+    inits[i] = (NodeInitializer) tmp[i];
+  }
+  maxsize=Configuration.getInt(prefix+"."+PAR_MAX,Network.getCapacity());
+  minsize = Configuration.getInt(prefix + "." + PAR_MIN, 0);
 }
 
 // --------------------------------------------------------------------------
@@ -176,32 +177,42 @@ public DynamicNetwork(String prefix)
  */
 public final boolean execute()
 {
-  System.out.println("time is "+CommonState.getTime());
-	if (add == 0)
-		return false;
-	if (!substitute) {
-		if ((maxsize <= Network.size() && add > 0)
-				|| (minsize >= Network.size() && add < 0))
-			return false;
-	}
-	int toadd = 0;
-	int toremove = 0;
-	if (add > 0) {
-		toadd = (int) (add < 1 ? add * Network.size() : add);
-		if (!substitute && toadd > maxsize - Network.size())
-			toadd = maxsize - Network.size();
-		if (substitute)
-			toremove = toadd;
-	} else if (add < 0) {
-		toremove = (int) (add > -1 ? -add * Network.size() : -add);
-		if (!substitute && toremove > Network.size() - minsize)
-			toremove = Network.size() - minsize;
-		if (substitute)
-			toadd = toremove;
-	}
-	remove(toremove);
-	add(toadd);
-	return false;
+  //System.out.println("time is "+CommonState.getTime());
+
+  if (add == 0)
+    return false;
+
+  if (!substitute)
+  {
+    if ((maxsize <= Network.size() && add > 0) ||
+        (minsize >= Network.size() && add < 0))
+      return false;
+  }
+
+  int toadd = 0;
+  int toremove = 0;
+
+  if (add > 0)
+  {
+    toadd = (int) (add < 1 ? add * Network.size() : add);
+    if (!substitute && toadd > maxsize - Network.size())
+      toadd = maxsize - Network.size();
+    if (substitute)
+      toremove = toadd;
+  }
+  else if (add < 0)
+  {
+    toremove = (int) (add > -1 ? -add * Network.size() : -add);
+    if (!substitute && toremove > Network.size() - minsize)
+      toremove = Network.size() - minsize;
+    if (substitute)
+      toadd = toremove;
+  }
+
+  remove(toremove);
+  add(toadd);
+
+  return false;
 }
 
 // --------------------------------------------------------------------------

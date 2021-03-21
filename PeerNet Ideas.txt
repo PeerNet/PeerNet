@@ -164,6 +164,9 @@ Protocol.schedule(long dt, Object event)
 Change Transport structure
 
 Remove linkable from Configuration
+ + but make it easy & clear to get hold of other protocols within the same node
 
 Make Peer the default class. Do not require to explicitly mention it in the config file.
+
+Why isn't Node.transports static? Do we expect different transports on different nodes?
 

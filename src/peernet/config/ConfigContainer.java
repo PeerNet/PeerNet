@@ -588,7 +588,7 @@ private Class<?> getClazz(String name)
 				}
 				throw new IllegalParameterException(name,
 						"The non-qualified class name " + classname
-								+ "corresponds to multiple fully-qualified classes:" + fullname);
+								+ " corresponds to multiple fully-qualified classes:" + fullname);
 			}
 		}
 	}

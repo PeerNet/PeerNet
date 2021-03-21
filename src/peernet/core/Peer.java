@@ -170,4 +170,11 @@ public class Peer implements Serializable, Cloneable
     peer.address = (Address)address.clone();
     return peer;
   }
+
+
+
+  public String toString()
+  {
+    return ""+ID;
+  }
 }

@@ -55,14 +55,21 @@ public class MatrixParser implements Control
    */
   private static final String PAR_TRACE_TICKS_PER_SEC = "trace_ticks_per_sec";
 
+  /**
+   * The minimum latency allowed. Any smaller non-negative latency will be
+   * set to this.
+   * @config
+   */
+  private static final String PAR_MIN_LATENCY = "min";
+
   /** Name of the file containing the measurements. */
   private String filename;
 
-  /** Prefix for reading parameters */
-  private String prefix;
-
   /** Ratio read from PAR_RATIO */
   private double ratio;
+
+  /** Minimum allowed latency */
+  private double min;
 
   private boolean binary = false;
 
@@ -73,11 +80,11 @@ public class MatrixParser implements Control
    */
   public MatrixParser(String prefix)
   {
-    this.prefix = prefix;
     filename = Configuration.getString(prefix + "." + PAR_FILE);
 
     int ticks_per_sec = Configuration.getInt(prefix+"."+PAR_SIM_TICKS_PER_SEC);
     int trace_ticks_per_sec = Configuration.getInt(prefix+"."+PAR_TRACE_TICKS_PER_SEC);
+    min = Configuration.getInt(prefix+"."+PAR_MIN_LATENCY, 0);
     ratio = ((double)ticks_per_sec) / ((double)trace_ticks_per_sec);
  }
 
@@ -105,11 +112,12 @@ public class MatrixParser implements Control
   }
 
 
-  protected static void readAsciiFormat(String filename, double ratio) throws IOException
+
+  protected void readAsciiFormat(String filename, double ratio) throws IOException
   {
     BufferedReader in = new BufferedReader(new FileReader(filename));
 
-    // Read the number of nodes in the file (first four bytes).
+    // Read the number of nodes in the file (first line).
     String line = in.readLine();
     int size = Integer.parseInt(line);
 
@@ -127,8 +135,17 @@ public class MatrixParser implements Control
       StringTokenizer tok = new StringTokenizer(line, " ");
       for (int col=0; col<size; col++)
       {
-        double latency = Double.parseDouble(tok.nextToken()) * ratio;
-        RouterNetwork.setLatency(row, col, latency >= 0 ? (int)latency : -1);
+        double latency = Double.parseDouble(tok.nextToken());
+
+        if (latency >= 0)
+        {
+          latency = Math.max(latency, min);
+          latency *= ratio;
+        }
+        else
+          latency = -1;
+
+        RouterNetwork.setLatency(row, col, (int)latency);
         count++;
       }
     }
@@ -169,11 +186,5 @@ public class MatrixParser implements Control
       }
     }
     System.err.println("MatrixParser: Read " + count + " entries");
-  }
-
-
-  public static void main(String[] args) throws IOException
-  {
-    readAsciiFormat("/home/spyros/Data/latency/king_matrix", 1);
   }
 }
